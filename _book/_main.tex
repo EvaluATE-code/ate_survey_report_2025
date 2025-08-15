@@ -1,0 +1,1049 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{report}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+\usepackage{booktabs}
+\setmainfont{Calibri}
+\setcounter{secnumdepth}{2} % Numbers for sections and subsections.
+
+\usepackage{etoolbox}
+
+\preto{\section}{\clearpage}
+
+\usepackage{xcolor}
+
+\definecolor{327492}{HTML}{327492}  % blue_raspberry
+\definecolor{245075}{HTML}{245075}  % blueberry
+\definecolor{B03E61}{HTML}{B03E61}  % watermelon
+\definecolor{BD4C42}{HTML}{BD4C42}  % tangerine
+\definecolor{4B7F60}{HTML}{4B7F60}  % cucumber
+
+
+\definecolor{874e7a}{HTML}{874e7a}
+\definecolor{3c6384}{HTML}{3c6384}
+\definecolor{4d4c8c}{HTML}{4d4c8c}
+
+\usepackage[margin=1in]{geometry}
+
+
+\usepackage{etoolbox}
+\usepackage{titlesec}
+
+% Ensure page breaks before sections
+\preto{\section}{\clearpage}
+
+% Fix paragraph alignment
+\titleformat{\paragraph}[block]
+  {\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+\titlespacing*{\paragraph}{0pt}{1em}{1em}
+
+\usepackage{graphicx}
+
+\let\oldincludegraphics\includegraphics
+\renewcommand{\includegraphics}[2][]{%
+  \oldincludegraphics[width=0.8\textwidth, #1]{#2}%
+}
+
+
+
+
+
+
+
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\usepackage[]{biblatex}
+\addbibresource{references.bib}
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={ATE Survey Report 2025},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{ATE Survey Report 2025}
+\usepackage{etoolbox}
+\makeatletter
+\providecommand{\subtitle}[1]{% add subtitle to \maketitle
+  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+}
+\makeatother
+\subtitle{Findings from the Annual Survey of Principal Investigators in the National Science Foundation's Advanced Technological Education Program}
+\author{}
+\date{\vspace{-2.5em}}
+
+\begin{document}
+\maketitle
+
+{
+\setcounter{tocdepth}{1}
+\tableofcontents
+}
+\hypertarget{introduction}{%
+\chapter*{Introduction}\label{introduction}}
+\addcontentsline{toc}{chapter}{Introduction}
+
+The Scientific and Advanced-Technology Act (1992) called for establishing ``a national advanced technician training program utilizing the resources of the nation's two-year associate-degree- granting colleges'' \autocite{scientific1992act}. In response, the National Science Foundation (NSF) created the Advanced Technological Education (ATE) program. The ATE program makes awards ranging from \$70,000 to \$7.5 million to support an array of initiatives to improve the education of technicians at undergraduate institutions and secondary schools, with an emphasis on two-year colleges. Examples of high-technology fields of interest include advanced manufacturing, biotechnology, energy and environmental technologies, engineering, information technologies, and nanotechnologies.
+
+\textcolor{327492}{\textbf{This report summarizes data gathered in the 2024 survey of ATE program grantees.}} EvaluATE, the evaluation hub for the ATE program, located at The Evaluation Center at Western Michigan University, has conducted this survey annually since 2000. Included in this report are findings about ATE projects and their activities and achievements during the 2023 calendar year (and, for budget-related questions, the 2023 fiscal year).
+
+\textcolor{327492}{\textbf{The 2024 survey was a census of ATE principal investigators (PIs) with active grants (N=396).}} Ninety- two percent of PIs (n=364) responded to the survey. The survey included sections about grantee characteristics and practices, evaluation, collaboration, academic program or course development, educational materials development, instrument acquisition, student services and support, professional development for educators or future educators, professional
+exchange, research and publications, and ATE program services. Grantees were asked to complete sections that pertained to their work.
+
+Survey questions were substantially revised in 2018, resulting in the modification of existing questions and the addition of several new questions to capture a wider range of activities supported by ATE grants. Readers are cautioned against comparing results of the 2024 survey with those prior to 2019. In some cases, changes in the survey questions and structure led to fewer respondents reporting in some areas. In a tradeoff, this report includes data on several types of activities not addressed by the ATE Survey prior to 2019, such as workplace-based learning experiences for students, support for students transitioning into college, and acquisition of equipment for use in instruction.
+
+Reported numbers of participants, products, and activities throughout this report are rounded to the nearest ten. The n that appears with tables and figures indicates the number of respondents for a given item.
+
+\emph{Additional reports based on annual ATE survey data dating back to 2000 are available at \url{https://atesurvey.evalu-ate.org/survey-resources/}. Custom reports may be developed upon request. For more information, contact us through \url{https://evalu-ate.org/contact/}.}
+
+\hypertarget{how-to-use-this-report}{%
+\chapter*{How to Use This Report}\label{how-to-use-this-report}}
+\addcontentsline{toc}{chapter}{How to Use This Report}
+
+This report is intended for a broad audience, including ATE project staff, evaluators of ATE projects, those interested in submitting to the ATE program, NSF program officers, and others interested in learning more about advanced technological education. To encourage use of this report and translate findings into action, we have outlined how each of these audiences can use this report.
+
+\hypertarget{ate-project-staff}{%
+\subsubsection{ATE Project Staff}\label{ate-project-staff}}
+
+ATE project staff, including PIs, co-PIs, and others who work on ATE-funded projects, can benefit from this report through an increased awareness of how their project fits into the larger ATE program portfolio. Reading about the activities and achievements of other projects can provide insights about the similarities and differences between their project and others'. Project staff can use this report to better understand how their project fits amidst the larger framework of ATE projects across the country. Additionally, the survey report can be used to identify potential practices to add to their current project or inspire ideas for future projects.
+
+\hypertarget{ate-evaluators}{%
+\subsubsection{ATE Evaluators}\label{ate-evaluators}}
+
+ATE evaluators can benefit from understanding standard practices for evaluations of ATE projects, including types of reports produced and use of those reports. Additionally, ATE evaluators new to projects may gain insight about the types of data projects are already asked to collect in order to respond to this survey.
+
+\hypertarget{ate-program-grantseekers}{%
+\subsubsection{ATE Program Grantseekers}\label{ate-program-grantseekers}}
+
+For those interested in submitting a proposal to the ATE program, this report provides a sense of what funded projects are already doing. A detailed understanding of ATE activities can benefit proposers in the planning stages, as well as in their final submissions to NSF. Grantseekers might use data from this report either to support the continuation of a common activity or to justify an alternative activity to fill a need or gap in ATE activities. The findings in this report may also inspire ideas for targeted research projects.
+
+\hypertarget{nsf-program-officers}{%
+\subsubsection{NSF Program Officers}\label{nsf-program-officers}}
+
+The survey report provides a comprehensive overview of the ATE program, allowing NSF program officers to identify larger trends or needs in the ATE program. Additionally, this report can be shared with Congress as evidence of the program's achievements.
+
+\hypertarget{others-interested-in-advanced-technological-education}{%
+\subsubsection{Others Interested in Advanced Technological Education}\label{others-interested-in-advanced-technological-education}}
+
+This survey report is freely available from the EvaluATE website, open to anyone who has interest in advanced technological education. Efforts to increase courses and programs in career and technical education are not limited to the ATE program. Other academic programs or projects intended to advance career and technical education can benefit from understanding ATE project activities.
+
+\hypertarget{suggested-citation}{%
+\subsubsection{Suggested Citation}\label{suggested-citation}}
+
+Marshall, V. A., Sturgis, E., Becho, L. W., Wingate, L. A., \& Gullickson, A. (2024). ATE Survey: 2024 report. Kalamazoo, MI: The Evaluation Center, Western Michigan University. Retrieved from \url{https://atesurvey.evalu-ate.org/}
+
+\hypertarget{ate-grantee-and-project-characteristics}{%
+\chapter{ATE Grantee and Project Characteristics}\label{ate-grantee-and-project-characteristics}}
+
+\hypertarget{as-context-for-the-remainder-of-this-report-this-section-provides-basic-information-about-the-individuals-and-institutions-that-received-ate-awards-as-well-as-key-characteristics-of-the-funded-work-such-as-types-of-awards-disciplinary-emphases-and-nature-of-activities.}{%
+\paragraph{As context for the remainder of this report, this section provides basic information about the individuals and institutions that received ATE awards, as well as key characteristics of the funded work, such as types of awards, disciplinary emphases, and nature of activities.}\label{as-context-for-the-remainder-of-this-report-this-section-provides-basic-information-about-the-individuals-and-institutions-that-received-ate-awards-as-well-as-key-characteristics-of-the-funded-work-such-as-types-of-awards-disciplinary-emphases-and-nature-of-activities.}}
+
+\hypertarget{ate-grant-types-and-institutions}{%
+\section{ATE Grant Types and Institutions}\label{ate-grant-types-and-institutions}}
+
+\hypertarget{most-ate-grants-support-projects-and-most-pis-are-located-at-two-year-colleges.}{%
+\subsubsection{Most ATE grants support projects, and most PIs are located at two-year colleges.}\label{most-ate-grants-support-projects-and-most-pis-are-located-at-two-year-colleges.}}
+
+ATE awards fit into four main categories: projects, centers, targeted research, and conferences and meetings. The ATE program has special funding tracks for institutions new to the program and for organizations developing plans for national centers. \textbf{Ninety-two percent of ATE grants were for projects (including a variety of subcategories of project types).} Among the 271 project grants, 74 were designated for institutions new to the ATE program, 7 were consortia for innovations in technical education, and 0 were coordination network grants. Of the 18 centers, 6 identified as support or resource centers, 2 as regional centers, and 10 as national centers.
+
+\hypertarget{the-majority-of-ate-grants-support-.}{%
+\paragraph{\texorpdfstring{The majority of ATE grants support \textbf{\textcolor{245075}{\textbf{projects}}}.}{The majority of ATE grants support .}}\label{the-majority-of-ate-grants-support-.}}
+
+\begin{figure}
+\includegraphics[alt={Pie chart showing the distribution of 338 ATE grants awarded, categorized into four main types. The largest category is ‘Projects,’ accounting for 295 grants (87\%), followed by ‘Centers’ with 29 grants, ‘Targeted Research’ with 12 grants, and ‘Conferences and Meetings’ with 2 grants.}]{_main_files/figure-latex/fig1a1-1} \caption{Types of ATE grants awarded (n=294)}\label{fig:fig1a1}
+\end{figure}
+
+\newpage
+
+\hypertarget{most-ate-grantees-are-located-at-followed-by-and-.}{%
+\paragraph{\texorpdfstring{Most ATE grantees are located at \textcolor{245075}{\textbf{two-year colleges}}, followed by \textcolor{B03E61}{\textbf{four-year colleges and universities}} and \textcolor{BD4C42}{\textbf{nonprofits}}.}{Most ATE grantees are located at , followed by  and .}}\label{most-ate-grantees-are-located-at-followed-by-and-.}}
+
+\begin{figure}
+\centering
+\includegraphics{_main_files/figure-latex/fig1a2-1.pdf}
+\caption{\label{fig:fig1a2}ATE grant recipient institutions (n=294)}
+\end{figure}
+
+The ATE program solicitation states that the ``program focuses on IHEs that award two-year degrees in advanced technology fields and expects these IHEs and their faculty to have significant leadership roles on all projects'' \autocite[p.~4]{nsf2021}. Accordingly, most ATE grants are located at two-year colleges. The 220 grants awarded to two-year colleges supported 209 projects, 11 centers. Most of the 5 targeted research projects (80\%) are located at four-year colleges.
+
+\textbf{Unless specified, all types of grants---projects, centers, targeted research, and conferences---are referred to as projects in the remainder of this report.}
+
+\hypertarget{ate-project-disciplines}{%
+\section{ATE Project Disciplines}\label{ate-project-disciplines}}
+
+\hypertarget{the-majority-of-ate-projects-are-in-the-areas-of-and-.}{%
+\subsubsection{\texorpdfstring{The majority of ATE projects are in the areas of \textcolor{245075}{\textbf{advanced manufacturing technologies}}, \textcolor{B03E61}{\textbf{information and securities technologies}}, and \textcolor{BD4C42}{\textbf{Bio and Chemical Technologies}}.}{The majority of ATE projects are in the areas of , , and .}}\label{the-majority-of-ate-projects-are-in-the-areas-of-and-.}}
+
+\begin{figure}
+\centering
+\includegraphics{_main_files/figure-latex/fig3-1.pdf}
+\caption{\label{fig:fig3}Disciplinary areas of ATE projects (n=294)}
+\end{figure}
+
+In alignment with the broad aim of the ATE program to improve the education of science and engineering technicians, the disciplinary emphases of ATE grantees are diverse.
+
+\hypertarget{ate-project-activities}{%
+\section{ATE Project Activities}\label{ate-project-activities}}
+
+\hypertarget{ate-projects-engaged-in-a-variety-of-activities-in-2024-to-improve-the-education-of-science-and-engineering-technicians.}{%
+\subsubsection{ATE projects engaged in a variety of activities in 2024 to improve the education of science and engineering technicians.}\label{ate-projects-engaged-in-a-variety-of-activities-in-2024-to-improve-the-education-of-science-and-engineering-technicians.}}
+
+\begin{figure}
+\centering
+\includegraphics{_main_files/figure-latex/fig1a4-1.pdf}
+\caption{\label{fig:fig1a4}Percentage of projects that reported engaging in activities in 2024 and planning activities for the future (n=294). \emph{Responses less than 5\% are not labeled.}}
+\end{figure}
+
+\hypertarget{ate-projects-at-minority-serving-institutions}{%
+\section{ATE Projects at Minority-Serving Institutions}\label{ate-projects-at-minority-serving-institutions}}
+
+\hypertarget{ninety-one-ate-projects-35-are-located-at-institutions-of-higher-education-ihes.}{%
+\paragraph{\texorpdfstring{Ninety-one ATE projects (35\%) are located at \textcolor{245075}{\textbf{minority-serving}} institutions of higher education (IHEs).}{Ninety-one ATE projects (35\%) are located at  institutions of higher education (IHEs).}}\label{ninety-one-ate-projects-35-are-located-at-institutions-of-higher-education-ihes.}}
+
+\hypertarget{seventy-three-ate-projects-are-located-at-institutions-of-higher-education.}{%
+\paragraph{\texorpdfstring{Seventy-three ATE projects are located at \textcolor{B03E61}{\textbf{Hispanic-serving}} institutions of higher education.}{Seventy-three ATE projects are located at  institutions of higher education.}}\label{seventy-three-ate-projects-are-located-at-institutions-of-higher-education.}}
+
+\begin{figure}
+\centering
+\includegraphics{_main_files/figure-latex/fig1a5-1.pdf}
+\caption{\label{fig:fig1a5}ATE projects at minority-serving institutions (n=91)}
+\end{figure}
+
+Minority-serving institutions are defined in U.S. law under Title III of the Higher Education Act of 1965. The designation is based on the percentage of minority students enrolled in the school. \textbf{Of the 294 projects at IHEs, 34\% are at minority-serving institutions.} The majority of these IHEs (80\%) are Hispanic-serving. Alaska Native-serving institutions made up 5\% of IHEs, followed by 2\% of IHEs located at Native Hawaiian-serving institutions, and 8\% at predominantly Black or historically Black colleges and universities. 1\% projects were reported to be located at Tribal colleges or universities.
+
+\hypertarget{ate-principal-investigators}{%
+\section{ATE Principal Investigators}\label{ate-principal-investigators}}
+
+The ATE community is still working toward increasing diversity among PIs. Females make up 51\% of the U.S. population \autocite{uscensus2023acs}. Comparatively, females are underrepresented as ATE PIs, since only 35\% of ATE PIs in 2024 identified as female. Fifteen percent of ATE projects have PIs who are over the age of 65, while 29\% are between the ages of 55 and 64, 35\% are 45--54, 18\% are 35--44, and 2\% are 25--34.
+
+\begin{figure}
+\centering
+\includegraphics{_main_files/figure-latex/fig1a6-1.pdf}
+\caption{\label{fig:fig1a6}Gender identities of ATE PIs (n=293). Each icon represents 1\%.}
+\end{figure}
+
+\newpage
+
+\textbf{Fourteen percent of ATE projects have PIs from historically underrepresented racial and ethnic groups}, which includes Black, Hispanic, American Indian or Alaska Native, and Middle Eastern or North African.
+
+\hypertarget{seventy-five-percent-of-ate-projects-have-a-pi-who-identifies-as-.}{%
+\paragraph{\texorpdfstring{Seventy-five percent of ATE projects have a PI who identifies as \textcolor{BD4C42}{\textbf{white}}.}{Seventy-five percent of ATE projects have a PI who identifies as .}}\label{seventy-five-percent-of-ate-projects-have-a-pi-who-identifies-as-.}}
+
+\begin{figure}
+\centering
+\includegraphics{_main_files/figure-latex/fig1a7-1.pdf}
+\caption{\label{fig:fig1a7}Racial and ethnic identities of ATE PIs (n=293). Each icon represents 1\%. *Historically underrepresented racial and ethnic groups.}
+\end{figure}
+
+\hypertarget{academic-programs-courses-and-pathways}{%
+\chapter{Academic Programs, Courses, and Pathways}\label{academic-programs-courses-and-pathways}}
+
+\hypertarget{the-ate-program-supports-the-creation-and-improvement-of-academic-programs-that-lead-to-an-appropriate-associate-degree-or-specific-occupational-competency-or-certification-nsf2021-p.-5.-examples-of-funded-activities-include-creating-new-degree-or-certificate-programs-or-courses-modifying-the-content-instructional-strategies-or-delivery-modes-of-existing-programs-and-courses-enhancing-programs-through-the-acquisition-of-instruments-or-equipment-for-use-in-instruction-and-developing-educational-pathways-including-articulation-agreements-that-facilitate-students-movement-across-education-levels.}{%
+\paragraph{\texorpdfstring{The ATE program supports the creation and improvement of academic programs that lead to ``an appropriate associate degree or specific occupational competency or certification'' \autocite[p.~5]{nsf2021}. Examples of funded activities include creating new degree or certificate programs or courses; modifying the content, instructional strategies, or delivery modes of existing programs and courses; enhancing programs through the acquisition of instruments or equipment for use in instruction; and developing educational pathways (including articulation agreements) that facilitate students' movement across education levels.}{The ATE program supports the creation and improvement of academic programs that lead to ``an appropriate associate degree or specific occupational competency or certification'' {[}@nsf2021, p. 5{]}. Examples of funded activities include creating new degree or certificate programs or courses; modifying the content, instructional strategies, or delivery modes of existing programs and courses; enhancing programs through the acquisition of instruments or equipment for use in instruction; and developing educational pathways (including articulation agreements) that facilitate students' movement across education levels.}}\label{the-ate-program-supports-the-creation-and-improvement-of-academic-programs-that-lead-to-an-appropriate-associate-degree-or-specific-occupational-competency-or-certification-nsf2021-p.-5.-examples-of-funded-activities-include-creating-new-degree-or-certificate-programs-or-courses-modifying-the-content-instructional-strategies-or-delivery-modes-of-existing-programs-and-courses-enhancing-programs-through-the-acquisition-of-instruments-or-equipment-for-use-in-instruction-and-developing-educational-pathways-including-articulation-agreements-that-facilitate-students-movement-across-education-levels.}}
+
+\hypertarget{academic-program-development}{%
+\section{Academic Program Development}\label{academic-program-development}}
+
+\hypertarget{twenty-seven-percent-of-ate-projects-created-or-substantially-modified-an-academic-program.}{%
+\subsubsection{Twenty-seven percent of ATE projects created or substantially modified an academic program.}\label{twenty-seven-percent-of-ate-projects-created-or-substantially-modified-an-academic-program.}}
+
+The Committee on Science, Technology, Engineering, and Math Education's 2018 strategic plan emphasizes expanding the number of students pursuing STEM degrees and improving access to effective STEM programs across educational levels. One of the ways that ATE responds to this call is through the development of new STEM academic programs. ATE PIs were asked to identify the degree or certificate programs that their projects created or improved with ATE funding, and characteristics of students served by those programs.
+
+A total of 146 academic degree programs were developed or substantially modified by 78 ATE projects in 2024. \textbf{Most of these programs awarded certificates (58\%) or associate degrees (36\%).} Two programs awarded bachelor's degrees,and 8 programs provided other types of credentials. \textbf{18,030 students attended at least one course in these academic programs,} with a total of 2161 completing a program in 2024; 920 students completed an associate degree program, while 1100 students completed a certificate program. Programs with students completing certifications or degrees in 2024 graduated an average of 15 students.
+
+--\textgreater{}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-6-1.pdf}
+
+\newpage
+
+The Committee on STEM Education's 2024 progress report noted the persistence of labor shortages in STEM fields and underscored the importance of increasing diversity, equity, and inclusion in STEM. NSF (2024) has determined that women, persons with disabilities, and three racial and ethnic groups---Blacks, Hispanics, and American Indians or Alaskan Natives---are underrepresented in science and engineering.
+
+\begin{figure}
+\centering
+\includegraphics{_main_files/figure-latex/fig2a1-1.pdf}
+\caption{\label{fig:fig2a1}Percentage of projects that emphasized recruitment of students from specific demographic groups (n=78)}
+\end{figure}
+
+\hypertarget{students-served-by-ate-academic-programs}{%
+\section{Students Served by ATE Academic Programs}\label{students-served-by-ate-academic-programs}}
+
+\hypertarget{students-from-groups-that-have-been-historically-underrepresented-in-stem-have-similar-rates-of-participation-in-the-ate-program.}{%
+\subsubsection{Students from groups that have been historically underrepresented in STEM have similar rates of participation in the ATE program.}\label{students-from-groups-that-have-been-historically-underrepresented-in-stem-have-similar-rates-of-participation-in-the-ate-program.}}
+
+Of the 146 academic programs that were developed or modified by ATE projects in 2024, 84 programs (58\%) reported data on student gender, and 81 programs (55\%) reported data on student race.
+
+\hypertarget{like-other-stem-programs-ate-projects-still-face-a-challenge-in-attracting-.}{%
+\paragraph{\texorpdfstring{Like other STEM programs, ATE projects still face a challenge in attracting \textcolor{245075}{\textbf{women to the field}}.}{Like other STEM programs, ATE projects still face a challenge in attracting .}}\label{like-other-stem-programs-ate-projects-still-face-a-challenge-in-attracting-.}}
+
+\begin{figure}
+\centering
+\includegraphics{_main_files/figure-latex/fig2a2_corrected-1.pdf}
+\caption{(\#fig:fig2a2\_corrected)Percentage of women and men in ATE-supported academic programs by degree level}
+\end{figure}
+
+\newpage
+
+Students who identify as Black / African American or Hispanic / Latino or Latina have slightly higher representation in ATE- supported programs than they do in the general population of students across educational degrees. (See the technical notes for a full explanation of comparison sources for national data.iii)
+
+\hypertarget{the-percentage-of-students-who-identify-as-and-or-latina-in-the-ate-program-mimics-national-trends.}{%
+\paragraph{\texorpdfstring{The percentage of students who identify as \textcolor{BD4C42}{\textbf{Black / African American}} and \textcolor{4B7F60}{\textbf{Hispanic / Latino or Latina}} or Latina in the ATE program mimics national trends.}{The percentage of students who identify as  and  or Latina in the ATE program mimics national trends.}}\label{the-percentage-of-students-who-identify-as-and-or-latina-in-the-ate-program-mimics-national-trends.}}
+
+\begin{figure}
+\centering
+\includegraphics{_main_files/figure-latex/fig2a3-1.pdf}
+\caption{\label{fig:fig2a3}Percentage of students from underrepresented racial and ethnic minority groups in ATE-supported academic programs, compared with national rates}
+\end{figure}
+
+\hypertarget{course-development}{%
+\section{Course Development}\label{course-development}}
+
+\hypertarget{thirty-five-percent-of-ate-projects-created-or-modified-at-least-one-academic-course.}{%
+\subsubsection{Thirty-five percent of ATE projects created or modified at least one academic course.}\label{thirty-five-percent-of-ate-projects-created-or-modified-at-least-one-academic-course.}}
+
+ATE PIs whose projects engaged in creating or substantially modifying academic courses were asked to identify the number
+and types of courses they created or modified, the academic levels of these courses, their primary delivery modes, and how many students enrolled in the courses. Some ATE projects engaged in course development as part of a larger initiative to develop or modify an entire degree or certificate program; others did so as a stand-alone effort.
+
+\hypertarget{a-total-of-376-courses-were-developed-by-104-projects-in-2024.}{%
+\paragraph{A total of 376 courses were developed by 104 projects in 2024.}\label{a-total-of-376-courses-were-developed-by-104-projects-in-2024.}}
+
+--\textgreater{}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-8-1.pdf}
+
+\newpage
+
+\hypertarget{instrument-acquisition}{%
+\section{Instrument Acquisition}\label{instrument-acquisition}}
+
+\hypertarget{thirty-four-percent-of-ate-projects-acquired-instruments-or-equipment-to-prepare-students-for-work-in-business-and-industry.}{%
+\subsubsection{Thirty-four percent of ATE projects acquired instruments or equipment to prepare students for work in business and industry.}\label{thirty-four-percent-of-ate-projects-acquired-instruments-or-equipment-to-prepare-students-for-work-in-business-and-industry.}}
+
+Using state-of-the-art equipment contributes to the development of technical skills students will need for employment. Hands-on experience with such equipment has also been shown to contribute to students' self-efficacy and positively impact their longer-term career and educational goals \autocite{amelink2015examining}. The ATE program includes a funding stream to help grantees obtain instruments or equipment that can be used in instruction to prepare students for employment in business and industry.
+
+Ninety-nine ATE projects acquired instrumentation or equipment in 2024. Examples of instruments purchased and utilized by projects might include 3D scanners, computers for adversarial programming, assessment devices, mini drones, virtual reality viewers, and laboratory equipment. Ninety-eight projects reported the amounts they spent on instrumentation or equipment. \textbf{Projects spent between \$500 and \$386,170 on instrument acquisition in 2024.}
+
+\hypertarget{a-majority-of-projects-spent-less-than-25-of-their-grant-funds-on-instrumentation-in-2024.}{%
+\paragraph{A majority of projects spent less than 25\% of their grant funds on instrumentation in 2024.}\label{a-majority-of-projects-spent-less-than-25-of-their-grant-funds-on-instrumentation-in-2024.}}
+
+\begin{figure}
+\centering
+\includegraphics{_main_files/figure-latex/unnamed-chunk-9-1.pdf}
+\caption{\label{fig:unnamed-chunk-9}Percentage of total grant amount spent on instrumentation or equipment in 2020 (n=98)}
+\end{figure}
+
+\newpage
+
+Projects that use ATE funding to purchase instruments or equipment are expected to revise their academic programming to maximize the value of the items for student learning. In 2024, 3,850 students used instruments and equipment.
+
+\hypertarget{a-median-of-23-students-used-the-equipment-or-instrumentation-acquired-by-each-ate-project.}{%
+\paragraph{A median of 23 students used the equipment or instrumentation acquired by each ATE project.}\label{a-median-of-23-students-used-the-equipment-or-instrumentation-acquired-by-each-ate-project.}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-10-1.pdf}
+
+\textbf{Seventy-six projects reported acquiring instrumentation, equipment, or tools to give students hands-on experience with instruments used in the field.} Fourteen projects reported acquiring instruments to allow students to perform technical tasks in a simulated environment, and 9 projects noted other reasons, such as fostering collaborative work, students' applied research experiments, hands-on experience with industry-standard equipment, enabling students with disabilities to perform certain technical tasks, and enhancing virtual instruction.
+
+\hypertarget{articulation-agreements}{%
+\section{Articulation Agreements}\label{articulation-agreements}}
+
+\hypertarget{eleven-percent-of-ate-projects-created-or-maintained-articulation-agreements.}{%
+\subsubsection{Eleven percent of ATE projects created or maintained articulation agreements.}\label{eleven-percent-of-ate-projects-created-or-maintained-articulation-agreements.}}
+
+Articulation agreements are formal agreements between educational institutions that provide students from secondary schools with pathways and education access to two-year colleges and four-year colleges. These agreements contribute to increasing the number and diversity of scientists, engineers, and technicians \autocite{nae2012community}.
+
+In 1992, Congress saw the importance of these agreements and required their use in NSF's ATE program. The 2021 ATE solicitation calls for ``developing life-long career and educational pathways for technicians to support the changing workplace'' \autocite[p.~5]{nsf2021}.
+
+\textbf{Thirty-one projects developed or maintained articulation agreements in 2024.}
+
+\hypertarget{most-articulation-agreements-created-in-2024-were-between-but-more-students-matriculated-between-.}{%
+\paragraph{\texorpdfstring{Most articulation agreements created in 2024 were between \textcolor{245075}{\textbf{high schools and two-year colleges}}, but more students matriculated between \textcolor{B03E61}{\textbf{two-year and four-year colleges}}.}{Most articulation agreements created in 2024 were between , but more students matriculated between .}}\label{most-articulation-agreements-created-in-2024-were-between-but-more-students-matriculated-between-.}}
+
+\begin{figure}
+\centering
+\includegraphics{_main_files/figure-latex/fig2a6-1.pdf}
+\caption{\label{fig:fig2a6}Number of articulation agreements, institutions, and students (n=31)}
+\end{figure}
+
+\hypertarget{educational-material-development}{%
+\chapter{Educational Material Development}\label{educational-material-development}}
+
+\hypertarget{instructors-use-of-curriculum-materials-is-believed-to-have-three-general-types-of-outcomes-1-improvement-of-educators-pedagogical-knowledge-and-design-capacity-2-increased-opportunities-for-students-to-engage-in-ambitious-science-aimed-at-developing-their-skills-in-both-generation-and-use-of-scientific-knowledge-and-3-improved-student-learning-outcomes-davis2016teachers.-the-ate-program-supports-the-creation-validation-and-dissemination-of-educational-materials-in-print-or-digital-formats-to-be-used-for-instructional-or-assessment-purposes.-such-materials-includebut-are-not-limited-to-tests-lab-experiments-instructional-modules-and-textbooks.}{%
+\paragraph{\texorpdfstring{Instructors' use of curriculum materials is believed to have three general types of outcomes: (1) improvement of educators' pedagogical knowledge and ``design capacity''; (2) increased opportunities for students to engage in ``ambitious science,'' aimed at developing their skills in both generation and use of scientific knowledge; and (3) improved student learning outcomes \autocite{davis2016teachers}. The ATE program supports the creation, validation, and dissemination of educational materials in print or digital formats to be used for instructional or assessment purposes. Such materials include---but are not limited to--- tests, lab experiments, instructional modules, and textbooks.}{Instructors' use of curriculum materials is believed to have three general types of outcomes: (1) improvement of educators' pedagogical knowledge and ``design capacity''; (2) increased opportunities for students to engage in ``ambitious science,'' aimed at developing their skills in both generation and use of scientific knowledge; and (3) improved student learning outcomes {[}@davis2016teachers{]}. The ATE program supports the creation, validation, and dissemination of educational materials in print or digital formats to be used for instructional or assessment purposes. Such materials include---but are not limited to--- tests, lab experiments, instructional modules, and textbooks.}}\label{instructors-use-of-curriculum-materials-is-believed-to-have-three-general-types-of-outcomes-1-improvement-of-educators-pedagogical-knowledge-and-design-capacity-2-increased-opportunities-for-students-to-engage-in-ambitious-science-aimed-at-developing-their-skills-in-both-generation-and-use-of-scientific-knowledge-and-3-improved-student-learning-outcomes-davis2016teachers.-the-ate-program-supports-the-creation-validation-and-dissemination-of-educational-materials-in-print-or-digital-formats-to-be-used-for-instructional-or-assessment-purposes.-such-materials-includebut-are-not-limited-to-tests-lab-experiments-instructional-modules-and-textbooks.}}
+
+\hypertarget{the-pis-whose-projects-developed-educational-materials-were-asked-to-report-the-type-and-number-of-materials-they-developed-or-adapted-and-how-those-materials-were-disseminated-beyond-their-institutions.}{%
+\paragraph{The PIs whose projects developed educational materials were asked to report the type and number of materials they developed or adapted and how those materials were disseminated beyond their institutions.}\label{the-pis-whose-projects-developed-educational-materials-were-asked-to-report-the-type-and-number-of-materials-they-developed-or-adapted-and-how-those-materials-were-disseminated-beyond-their-institutions.}}
+
+\hypertarget{educational-material-development-1}{%
+\section{Educational Material Development}\label{educational-material-development-1}}
+
+\hypertarget{forty-three-percent-of-ate-projects-created-or-substantially-modified-educational-materials.}{%
+\subsubsection{Forty-three percent of ATE projects created or substantially modified educational materials.}\label{forty-three-percent-of-ate-projects-created-or-substantially-modified-educational-materials.}}
+
+\hypertarget{ate-projects-developed-or-modified-over-5460-educational-materials-in-2024.}{%
+\paragraph{127 ATE projects developed or modified over 5,460 educational materials in 2024.}\label{ate-projects-developed-or-modified-over-5460-educational-materials-in-2024.}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-12-1.pdf}
+
+Additional materials developed include 100 instructor guides,220 case studies or problem sets, 140 program curricula, and 20 textbooks. ATE projects also developed 240 other types of materials.
+
+\newpage
+
+\textbf{Educational materials created in 2024 by ATE projects were primarily disseminated through the projects' websites (61\%) and conference presentations or booths (76\%). This was followed by workshops (57\%), ATE Central (the ATE program's archiving platform; 64\%), and commercial publication (6\%).}
+
+\textbf{Ninety-five ATE projects disseminated educational materials that were created prior to 2024.} These materials were primarily course curricula (55\%), modules or instructional units (52\%), and program curricula (38\%). ATE projects also reported continued dissemination of lab experiments (44\%), assessment activities or tests (38\%), and lesson plans (39\%) created in previous years.
+
+Conference presentations or booths (80\%) was the most prominent avenue for disseminating materials created in previous years. 62\% distributed materials at workshops and 55\% on a project webpage or website.
+
+Sixteen of the 153 projects that developed and/or disseminated educational materials kept track of which other institutions are using their program and/or course curricula.
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-13-1.pdf}
+
+\hypertarget{student-service-and-support}{%
+\chapter{Student Service and Support}\label{student-service-and-support}}
+
+\hypertarget{the-ate-program-supports-an-array-of-activities-designed-to-enhance-student-learning-and-success-in-stem-programs-outside-of-typical-classroom-environments.-studies-have-shown-that-students-who-experience-these-types-of-enrichment-and-support-programs-are-more-likely-to-have-positive-attitudes-toward-science-and-sustain-interest-in-stem-merolla2014stem.}{%
+\paragraph{\texorpdfstring{The ATE program supports an array of activities designed to enhance student learning and success in STEM programs outside of typical classroom environments. Studies have shown that students who experience these types of enrichment and support programs are more likely to have positive attitudes toward science and sustain interest in STEM \autocite{merolla2014stem}.}{The ATE program supports an array of activities designed to enhance student learning and success in STEM programs outside of typical classroom environments. Studies have shown that students who experience these types of enrichment and support programs are more likely to have positive attitudes toward science and sustain interest in STEM {[}@merolla2014stem{]}.}}\label{the-ate-program-supports-an-array-of-activities-designed-to-enhance-student-learning-and-success-in-stem-programs-outside-of-typical-classroom-environments.-studies-have-shown-that-students-who-experience-these-types-of-enrichment-and-support-programs-are-more-likely-to-have-positive-attitudes-toward-science-and-sustain-interest-in-stem-merolla2014stem.}}
+
+\hypertarget{ate-pis-were-asked-if-their-projects-provided-any-of-the-following-student-focused-services-support-for-students-transitioning-into-college-opportunities-to-participate-in-stem-competitions-mentoring-entrepreneurial-skills-development-or-support-for-obtaining-industry-recognized-certifications-or-licenses.-respondents-who-answered-affirmatively-were-asked-additional-questions-about-the-nature-of-these-activities-and-the-number-of-students-served.}{%
+\paragraph{ATE PIs were asked if their projects provided any of the following student-focused services: support for students transitioning into college, opportunities to participate in STEM competitions, mentoring, entrepreneurial skills development, or support for obtaining industry-recognized certifications or licenses. Respondents who answered affirmatively were asked additional questions about the nature of these activities and the number of students served.}\label{ate-pis-were-asked-if-their-projects-provided-any-of-the-following-student-focused-services-support-for-students-transitioning-into-college-opportunities-to-participate-in-stem-competitions-mentoring-entrepreneurial-skills-development-or-support-for-obtaining-industry-recognized-certifications-or-licenses.-respondents-who-answered-affirmatively-were-asked-additional-questions-about-the-nature-of-these-activities-and-the-number-of-students-served.}}
+
+\newpage
+
+\hypertarget{ate-pis-were-asked-if-their-projects-provided-any-of-the-following-student-focused-services-support-for-students-transitioning-into-college-opportunities-to-participate-in-stem-competitions-mentoring-entrepreneurial-skills-development-or-support-for-obtaining-industry-recognized-certifications-or-licenses.-respondents-who-answered-affirmatively-were-asked-additional-questions-about-the-nature-of-these-activities-and-the-number-of-students-served.-1}{%
+\paragraph{ATE PIs were asked if their projects provided any of the following student-focused services: support for students transitioning into college, opportunities to participate in STEM competitions, mentoring, entrepreneurial skills development, or support for obtaining industry-recognized certifications or licenses. Respondents who answered affirmatively were asked additional questions about the nature of these activities and the number of students served.}\label{ate-pis-were-asked-if-their-projects-provided-any-of-the-following-student-focused-services-support-for-students-transitioning-into-college-opportunities-to-participate-in-stem-competitions-mentoring-entrepreneurial-skills-development-or-support-for-obtaining-industry-recognized-certifications-or-licenses.-respondents-who-answered-affirmatively-were-asked-additional-questions-about-the-nature-of-these-activities-and-the-number-of-students-served.-1}}
+
+\hypertarget{fifty-percent-of-projects-provided-at-least-one-type-of-student-service-or-support.}{%
+\subsubsection{Fifty percent of projects provided at least one type of student service or support.}\label{fifty-percent-of-projects-provided-at-least-one-type-of-student-service-or-support.}}
+
+\hypertarget{ate-projects-provided-at-least-one-type-of-student-service-or-support.}{%
+\paragraph{147 ATE projects provided at least one type of student service or support.}\label{ate-projects-provided-at-least-one-type-of-student-service-or-support.}}
+
+\begin{figure}
+\centering
+\includegraphics{_main_files/figure-latex/fig4a1-1.pdf}
+\caption{\label{fig:fig4a1}Percentage of projects that provided student services and support (n=294)}
+\end{figure}
+
+\hypertarget{business-and-entrepreneurial-skills}{%
+\section{Business and Entrepreneurial Skills}\label{business-and-entrepreneurial-skills}}
+
+\hypertarget{fifteen-percent-of-ate-projects-engaged-students-in-building-their-business-and-entrepreneurial-skills.}{%
+\subsubsection{Fifteen percent of ATE projects engaged students in building their business and entrepreneurial skills.}\label{fifteen-percent-of-ate-projects-engaged-students-in-building-their-business-and-entrepreneurial-skills.}}
+
+Business and entrepreneurial skills development involves working with students to develop their skills in areas such as business development, marketing, networking, and understanding the global marketplace.
+
+\textcolor{BD4C42}{\textbf{A total of 2,690}} received business and entrepreneurial skills development from 44 ATE projects in 2024.
+
+\hypertarget{and-are-the-dominant-ways-of-helping-students-develop-business-and-entrepreneurial-skills-in-the-ate-program.}{%
+\paragraph{\texorpdfstring{\textcolor{245075}{\textbf{Mentoring and coaching}}, and \textcolor{B03E61}{\textbf{in-course units or activities}} are the dominant ways of helping students develop business and entrepreneurial skills in the ATE program.}{, and  are the dominant ways of helping students develop business and entrepreneurial skills in the ATE program.}}\label{and-are-the-dominant-ways-of-helping-students-develop-business-and-entrepreneurial-skills-in-the-ate-program.}}
+
+\begin{figure}
+\centering
+\includegraphics{_main_files/figure-latex/fig4a2-1.pdf}
+\caption{\label{fig:fig4a2}Percentage of skills development opportunities offered to students by ATE projects (n=44)}
+\end{figure}
+
+\hypertarget{mentoring}{%
+\section{Mentoring}\label{mentoring}}
+
+\hypertarget{twenty-three-percent-of-ate-projects-provided-students-with-mentoring-or-coaching}{%
+\subsubsection{Twenty-three percent of ATE projects provided students with mentoring or coaching}\label{twenty-three-percent-of-ate-projects-provided-students-with-mentoring-or-coaching}}
+
+Student mentoring involves an experienced industry professional, educator, or advanced student providing guidance and advice to help less-experienced students develop the skills and knowledge they need to enhance their academic and professional growth. Mentoring is a source of both psychosocial support and career advancement \autocite{anderson2015near}. This type of support is especially important for students at two-year colleges, who typically face more barriers to degree completion than those at four-year institutions \autocite{crisp2010impact}.
+
+\hypertarget{approximately-3060-students-received-mentoring-through-ate-projects.}{%
+\paragraph{\texorpdfstring{Approximately \textbf{3,060} students received mentoring through ATE projects.}{Approximately 3,060 students received mentoring through ATE projects.}}\label{approximately-3060-students-received-mentoring-through-ate-projects.}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-15-1.pdf}
+
+\textbf{Mentoring was most often provided by educational faculty or staff (79\%), followed by business and industry professionals (57\%) and students or peers (54\%).} Four percent of projects that offered mentoring or coaching provided training to the mentors.
+
+\hypertarget{competitions}{%
+\section{Competitions}\label{competitions}}
+
+\hypertarget{eight-percent-hosted-or-organized-a-student-competition.}{%
+\subsubsection{Eight percent hosted or organized a student competition.}\label{eight-percent-hosted-or-organized-a-student-competition.}}
+
+In student competitions, students compete as individuals or teams using skills related to a STEM discipline or industry, such as robotics, information technology, or engineering. Research shows that participation in STEM competitions has a positive impact on students' interest in pursuing STEM careers, even when controlling for prior interest and ability \autocite{miller2018influence}.
+
+\hypertarget{students-participated-in-one-of-the-69-ate-hosted-student-competitions.-the-most-common-areas-for-competitions-included}{%
+\paragraph{\texorpdfstring{\textbf{7,220} students participated in one of the 69 ATE-hosted student competitions. The most common areas for competitions included:}{7,220 students participated in one of the 69 ATE-hosted student competitions. The most common areas for competitions included:}}\label{students-participated-in-one-of-the-69-ate-hosted-student-competitions.-the-most-common-areas-for-competitions-included}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-16-1.pdf}
+
+In addition, 7 other competitions engaged 250 students in advanced manufacturing, and 4 competitions in general advance technological education engaged 110.
+
+\hypertarget{transition-programs}{%
+\section{Transition Programs}\label{transition-programs}}
+
+\hypertarget{ten-percent-of-ate-projects-provided-extra-support-for-students-transitioning-into-college}{%
+\subsubsection{Ten percent of ATE projects provided extra support for students transitioning into college}\label{ten-percent-of-ate-projects-provided-extra-support-for-students-transitioning-into-college}}
+
+Community colleges enroll disproportionate numbers of students who are economically disadvantaged and from underrepresented minority groups \autocite{edgecombe2019demography}. Programs that support students as they transition into college are an important means for enhancing academic persistence and completion among these and other students \autocite{baber2018living}. \textbf{The ATE program supports efforts to facilitate students' transition into college and equip them with the skills they need to successfully navigate college.} Such programs include---but are not limited to---summer bridge programs, college readiness workshops or classes, first-year programs, and support for nontraditional students.
+
+The majority of transition programs are for \textcolor{245075}{\textbf{High school students}}.
+
+\begin{figure}
+\centering
+\includegraphics{_main_files/figure-latex/fig4a3-1.pdf}
+\caption{\label{fig:fig4a3}Primary audience for transition programs supported by ATE projects (n=40)}
+\end{figure}
+
+\hypertarget{around-2280-students-transitioning-into-college-received-support-from-ate-projects.}{%
+\paragraph{Around 2,280 students transitioning into college received support from ATE projects.}\label{around-2280-students-transitioning-into-college-received-support-from-ate-projects.}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-17-1.pdf}
+
+\hypertarget{support-for-certifications-or-licensure}{%
+\section{Support for Certifications or Licensure}\label{support-for-certifications-or-licensure}}
+
+\hypertarget{twenty-nine-percent-helped-students-prepare-for-certification-or-licensure.}{%
+\subsubsection{Twenty-nine percent helped students prepare for certification or licensure.}\label{twenty-nine-percent-helped-students-prepare-for-certification-or-licensure.}}
+
+Professional certifications, typically awarded by industry groups or professional organizations, serve as verification that an individual has the knowledge and skills required for certain jobs. Many community colleges offer students assistance in obtaining these credentials. These efforts may involve aligning academic programming with certification exams, offering exam preparation support, or operating testing centers on campus \autocite{nas2017building}.
+
+\textbf{Eighty-five ATE projects provided students with support for obtaining certifications or licenses in 2024.} 92\% of those ATE projects reported supporting students through aligning existing courses with licensing or certification requirements. ATE projects also provided test preparation workshops or learning modules (69\%) and served as testing centers (47\%). ATE projects involved in this activity were asked to identify the type of entity that awards the licenses or certifications they help students obtain. The most common response was non-governmental organizations (46), followed by for-profit companies (28) and government agencies (14).
+
+\hypertarget{workplace-based-learning}{%
+\chapter{Workplace-Based Learning}\label{workplace-based-learning}}
+
+\hypertarget{workplace-based-learning-includes-any-situation-in-which-a-student-gains-experience-at-a-work-site-such-as-through-internships-apprenticeships-co-op-learning-and-job-shadowing.-research-indicates-that-such-experiences-contribute-to-students-confidence-in-their-abilities-and-enhance-employability-skills-such-as-problem-solving-communication-and-professionalism-jackson2014employability.}{%
+\paragraph{\texorpdfstring{Workplace-based learning includes any situation in which a student gains experience at a work site, such as through internships, apprenticeships, co-op learning, and job shadowing. Research indicates that such experiences contribute to students' confidence in their abilities and enhance employability skills, such as problem-solving, communication, and professionalism \autocite{jackson2014employability}.}{Workplace-based learning includes any situation in which a student gains experience at a work site, such as through internships, apprenticeships, co-op learning, and job shadowing. Research indicates that such experiences contribute to students' confidence in their abilities and enhance employability skills, such as problem-solving, communication, and professionalism {[}@jackson2014employability{]}.}}\label{workplace-based-learning-includes-any-situation-in-which-a-student-gains-experience-at-a-work-site-such-as-through-internships-apprenticeships-co-op-learning-and-job-shadowing.-research-indicates-that-such-experiences-contribute-to-students-confidence-in-their-abilities-and-enhance-employability-skills-such-as-problem-solving-communication-and-professionalism-jackson2014employability.}}
+
+\hypertarget{ate-pis-whose-projects-offered-workplace-based-learning-were-asked-about-key-characteristics-of-the-workplace-based-learning-opportunities-they-offered-and-about-the-number-of-students-who-participated-in-these-activities-in-2024.}{%
+\paragraph{ATE PIs whose projects offered workplace-based learning were asked about key characteristics of the workplace-based learning opportunities they offered and about the number of students who participated in these activities in 2024.}\label{ate-pis-whose-projects-offered-workplace-based-learning-were-asked-about-key-characteristics-of-the-workplace-based-learning-opportunities-they-offered-and-about-the-number-of-students-who-participated-in-these-activities-in-2024.}}
+
+\hypertarget{workplace-based-learning-1}{%
+\section{Workplace-Based Learning}\label{workplace-based-learning-1}}
+
+\hypertarget{twenty-three-percent-of-ate-projects-provided-workplace-based-learning-opportunities-for-students.}{%
+\subsubsection{Twenty-three percent of ATE projects provided workplace-based learning opportunities for students.}\label{twenty-three-percent-of-ate-projects-provided-workplace-based-learning-opportunities-for-students.}}
+
+\textbf{In 2024, 2,510 students participated in workplace-based learning opportunities offered by 68 ATE projects.} An additional 20 ATE projects reported offering field trips to business and industry sites. The 23\% of projects that provided workplace-based learning in 2020 excludes the 20 projects that only reported offering field trips.
+
+\hypertarget{most-ate-projects-offered-workplace-based-learning-through-and-.}{%
+\paragraph{\texorpdfstring{Most ATE projects offered workplace-based learning through \textcolor{245075}{\textbf{internships}} and \textcolor{B03E61}{\textbf{apprenticeships}}.}{Most ATE projects offered workplace-based learning through  and .}}\label{most-ate-projects-offered-workplace-based-learning-through-and-.}}
+
+\begin{figure}
+\centering
+\includegraphics{_main_files/figure-latex/fig5a1-1.pdf}
+\caption{\label{fig:fig5a1}Percentage of ATE projects that offered each type of workplace-based learning (n=68)}
+\end{figure}
+
+The median number of weekly hours that students spent in a workplace-based learning activity ranged from 5 to 40, and the median number of weeks spent in an activity ranged from 2 (job shadowing) to 52 (apprenticeships).
+
+\newpage
+
+Respondents discussed a variety of benefits to both students and employers. As one respondent noted:
+
+\begin{quote}
+``The students improve their scientific communication skills and gain confidence in communicating the work that they are doing\ldots{} In addition, the students learn what it takes to be successful in an industry\ldots{} Finally, networking with other people in the industry is very important as many times this leads to employment in the field.''
+\end{quote}
+
+Survey respondents reported on the characteristics of the workplace-based learning their projects offered. The table shows variation both within and across activities.
+
+\begin{table}
+\centering
+\caption{(\#tab:table5.1)Characteristics of the three most frequently reported workplace-based learning activities}
+\centering
+\begin{tabular}[t]{l|c|c|c}
+\hline
+\cellcolor[HTML]{327492}{\textcolor{white}{\textbf{ }}} & \cellcolor[HTML]{327492}{\textcolor{white}{\textbf{Internships (n=49)}}} & \cellcolor[HTML]{327492}{\textcolor{white}{\textbf{Apprenticeships (n=11)}}} & \cellcolor[HTML]{327492}{\textcolor{white}{\textbf{Job Shadowing (n=8)}}}\\
+\hline
+Required by program & 37\% & 27\% & 38\%\\
+\hline
+Academic credit & 63\% & 55\% & 38\%\\
+\hline
+Coupled with a course & 59\% & 36\% & 62\%\\
+\hline
+Received payment & 82\% & 73\% & 0\%\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{professional-development-for-educators}{%
+\chapter{Professional Development for Educators}\label{professional-development-for-educators}}
+
+\hypertarget{community-college-faculty-have-diverse-responsibilities.-they-design-and-deliver-courses-and-are-often-charged-with-responsibilities-related-to-student-retention-or-institutional-administration.-incoming-faculty-are-typically-subject-matter-experts-with-minimal-training-in-pedagogy-strickland2019impact.-furthermore-instructors-in-advanced-technological-fields-must-keep-pace-with-rapidly-changing-technology-and-workforce-needs.-increasingly-secondary-school-teachers-are-being-called-up-to-play-a-part-in-building-students-stem-knowledge-and-skills-and-instilling-interest-in-stem-careers.}{%
+\paragraph{\texorpdfstring{Community college faculty have diverse responsibilities. They design and deliver courses and are often charged with responsibilities related to student retention or institutional administration. Incoming faculty are typically subject matter experts with minimal training in pedagogy \autocite{strickland2019impact}. Furthermore, instructors in advanced technological fields must keep pace with rapidly changing technology and workforce needs. Increasingly, secondary school teachers are being called up to play a part in building students' STEM knowledge and skills and instilling interest in STEM careers.}{Community college faculty have diverse responsibilities. They design and deliver courses and are often charged with responsibilities related to student retention or institutional administration. Incoming faculty are typically subject matter experts with minimal training in pedagogy {[}@strickland2019impact{]}. Furthermore, instructors in advanced technological fields must keep pace with rapidly changing technology and workforce needs. Increasingly, secondary school teachers are being called up to play a part in building students' STEM knowledge and skills and instilling interest in STEM careers.}}\label{community-college-faculty-have-diverse-responsibilities.-they-design-and-deliver-courses-and-are-often-charged-with-responsibilities-related-to-student-retention-or-institutional-administration.-incoming-faculty-are-typically-subject-matter-experts-with-minimal-training-in-pedagogy-strickland2019impact.-furthermore-instructors-in-advanced-technological-fields-must-keep-pace-with-rapidly-changing-technology-and-workforce-needs.-increasingly-secondary-school-teachers-are-being-called-up-to-play-a-part-in-building-students-stem-knowledge-and-skills-and-instilling-interest-in-stem-careers.}}
+
+\hypertarget{the-ate-program-provides-support-for-projects-to-develop-and-deliver-professional-development-for-educators-with-a-focus-on-enhancing-their-disciplinary-capabilities-teaching-skills-understanding-of-current-technologies-and-practices-and-employability-skills-nsf2021-p.-5.-ate-pis-were-asked-to-report-on-the-focus-number-and-length-of-professional-development-activities-provided-by-their-projects-as-well-as-the-number-and-type-of-participants-and-number-of-students-subsequently-impacted-by-those-participants.}{%
+\paragraph{\texorpdfstring{The ATE program provides support for projects to develop and deliver professional development for educators, with a focus on enhancing their ``disciplinary capabilities, teaching skills, understanding of current technologies and practices, and employability skills'' \autocite[p.~5]{nsf2021}. ATE PIs were asked to report on the focus, number, and length of professional development activities provided by their projects, as well as the number and type of participants and number of students subsequently impacted by those participants.}{The ATE program provides support for projects to develop and deliver professional development for educators, with a focus on enhancing their ``disciplinary capabilities, teaching skills, understanding of current technologies and practices, and employability skills'' {[}@nsf2021, p. 5{]}. ATE PIs were asked to report on the focus, number, and length of professional development activities provided by their projects, as well as the number and type of participants and number of students subsequently impacted by those participants.}}\label{the-ate-program-provides-support-for-projects-to-develop-and-deliver-professional-development-for-educators-with-a-focus-on-enhancing-their-disciplinary-capabilities-teaching-skills-understanding-of-current-technologies-and-practices-and-employability-skills-nsf2021-p.-5.-ate-pis-were-asked-to-report-on-the-focus-number-and-length-of-professional-development-activities-provided-by-their-projects-as-well-as-the-number-and-type-of-participants-and-number-of-students-subsequently-impacted-by-those-participants.}}
+
+\hypertarget{professional-development-for-educators-1}{%
+\section{Professional Development for Educators}\label{professional-development-for-educators-1}}
+
+\hypertarget{forty-four-percent-of-ate-projects-provided-training-or-professional-development-to-current-or-future-educators.}{%
+\subsubsection{Forty-four percent of ATE projects provided training or professional development to current or future educators.}\label{forty-four-percent-of-ate-projects-provided-training-or-professional-development-to-current-or-future-educators.}}
+
+\textbf{One hundred twenty-eight ATE projects provided 660 training or professional development activities for educators in 2024.} Over half of these activities were a day or less in length (52\%), including webinars and one-day workshops. Twenty-six percent lasted more than one day but less than one week, including workshops and online modules.Twelve percent lasted from one to several weeks, including courses and summer institutes. The remaining 11\% were long-term and periodic and included internships and peer coaching.
+
+\hypertarget{ate-projects-offered-660-professional-development-activities-for-educators-in-2024.}{%
+\paragraph{ATE projects offered 660 professional development activities for educators in 2024.}\label{ate-projects-offered-660-professional-development-activities-for-educators-in-2024.}}
+
+\begin{figure}
+\centering
+\includegraphics{_main_files/figure-latex/fig6a1-1.pdf}
+\caption{\label{fig:fig6a1}Number of professional development activities for educators by length of time (n=128)}
+\end{figure}
+
+\newpage
+
+Professional development activities focused on a range of skills and topic areas. Eighty-six percent focused on discipline- or industry-specific knowledge or skills, 51\% on pedagogy, and 70\% on training on specific equipment. Additional professional development topics reported by ATE projects included recruitment or retention of students (29\%), addressing issues of equity, diversity, or inclusion (10\%), and other professional skills, such as leadership (13\%).
+
+The most common professional development audience was in the ``Other or Unknown'' category (50\%) followed by 2-year faculty (33\%). At least 16,430 students were taught by educators who participated in ATE-sponsored professional development (most likely many more, due to underreporting and projects' inability to collect this data).
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-20-1.pdf}
+
+\hypertarget{professional-exchange}{%
+\chapter{Professional Exchange}\label{professional-exchange}}
+
+\hypertarget{bringing-together-professionals-from-different-organizations-and-geographical-locations-facilitates-knowledge-diffusion-collaboration-and-professional-interaction-chai2019temporary.-research-has-shown-that-diverse-collaborative-networks-enhance-innovation-and-complex-problem-solving-biancani2014semiformal.}{%
+\paragraph{\texorpdfstring{Bringing together professionals from different organizations and geographical locations facilitates knowledge diffusion, collaboration, and professional interaction \autocite{chai2019temporary}. Research has shown that ``diverse collaborative networks'' enhance innovation and complex problem-solving \autocite{biancani2014semiformal}.}{Bringing together professionals from different organizations and geographical locations facilitates knowledge diffusion, collaboration, and professional interaction {[}@chai2019temporary{]}. Research has shown that ``diverse collaborative networks'' enhance innovation and complex problem-solving {[}@biancani2014semiformal{]}.}}\label{bringing-together-professionals-from-different-organizations-and-geographical-locations-facilitates-knowledge-diffusion-collaboration-and-professional-interaction-chai2019temporary.-research-has-shown-that-diverse-collaborative-networks-enhance-innovation-and-complex-problem-solving-biancani2014semiformal.}}
+
+\hypertarget{the-ate-program-has-two-funding-tracks-that-support-activities-to-catalyze-professional-exchange.-one-such-track-supports-coordination-networks-which-facilitate-collaboration-and-communication-about-research-training-and-education-across-disciplines-organizations-and-geographical-boundaries.-the-other-track-provides-funding-for-conferences-meetings-and-events-to-improve-understanding-of-advanced-technological-education-issues-nsf2021-p.-9.}{%
+\paragraph{\texorpdfstring{The ATE program has two funding tracks that support activities to catalyze professional exchange. One such track supports coordination networks, which facilitate collaboration and communication about research, training, and education across disciplines, organizations, and geographical boundaries. The other track provides funding for \textbf{conferences, meetings, and events} to improve understanding of advanced technological education issues \autocite[p.~9]{nsf2021}.}{The ATE program has two funding tracks that support activities to catalyze professional exchange. One such track supports coordination networks, which facilitate collaboration and communication about research, training, and education across disciplines, organizations, and geographical boundaries. The other track provides funding for conferences, meetings, and events to improve understanding of advanced technological education issues {[}@nsf2021, p. 9{]}.}}\label{the-ate-program-has-two-funding-tracks-that-support-activities-to-catalyze-professional-exchange.-one-such-track-supports-coordination-networks-which-facilitate-collaboration-and-communication-about-research-training-and-education-across-disciplines-organizations-and-geographical-boundaries.-the-other-track-provides-funding-for-conferences-meetings-and-events-to-improve-understanding-of-advanced-technological-education-issues-nsf2021-p.-9.}}
+
+\hypertarget{ate-pis-whose-projects-hosted-conferences-or-similar-events-were-asked-to-identify-the-names-and-purposes-of-the-events-and-the-number-of-attendees.-those-engaged-in-network-coordination-were-asked-to-identify-the-purpose-of-their-networks.}{%
+\paragraph{ATE PIs whose projects hosted conferences or similar events were asked to identify the names and purposes of the events and the number of attendees. Those engaged in network coordination were asked to identify the purpose of their networks.}\label{ate-pis-whose-projects-hosted-conferences-or-similar-events-were-asked-to-identify-the-names-and-purposes-of-the-events-and-the-number-of-attendees.-those-engaged-in-network-coordination-were-asked-to-identify-the-purpose-of-their-networks.}}
+
+\hypertarget{coordination-networks}{%
+\section{Coordination Networks}\label{coordination-networks}}
+
+\hypertarget{two-percent-of-ate-projects-indicated-coordination-networks-as-a-primary-purpose-of-their-grant.}{%
+\subsubsection{Two percent of ATE projects indicated coordination networks as a primary purpose of their grant.}\label{two-percent-of-ate-projects-indicated-coordination-networks-as-a-primary-purpose-of-their-grant.}}
+
+Seven ATE projects indicated that developing and facilitating coordination networks was the primary purpose of their grant.
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{National Center for Autonomous Technologies} has partnered with the Federal Aviation Administration to help lead the Uncrewed Aircraft Systems Collegiate Training Initiative. UAS-CIT is a consortium of higher-education institutions that shared educational philosophy and content resources to create a uniform standard of education for uncrewed aircraft systems.
+\item
+  \textbf{Advanced Technological Education Coordination Network for Knowledge Sharing in Robotics/Automation and Cybersecurity} intends to facilitate the sharing of best practices about how to develop community college students' knowledge and skills in robotics/automation and cybersecurity.
+\item
+  \textbf{Advanced Technological Education Network for Utilities and Energy Technical Education} facilitated relationships and resource sharing between educators, industry leaders, and workforce developers focused on closing the workforce gap in the energy industry.
+\item
+  \textbf{The IT Innovation Network (ITIN)} is comprised of community colleges who will participate in a community of practice (CoP) to benchmark best practices and emerging ideas to advance IT
+  education nationally.
+\item
+  \textbf{National Cybersecurity Training \& Education (NCyTE)'s} academic and industry partner membership is a large consortium network (ecosystem) contributing to advancing the quality and quantity of the cybersecurity workforce.
+\item
+  \textbf{Collaborative Research: Revolutionizing Electric Vehicle Education} is designing, developing, implementing, and evaluating battery electric vehicle (BEV) curricula. They will build networks and provide professional development addressing the new BEV sector and future PI development.
+\item
+  \textbf{Mount San Antonio College} is coordinating a network of four-year colleges to enhance access to research facilities and mentorship for their students.
+\item
+  \textbf{NEVTEX NEXT} is a network of 15 community colleges developing electric vehicle programs.
+\item
+  \textbf{The Necessary Skills Now Network} facilitates collaboration between educators and employers to improve the employability skills of entry-level technicians in STEM fields.
+\item
+  \textbf{National Electric Vehicle Consortium (NEVC)} promotes the interaction of a critical mass of academic, agency, and industry experts across all EV disciplines to help secure the nation's EV workforce pipeline.
+\end{itemize}
+
+\hypertarget{conferences-and-meetings}{%
+\section{Conferences and Meetings}\label{conferences-and-meetings}}
+
+\hypertarget{twelve-percent-of-ate-projects-engaged-in-organizing-a-conference-or-meeting-for-the-purpose-of-professional-exchange-in-2024.}{%
+\subsubsection{Twelve percent of ATE projects engaged in organizing a conference or meeting for the purpose of professional exchange in 2024.}\label{twelve-percent-of-ate-projects-engaged-in-organizing-a-conference-or-meeting-for-the-purpose-of-professional-exchange-in-2024.}}
+
+0 ATE project was explicitly funded to coordinate conferences or meetings in 2024. For Three additional projects, hosting a conferences was the main purpose of their grant and 34 other projects organized conferences or meetings in 2024. These 36 projects hosted a total of 67 conferences or meetings, with attendance that ranged from 3 to 24,000 people.
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-22-1.pdf}
+
+Projects that organized conference or meeting events in 2024 included:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Preparing Cybersecurity Technicians with the Technical and Entrepreneurial Skills Required to Work as Independent Contractors} hosted an event called ``Sheros: Protecting Business Systems.''
+\item
+  \textbf{Manufacturing Talent Development Innovation Laboratory} hosted a Manufacturing Momentum Summit.
+\item
+  \textbf{Enhancing Preparation of Students for Technical Careers in Cloud Computing Technologies} organized an event called ``IT READY!''
+\item
+  \textbf{Map Your Success} hosted a GIS Day.
+\item
+  \textbf{Advancing STEM Technician Education \& Innovation: The Community College Leadership Role} hosted the 2024 ATE PI Conference.
+\item
+  \textbf{NEVTEX Next} hosted five events that facilitated professional exchange among 15 colleges.
+\end{itemize}
+
+\hypertarget{research-and-publications}{%
+\chapter{Research and Publications}\label{research-and-publications}}
+
+\hypertarget{all-nsf-funded-projects-are-expected-to-advance-the-frontiers-of-knowledge-nsf2024.-the-ate-programs-targeted-research-track-funds-studies-to-generate-knowledge-and-build-an-evidence-base-for-technician-education-and-the-development-of-a-skilled-technical-workforce.-ate-pis-whose-projects-engaged-in-research-were-asked-about-the-purpose-and-status-of-their-research-their-methods-and-findings-and-their-dissemination-strategies.}{%
+\paragraph{\texorpdfstring{All NSF-funded projects are expected to advance the frontiers of knowledge \autocite{nsf2024}. The ATE program's \textbf{targeted research track} funds studies to generate knowledge and build an evidence base for technician education and the development of a skilled technical workforce. ATE PIs whose projects engaged in research were asked about the purpose and status of their research, their methods and findings, and their dissemination strategies.}{All NSF-funded projects are expected to advance the frontiers of knowledge {[}@nsf2024{]}. The ATE program's targeted research track funds studies to generate knowledge and build an evidence base for technician education and the development of a skilled technical workforce. ATE PIs whose projects engaged in research were asked about the purpose and status of their research, their methods and findings, and their dissemination strategies.}}\label{all-nsf-funded-projects-are-expected-to-advance-the-frontiers-of-knowledge-nsf2024.-the-ate-programs-targeted-research-track-funds-studies-to-generate-knowledge-and-build-an-evidence-base-for-technician-education-and-the-development-of-a-skilled-technical-workforce.-ate-pis-whose-projects-engaged-in-research-were-asked-about-the-purpose-and-status-of-their-research-their-methods-and-findings-and-their-dissemination-strategies.}}
+
+\hypertarget{publications-are-a-vehicle-not-only-for-disseminating-research-findings-but-also-for-sharing-promising-practices-lessons-learned-and-information-about-project-developments-and-materials.-survey-respondents-were-asked-about-the-number-and-types-of-publications-produced-by-their-projects-such-as-articles-reports-white-papers-and-other-documents-of-publishable-quality-not-including-projects-annual-reports-to-nsf-evaluation-reports-or-conference-materials.}{%
+\paragraph{\texorpdfstring{\textbf{Publications} are a vehicle not only for disseminating research findings, but also for sharing promising practices, lessons learned, and information about project developments and materials. Survey respondents were asked about the number and types of publications produced by their projects, such as articles, reports, white papers, and other documents of publishable quality (not including projects' annual reports to NSF, evaluation reports, or conference materials).}{Publications are a vehicle not only for disseminating research findings, but also for sharing promising practices, lessons learned, and information about project developments and materials. Survey respondents were asked about the number and types of publications produced by their projects, such as articles, reports, white papers, and other documents of publishable quality (not including projects' annual reports to NSF, evaluation reports, or conference materials).}}\label{publications-are-a-vehicle-not-only-for-disseminating-research-findings-but-also-for-sharing-promising-practices-lessons-learned-and-information-about-project-developments-and-materials.-survey-respondents-were-asked-about-the-number-and-types-of-publications-produced-by-their-projects-such-as-articles-reports-white-papers-and-other-documents-of-publishable-quality-not-including-projects-annual-reports-to-nsf-evaluation-reports-or-conference-materials.}}
+
+\hypertarget{ate-targeted-research}{%
+\section{ATE Targeted Research}\label{ate-targeted-research}}
+
+\hypertarget{eight-percent-of-ate-projects-conducted-some-type-of-research.}{%
+\subsubsection{Eight percent of ATE projects conducted some type of research.}\label{eight-percent-of-ate-projects-conducted-some-type-of-research.}}
+
+Five ATE projects were specifically funded to conduct targeted research in 2024. Between them, they reported 1 active studies. At the time of the survey, 24\% of those studies were collecting data, 14\% were analyzing data, 16\% were writing up results, and 16\% had findings published or submitted for publication.
+
+In addition to these Five targeted research projects, 19 other ATE projects indicated they conducted some sort of research in 2024. Together, these projects reported 56 research studies. Examples included conducting descriptive research (76\%), document reviews (22\%), correlational research (18\%), experimental or quasi-experimental research (14\%), other research (10\%), and meta-analysis (2\%).
+
+\hypertarget{research-findings-are-frequently-disseminated-through-or-.}{%
+\paragraph{\texorpdfstring{Research findings are frequently disseminated through \textcolor{245075}{\textbf{conference presentations}} or \textcolor{B03E61}{\textbf{articles in peer-reviewed journals}}.}{Research findings are frequently disseminated through  or .}}\label{research-findings-are-frequently-disseminated-through-or-.}}
+
+\begin{figure}
+\centering
+\includegraphics{_main_files/figure-latex/fig8a1-1.pdf}
+\caption{\label{fig:fig8a1}Percentage of research activities shared via various dissemination channels (n=51)}
+\end{figure}
+
+\hypertarget{publications}{%
+\section{Publications}\label{publications}}
+
+\hypertarget{twenty-percent-of-developed-materials-were-intended-for-publication.}{%
+\subsubsection{Twenty percent of developed materials were intended for publication.}\label{twenty-percent-of-developed-materials-were-intended-for-publication.}}
+
+While publication is an expectation for all projects engaged in targeted research, many other ATE projects also prepare publications of various types. Therefore, all ATE PIs were asked if their projects developed publications (excluding annual reports prepared for NSF, evaluation reports, and conference proceedings).
+
+\hypertarget{ate-projects-prepared-a-total-of-180-publications.}{%
+\paragraph{\texorpdfstring{59 ATE projects prepared a total of \textbf{180 publications}.}{59 ATE projects prepared a total of 180 publications.}}\label{ate-projects-prepared-a-total-of-180-publications.}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-24-1.pdf}
+
+PIs reported 50 other publication types, such as journal special issues, news posts, blogs, and newsletter articles.
+
+\hypertarget{ate-program-services}{%
+\chapter{ATE Program Services}\label{ate-program-services}}
+
+\hypertarget{for-a-few-ate-projects-the-primary-purpose-is-to-provide-activities-materials-or-services-to-enhance-the-capacity-of-ate-grantseekers-grantees-and-affiliated-stakeholders-to-plan-and-conduct-successful-ate-projects.-in-some-other-programs-within-nsfs-education-and-human-resources-directorate-these-types-of-program-oriented-services-are-consolidated-and-provided-by-a-single-organization.-the-ate-program-is-configured-differently-ate-program--specific-support-technical-assistance-and-other-services-are-delivered-by-multiple-grant--funded-entities-that-focus-on-narrower-areas-of-expertise-with-an-array-of-other-projects-contributing-to-program-capacity-in-various-ways.-the-ate-program-also-has-a-culture-of-sharing-and-support-to-advance-the-shared-interests-of-program-stakeholders.}{%
+\paragraph{For a few ATE projects, the primary purpose is to provide activities, materials, or services to enhance the capacity of ATE grantseekers, grantees, and affiliated stakeholders to plan and conduct successful ATE projects. In some other programs within NSF's Education and Human Resources directorate, these types of program-oriented services are consolidated and provided by a single organization. The ATE program is configured differently; ATE program- specific support, technical assistance, and other services are delivered by multiple grant- funded entities that focus on narrower areas of expertise, with an array of other projects contributing to program capacity in various ways. The ATE program also has a culture of sharing and support to advance the shared interests of program stakeholders.}\label{for-a-few-ate-projects-the-primary-purpose-is-to-provide-activities-materials-or-services-to-enhance-the-capacity-of-ate-grantseekers-grantees-and-affiliated-stakeholders-to-plan-and-conduct-successful-ate-projects.-in-some-other-programs-within-nsfs-education-and-human-resources-directorate-these-types-of-program-oriented-services-are-consolidated-and-provided-by-a-single-organization.-the-ate-program-is-configured-differently-ate-program--specific-support-technical-assistance-and-other-services-are-delivered-by-multiple-grant--funded-entities-that-focus-on-narrower-areas-of-expertise-with-an-array-of-other-projects-contributing-to-program-capacity-in-various-ways.-the-ate-program-also-has-a-culture-of-sharing-and-support-to-advance-the-shared-interests-of-program-stakeholders.}}
+
+\hypertarget{ate-pis-were-asked-to-identify-the-ways-in-which-their-projects-supported-the-ate-community-and-the-number-of-people-served-through-their-service-activities.}{%
+\paragraph{ATE PIs were asked to identify the ways in which their projects supported the ATE community and the number of people served through their service activities.}\label{ate-pis-were-asked-to-identify-the-ways-in-which-their-projects-supported-the-ate-community-and-the-number-of-people-served-through-their-service-activities.}}
+
+\hypertarget{ate-program-services-1}{%
+\section{ATE Program Services}\label{ate-program-services-1}}
+
+\hypertarget{three-percent-of-projects-were-funded-specifically-to-serve-the-ate-program.}{%
+\subsubsection{Three percent of projects were funded specifically to serve the ATE program.}\label{three-percent-of-projects-were-funded-specifically-to-serve-the-ate-program.}}
+
+Nine ATE projects are funded to provide services and support specifically for ATE grantseekers and grantees and their affiliates. These projects include the following:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{AccessATE} supported ATE projects in making their materials and activities more accessible to all students and faculty, including those with disabilities.
+\item
+  \textbf{ATE Central} served as the ATE program's information hub, dedicated to highlighting ATE projects' work and supporting them in various aspects of their work, such as archiving, outreach, and connecting with others in the ATE community.
+\item
+  \textbf{ATE for 2 Year Colleges (ATE-2YC)} provided proposal writing workshops and a mentoring program for two-year college STEM faculty.
+\item
+  \textbf{ATE Collaborative Outreach and Engagement} raised awareness of the ATE program, primarily through the publication of the ATE Impacts book.
+\item
+  \textbf{BILT and Mentoring Academies} supported ATE projects in integrating the Business Industry Leadership Team model for productive partnerships with industry.
+\item
+  \textbf{EvaluATE} strengthened the evaluation capacity of those involved with ATE projects through training, networking opportunities, and research, including administration of the ATE Survey.
+\item
+  \textbf{Formative Assessment Systems for ATE (FAS4ATE)} provided workshops to improve the assessment of professional development activities by ATE projects.
+\item
+  \textbf{HIS ATE Hub} supported Hispanic serving institutions to apply for ATE funding.
+\item
+  \textbf{Mentor-Connect} served as a mentoring and leadership development program for two-year institutions of higher education new to the ATE program.
+\item
+  \textbf{Mentor Links} served as a mentoring initiative that supports community colleges in developing new or strengthening existing STEM technician education programs.
+\item
+  \textbf{Mentor Up} served as a mentoring initiative that supports teams in developing and submitting a successful ATE proposal.
+\item
+  \textbf{Project Vision} encouraged presidents of colleges new to NSF funding to apply for grant programs in the NSF Division of Undergraduate Education.
+\item
+  \textbf{Working Partner Workshops} provided training to ATE project teams on how to effectively and sustainably collaborate with industry partners.
+\end{itemize}
+
+Collectively, these 9 projects reported the following achievements:
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-26-1.pdf}
+
+\hypertarget{collaboration}{%
+\chapter{Collaboration}\label{collaboration}}
+
+\hypertarget{nsf-encourages-ate-projects-to-partner-with-other-institutions-of-higher-education-secondary-schools-businesses-industries-economic-development-agencies-andor-government-agencies.-the-ate-program-solicitation-emphasizes-the-importance-of-engaging-with-industry-to-ensure-programs-are-responsive-to-workforce-needs-and-leveraging-the-assets-of-industry-in-preparing-students-for-employment-nsf2021.-according-to-the-brookings-institution-hallmarks-of-successful-community-college-based-workforce-training-programs-include-employer-involvement-in-curriculum-development-and-workplace-experiences-for-students-soliz2016preparing.}{%
+\paragraph{\texorpdfstring{NSF encourages ATE projects to partner with other institutions of higher education, secondary schools, businesses, industries, economic development agencies, and/or government agencies. The ATE program solicitation emphasizes the importance of engaging with industry to ensure programs are responsive to workforce needs and leveraging the assets of industry in preparing students for employment \autocite{nsf2021}. According to the Brookings Institution, hallmarks of successful community college based workforce training programs include employer involvement in curriculum development and workplace experiences for students \autocite{soliz2016preparing}.}{NSF encourages ATE projects to partner with other institutions of higher education, secondary schools, businesses, industries, economic development agencies, and/or government agencies. The ATE program solicitation emphasizes the importance of engaging with industry to ensure programs are responsive to workforce needs and leveraging the assets of industry in preparing students for employment {[}@nsf2021{]}. According to the Brookings Institution, hallmarks of successful community college based workforce training programs include employer involvement in curriculum development and workplace experiences for students {[}@soliz2016preparing{]}.}}\label{nsf-encourages-ate-projects-to-partner-with-other-institutions-of-higher-education-secondary-schools-businesses-industries-economic-development-agencies-andor-government-agencies.-the-ate-program-solicitation-emphasizes-the-importance-of-engaging-with-industry-to-ensure-programs-are-responsive-to-workforce-needs-and-leveraging-the-assets-of-industry-in-preparing-students-for-employment-nsf2021.-according-to-the-brookings-institution-hallmarks-of-successful-community-college-based-workforce-training-programs-include-employer-involvement-in-curriculum-development-and-workplace-experiences-for-students-soliz2016preparing.}}
+
+\hypertarget{ate-pis-were-asked-about-the-types-of-entities-with-which-they-collaborated-and-the-benefits-of-those-collaborations-including-monetary-and-in-kind-support.-projects-that-collaborated-with-business-and-industry-were-asked-to-identify-the-specific-ways-in-which-they-worked-with-these-groups.}{%
+\paragraph{ATE PIs were asked about the types of entities with which they collaborated and the benefits of those collaborations, including monetary and in-kind support. Projects that collaborated with business and industry were asked to identify the specific ways in which they worked with these groups.}\label{ate-pis-were-asked-about-the-types-of-entities-with-which-they-collaborated-and-the-benefits-of-those-collaborations-including-monetary-and-in-kind-support.-projects-that-collaborated-with-business-and-industry-were-asked-to-identify-the-specific-ways-in-which-they-worked-with-these-groups.}}
+
+\hypertarget{collaboration-1}{%
+\section{Collaboration}\label{collaboration-1}}
+
+\hypertarget{ate-projects-collaborated-with-960-other-organizations-and-institutions.}{%
+\subsubsection{ATE projects collaborated with 960 other organizations and institutions.}\label{ate-projects-collaborated-with-960-other-organizations-and-institutions.}}
+
+\textbf{In 2024, ATE projects collaborated with 240 business and industry partners, 160 K--12 schools, 130 colleges, 130 other ATE projects, 120 entities within their host institutions, 110 public agencies, and 40 other types of partners.} ATE projects collaborated with a median of Five business and industry groups, Two K--12 schools, Two colleges, and One other ATE project.
+
+\hypertarget{ate-projects-most-frequently-collaborated-with-groups-followed-by-.}{%
+\paragraph{\texorpdfstring{ATE projects most frequently collaborated with \textcolor{245075}{\textbf{business and industry}} groups, followed by \textcolor{245075}{\textbf{other two- or four-year colleges}}.}{ATE projects most frequently collaborated with  groups, followed by .}}\label{ate-projects-most-frequently-collaborated-with-groups-followed-by-.}}
+
+\begin{figure}
+\centering
+\includegraphics{_main_files/figure-latex/fig10a1-1.pdf}
+\caption{\label{fig:fig10a1}Percentage of ATE projects that collaborated with other groups, by type (n=294)}
+\end{figure}
+
+Most projects that indicated they worked with other types of partners identified these collaborators as community organizations and professional associations.
+
+\newpage
+
+Collaborators provided over \$11 million in monetary and in-kind support to 99 ATE projects.
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-28-1.pdf}
+
+\textbf{Fifteen percent of projects reported receiving monetary support from collaborators, while 26\% reported receiving in-kind support}. The median contributions for monetary support and in- kind support across projects were \$45,000 and \$5,000, respectively. Projects reported that in-kind support primarily consisted of staff time (66\%) and equipment (43\%). Other types of in-kind support included access to facilities, materials, and supplies.
+
+\hypertarget{collaboration-with-business-and-industry}{%
+\section{Collaboration with Business and Industry}\label{collaboration-with-business-and-industry}}
+
+\hypertarget{eighty-one-percent-of-ate-projects-collaborated-with-business-and-industry-partners.}{%
+\subsubsection{Eighty-one percent of ATE projects collaborated with business and industry partners.}\label{eighty-one-percent-of-ate-projects-collaborated-with-business-and-industry-partners.}}
+
+A total of 238 projects reported collaborating with business and industry groups. Most used these partners to \textcolor{245075}{\textbf{identify workforce needs}}, \textcolor{B03E61}{\textbf{serve on an advisory board}}, or \textcolor{BD4C42}{\textbf{review and advise on curriculum}}.
+
+\begin{figure}
+\centering
+\includegraphics{_main_files/figure-latex/fig10a2-1.pdf}
+\caption{\label{fig:fig10a2}Percentage of projects reporting contributions from business and industry partners (n=238)}
+\end{figure}
+
+Business and industry representatives serve on advisory boards for 186 projects. Most of these projects (47\%) reported that their advisors from business and industry committed two to five hours per year to their ATE projects.
+
+\newpage
+
+When asked to identify the benefits of collaborating with different organizations and groups, PIs frequently pointed to the utility of
+the information that they received from them. For example, one PI noted:
+
+\begin{quote}
+``By collaborating with multiple internal and external partners, \ldots{} {[}the{]} team was able to create a community for
+support for the\ldots{} project that increased awareness of the career path and helped increase enrollment.''
+\end{quote}
+
+Collaborations with industry groups were also noted by PIs as important to project innovation and growth:
+
+\begin{quote}
+``Collaborating with industry allowed us to bridge the gap of what students learn in the classroom compared to applying it in industry\ldots{} to learn what is new in the industry, what academic and career pathways students should track to get into the career of interest {[}and{]} learn how other females navigated traditional male-dominated careers.''
+\end{quote}
+
+\hypertarget{evaluation}{%
+\chapter{Evaluation}\label{evaluation}}
+
+\hypertarget{each-ate-project-is-required-to-have-an-evaluation-component-to-assess-its-quality-and-effectiveness.-evaluation-of-ate-and-other-nsf-funded-projects-is-intended-to-serve-two-distinct-purposes-1-produce-information-that-can-be-used-to-improve-a-project-as-it-is-being-implemented-and-2-determine-and-document-a-projects-achievements-frechtling2010user.}{%
+\paragraph{\texorpdfstring{Each ATE project is required to have an evaluation component to assess its quality and effectiveness. Evaluation of ATE and other NSF-funded projects is intended to serve two distinct purposes: (1) Produce information that can be used to improve a project as it is being implemented and (2) Determine and document a project's achievements \autocite{frechtling2010user}.}{Each ATE project is required to have an evaluation component to assess its quality and effectiveness. Evaluation of ATE and other NSF-funded projects is intended to serve two distinct purposes: (1) Produce information that can be used to improve a project as it is being implemented and (2) Determine and document a project's achievements {[}@frechtling2010user{]}.}}\label{each-ate-project-is-required-to-have-an-evaluation-component-to-assess-its-quality-and-effectiveness.-evaluation-of-ate-and-other-nsf-funded-projects-is-intended-to-serve-two-distinct-purposes-1-produce-information-that-can-be-used-to-improve-a-project-as-it-is-being-implemented-and-2-determine-and-document-a-projects-achievements-frechtling2010user.}}
+
+\hypertarget{ate-pis-were-asked-about-their-evaluators-and-interactions-with-them-as-well-as-their-projects-use-and-dissemination-of-evaluation-results.}{%
+\paragraph{ATE PIs were asked about their evaluators and interactions with them, as well as their projects' use and dissemination of evaluation results.}\label{ate-pis-were-asked-about-their-evaluators-and-interactions-with-them-as-well-as-their-projects-use-and-dissemination-of-evaluation-results.}}
+
+\hypertarget{evaluation-1}{%
+\section{Evaluation}\label{evaluation-1}}
+
+\hypertarget{ninety-three-percent-of-ate-projects-engaged-an-evaluator.}{%
+\subsubsection{Ninety-three percent of ATE projects engaged an evaluator.}\label{ninety-three-percent-of-ate-projects-engaged-an-evaluator.}}
+
+Two hundred seventy-one ATE projects had evaluators in 2023. Of the 19 PIs who said they did not have evaluators, 12 were in their first year of funding. \textbf{Of the 271 projects with evaluators, 93\% reported having an external evaluator, with 5\% having both an internal and external evaluator and 2\% having only an internal evaluator.}
+
+Thirty percent of PIs reported that they interacted with their evaluators continually (at least once a week) or often (two or three times a month), while 48\% interacted with their evaluators occasionally (more often than quarterly) and 17\% did so infrequently or rarely (once a quarter or less).
+
+\hypertarget{more-than-half-of-ate-projects-received-evaluation-reports.}{%
+\paragraph{\texorpdfstring{More than half of ATE projects received \textcolor{245075}{\textbf{both oral and written}} evaluation reports.}{More than half of ATE projects received  evaluation reports.}}\label{more-than-half-of-ate-projects-received-evaluation-reports.}}
+
+\begin{figure}
+\centering
+\includegraphics{_main_files/figure-latex/fig11a1-1.pdf}
+\caption{\label{fig:fig11a1}Types of evaluation report received by ATE projects (n=271)}
+\end{figure}
+
+\textbf{Of the 234 PIs who received evaluation reports, 53\% indicated their project's evaluation caused them to make a change in implementing their project,} and 46\% indicated that the evaluation caused them to make a change in their project's goals, objectives, or target audience.
+
+\newpage
+
+\hypertarget{most-projects-shared-their-evaluation-results-with-their-and-.}{%
+\paragraph{\texorpdfstring{Most projects shared their evaluation results with \textcolor{245075}{\textbf{NSF program officers}}, their \textcolor{B03E61}{\textbf{faculty or staff at their host institution}}, and \textcolor{BD4C42}{\textbf{executive administrators}}.}{Most projects shared their evaluation results with , their , and .}}\label{most-projects-shared-their-evaluation-results-with-their-and-.}}
+
+\begin{figure}
+\centering
+\includegraphics{_main_files/figure-latex/fig11a2-1.pdf}
+\caption{\label{fig:fig11a2}Percentage of projects that shared their evaluation results with various audiences (n=228)}
+\end{figure}
+
+\hypertarget{ate-survey-2024-highlights}{%
+\chapter{ATE Survey 2024 Highlights}\label{ate-survey-2024-highlights}}
+
+This summary of activities and achievements of the Advanced Technology Education (ATE) program is based on the 2024 ATE Survey. Principal investigators for 97\% of ATE grants (n= 294, out of a total of 322 active ATE grants) completed the survey. Respondents represented grants supporting 271 projects, 18 centers, conferences, and 5 targeted research projects.
+
+\newpage
+
+\hypertarget{section}{%
+\paragraph{\texorpdfstring{\textcolor{327492}{\textbf{90 degree programs and 376 courses were developed by 59 ATE projects.}}}{}}\label{section}}
+
+Most (57\%) of all academic degree programs developed were certificate programs, and a majority (\%) of courses developed were at the associate degree level.
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-31-1.pdf}
+
+\hypertarget{section-1}{%
+\paragraph{\texorpdfstring{\textcolor{327492}{\textbf{5,930 educators participated in 660 professional development activities.}}}{}}\label{section-1}}
+
+4,360 educators who received professional development were located at two-year colleges followed by 460 educators at four-year colleges.
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-32-1.pdf}
+
+\newpage
+
+\hypertarget{section-2}{%
+\paragraph{\texorpdfstring{\textcolor{327492}{\textbf{46,920 students were served by ATE projects.}}}{}}\label{section-2}}
+
+ATE projects served over 46,920 students through a variety of activities in 2020.* ATE projects served the most students through developing or modifying academic programs, followed by courses.
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-33-1.pdf}
+
+\begin{itemize}
+\tightlist
+\item
+  Due to the structure of the survey questions, the total number of students served may not represent a count of unique students.
+\end{itemize}
+
+\newpage
+
+\hypertarget{section-3}{%
+\paragraph{\texorpdfstring{\textcolor{327492}{\textbf{5,460 educational materials were developed by 127 ATE projects.}}}{}}\label{section-3}}
+
+Educational materials developed included assessment activities, modules or instructional units, lessons, lab experiments, curricula, case studies, instructor guides, and textbooks.
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-34-1.pdf}
+
+\hypertarget{section-4}{%
+\paragraph{\texorpdfstring{\textcolor{327492}{\textbf{250 articulation agreements were developed or maintained by 31 ATE projects.}}}{}}\label{section-4}}
+
+300 students matriculated to a higher-level education institution with the aid of an ATE-supported articulation agreement.
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-35-1.pdf}
+
+\newpage
+
+\hypertarget{section-5}{%
+\paragraph{\texorpdfstring{\textcolor{327492}{\textbf{8,010 collaborators were engaged by ATE projects.}}}{}}\label{section-5}}
+
+ATE projects most frequently collaborated with business and industry groups and other colleges and universities.
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-36-1.pdf}
+
+\hypertarget{section-6}{%
+\paragraph{\texorpdfstring{\textcolor{327492}{\textbf{Other activities were conducted by ATE projects in 2023 in support of advanced technological education.}}}{}}\label{section-6}}
+
+ATE projects engaged in a wide range of activities. More information about those listed below and others can be found in the full report.
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-37-1.pdf}
+
+\hypertarget{technical-notes}{%
+\chapter*{Technical Notes}\label{technical-notes}}
+\addcontentsline{toc}{chapter}{Technical Notes}
+
+i The 2021 ATE survey asked about the racial, ethnic, and gender identities of students in alignment with how the National Center for Education Statistics requests student demographic data from colleges. This involves asking students' race, ethnicity, and gender in a single question. This approach differs from years prior to 2019, when PIs were asked to report on the race, ethnicity, and gender identities of their students in separate questions. Additionally, ATE PIs were asked to report demographics for only students who had attended at least one course in an academic program that was developed or substantially modified in 2019. Prior to 2019, projects reported demographic information on students who attended at least one course in an ATE-supported academic program. This, in addition to a lower than usual response rate, resulted in a decrease in student demographic data for the 2020 and 2021 reports.
+
+ii National data for two-year STEM programs are from the 2017--18 National Center for Education Statistics Digest of Education Statistics Table 321.40 and Table 321.50. (Retrieved from \url{https://nces.ed.gov/programs/digest/current_tables.asp}.) Selected fields of study include agriculture and natural resources, biological and biomedical sciences, communications technologies, computer and information sciences, construction, engineering and engineering technologies, mechanic and repair technologies/technicians, physical sciences and science technologies, precision production, and transportation and materials moving. While these are not exact comparison groups, they are as close as available data allow.
+
+iii Comparison data for student demographics are from the National Center for Education Statistics. The referenced NCES tables were retrieved from \url{https://nces.ed.gov/programs/digest/current_tables.asp}. The national percentage of underrepresented minority students at the two-year level reflects STEM degrees conferred in the 2019-20 school year, derived from Table 321.30. Selected fields of study are the same as those listed in note ii. National rates for certificate programs are not presented because they are not reported by race and STEM field.
+
+\hypertarget{acknowledgements}{%
+\chapter*{Acknowledgements}\label{acknowledgements}}
+\addcontentsline{toc}{chapter}{Acknowledgements}
+
+\hypertarget{december-2023}{%
+\subsubsection{December 2023}\label{december-2023}}
+
+Valerie A. Marshall
+Erika Sturgis
+Lyssa Wilson Becho
+Lori A. Wingate
+Arlen Gullickson
+
+\hypertarget{suggested-citation-1}{%
+\subsubsection{Suggested Citation}\label{suggested-citation-1}}
+
+Marshall, V. A., Sturgis, E., Becho, L. W., Wingate, L. A., \& Gullickson, A. (2024). ATE Survey: 2024 report. Kalamazoo, MI: The Evaluation Center, Western Michigan University. Retrieved from \url{https://atesurvey.evalu-ate.org/}
+
+\printbibliography
+
+\end{document}

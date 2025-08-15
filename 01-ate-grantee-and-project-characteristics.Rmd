@@ -1,0 +1,679 @@
+# ATE Grantee and Project Characteristics
+
+##### As context for the remainder of this report, this section provides basic information about the individuals and institutions that received ATE awards, as well as key characteristics of the funded work, such as types of awards, disciplinary emphases, and nature of activities.
+
+## ATE Grant Types and Institutions
+
+
+```{r 1.1_prep}
+grant_type_mapping <- data.frame(
+  number = 1:11,
+  grant_type = c(
+    'Projects', 
+    'Projects',
+    'Projects',
+    'Centers', 
+    'Centers', 
+    'Centers',
+    'Targeted Research', 
+    'Conferences and Meetings', 
+    'Projects', 
+    'Projects',
+    'Projects')
+)
+
+ATE_grant_type_summary <- ATE_data %>% 
+  process_summary(
+    grant_type_mapping,
+    'Q1.1. What type of award is your ATE grant? - Selected Choice'
+  ) 
+
+
+ATE_grant_type_two_year_summary <- ATE_data %>%
+  filter(`Q1.7. At what type of institution is the PI for this project located? - Selected Choice` == 2) %>%
+  process_summary(
+    grant_type_mapping,
+    'Q1.1. What type of award is your ATE grant? - Selected Choice'
+  )
+
+ATE_grant_type_four_year_summary <- ATE_data %>%
+  filter(
+    `Q1.7. At what type of institution is the PI for this project located? - Selected Choice` == 1
+  ) %>% 
+  process_summary(
+    grant_type_mapping,
+    'Q1.1. What type of award is your ATE grant? - Selected Choice'
+  )
+
+institution_mapping <- data.frame(
+  number = 1:5,
+  institution = c(
+    'Four-year colleges', #1
+    'Two-year colleges', #2
+    'K-12 schools', #3
+    'Nonprofit organizations', #4
+    'Other') #5
+)
+
+ATE_institution_summary <- ATE_data %>% 
+  process_summary(
+    institution_mapping,
+    'Q1.7. At what type of institution is the PI for this project located? - Selected Choice'
+)
+
+```
+
+```{r 1.1_inline}
+# paragraph 1
+total_ATE_grants = sum(ATE_grant_type_summary$n)
+
+# 1. filter the rows where grant_type contains "Projects"
+# 2. extract the 'n' column value from the filtered rows
+projects <- ATE_grant_type_summary %>%
+  filter(str_detect(grant_type, "Projects")) %>%
+  pull(n)
+projects_pct <- round_and_english(projects/total_ATE_grants*100)
+
+reference <- table(
+  factor(ATE_data$`Q1.1. What type of award is your ATE grant? - Selected Choice`,
+         levels = 1:11)
+)
+new_institution <- reference[[2]]
+consortia <- reference[[11]]
+coordination_network <- reference[[10]]
+center <- reference[[4]]+reference[[5]]+reference[[6]]
+support_resource_center <- reference[[6]]
+regional_center <- reference[[5]]
+national_center <- reference[[4]]
+consortia <- 7
+coordination_network <- 0
+
+## paragraph 2
+total_two_year <- sum(ATE_grant_type_two_year_summary$n)
+two_year_projects <- ATE_grant_type_two_year_summary %>%
+  filter(grant_type == 'Projects') %>%
+  pull(n)
+two_year_centers <- ATE_grant_type_two_year_summary %>%
+  filter(grant_type == 'Centers') %>%
+  pull(n)
+two_year_targeted_research <- ATE_grant_type_two_year_summary %>%
+  filter(grant_type == 'Targeted Research') %>%
+  pull(n)
+two_year_conference_meetings <- ATE_grant_type_two_year_summary %>%
+  filter(grant_type == 'Conferences and Meetings') %>%
+  pull(n)
+targeted_research <- ATE_grant_type_summary %>%
+  filter(grant_type == "Targeted Research") %>%
+  pull(n)
+four_year_targeted_research_pct <- ATE_grant_type_four_year_summary %>%
+  filter(grant_type == 'Targeted Research') %>%
+  pull(n) %>%
+  { round2(. / targeted_research * 100) }
+
+
+
+```
+
+#### Most ATE grants support projects, and most PIs are located at two-year colleges.
+
+ATE awards fit into four main categories: projects, centers, targeted research, and conferences and meetings. The ATE program has special funding tracks for institutions new to the program and for organizations developing plans for national centers. **`r projects_pct` percent of ATE grants were for projects (including a variety of subcategories of project types).** Among the `r projects` project grants, `r new_institution` were designated for institutions new to the ATE program, `r consortia` were  consortia for innovations in technical education, and `r coordination_network` were coordination network grants. Of the `r center` centers, `r support_resource_center` identified as support or resource centers, `r regional_center` as regional centers, and `r national_center` as national centers.
+
+##### The majority of ATE grants support **`r colorize('projects', color1)`**.
+
+```{r fig1a1, fig.cap = paste0('Types of ATE grants awarded (n=', total_ATE_grants, ')'), fig.alt="Pie chart showing the distribution of 338 ATE grants awarded, categorized into four main types. The largest category is ‘Projects,’ accounting for 295 grants (87%), followed by ‘Centers’ with 29 grants, ‘Targeted Research’ with 12 grants, and ‘Conferences and Meetings’ with 2 grants."}
+
+set_color_palette(ATE_grant_type_summary)
+create_pie_chart(ATE_grant_type_summary, n, grant_type)
+
+# not required in this year's calculation
+# set_color_palette(ATE_grant_type_summary)
+# 
+# fig1 <- plot_ly(
+#   ATE_grant_type_summary, labels = ~grant_type, values = ~n,
+#   hoverinfo = 'none',  # Disable hover tooltips
+#   textposition = 'outside',
+#   textinfo = 'label+value',
+#   textfont = list(
+#     family = 'Calibri',
+#     size = 16
+#   ),
+#   height = 400,
+#   outsidetextfont = list(color = evaluate_color_palette),
+#   marker = list(
+#     colors = evaluate_color_palette,  # Colors for the slices
+#     line = list(color = 'white', width = 2)  # White border around the slices
+#   )
+# )
+# fig1 <- fig1 %>% add_pie(hole = 0.55)
+# fig1 <- fig1 %>% layout(showlegend = FALSE, margin = list(t = 60))
+# fig1 <- fig1 %>% config(staticPlot = TRUE)
+# 
+# fig1
+```
+
+\newpage
+
+##### Most ATE grantees are located at `r colorize('two-year colleges', color1)`, followed by `r colorize('four-year colleges and universities', color2)` and `r colorize('nonprofits', color3)`.
+
+```{r fig1a2, fig.cap = paste0('ATE grant recipient institutions (n=', total_ATE_grants, ')'), fig.height=2 + 0.1 * nlevels(ATE_institution_summary$institution)}
+
+set_color_palette(ATE_institution_summary)
+create_bar_chart_single(ATE_institution_summary, pct, institution)
+
+```
+
+
+
+
+The ATE program solicitation states that the “program focuses on IHEs that award two-year degrees in advanced technology fields and expects these IHEs and their faculty to have significant leadership roles on all projects” [@nsf2021, p. 4]. Accordingly, most ATE grants are located at two-year colleges. The `r total_two_year` grants awarded to two-year colleges supported `r two_year_projects` projects, `r two_year_centers` centers. <!--, and `r two_year_targeted_research` targeted research studies; `r two_year_conference_meetings` was conference and meeting grants.[this part was commented out because this year's data didn't amke sense to use this line]--> Most of the `r targeted_research` targeted research projects (`r four_year_targeted_research_pct`%) are located at four-year colleges.
+
+
+
+**Unless specified, all types of grants—projects, centers, targeted research, and conferences—are referred to as projects in the remainder of this report.**
+
+## ATE Project Disciplines
+
+```{r 1.2_prep}
+# recode mapping
+project_discipline_mapping <- data.frame(
+  number = 1:8,
+  project_discipline = c(
+    'Advanced Manufacturing Technologies', #1
+    'Agricultural and Environmental Technologies', #2 
+    'Bio and Chemical Technologies', #3
+    'Engineering Technologies', #4
+    'Information and Security Technologies', #5
+    'Micro and Nano Tech', #6
+    'General Advanced Technological Education', #7 
+    'Other' #8
+  )
+)
+
+
+
+# Joining the ATE data to map the number of disciplines and counts
+ATE_project_discipline_summary <- ATE_data %>%
+  process_summary(
+    project_discipline_mapping,
+    '2021 Recode Q 1.11'
+  )
+```
+
+#### The majority of ATE projects are in the areas of `r colorize('advanced manufacturing technologies', color1)`, `r colorize('information and securities technologies', color2)`, and `r colorize('Bio and Chemical Technologies', color3)`.
+
+```{r fig3, fig.cap = paste0("Disciplinary areas of ATE projects (n=", total_ATE_projects, ")")}
+set_color_palette(ATE_project_discipline_summary)
+
+# darker_palette <- c('#1C3E5B', '#8F324D', '#9A3D36', '#3C654D', '#2C2C66', '#602E55', '#285C75', '#A38635')
+# lighter_palette <- c('#576F94', '#C1637D', '#D16F65', '#799D85', '#62619D', '#90577E', '#5E8CA8', '#E0C074')
+
+lighter_palette <- c('#92A7BD', '#D9A2AE', '#E5A199', '#A5C3B2', '#9B9ABC', '#BE9EB8', '#99B9CD', '#EAD598')
+
+## treemap 
+ggplot(ATE_project_discipline_summary, aes(
+  fill = project_discipline, 
+  area = n, 
+  label = paste0(project_discipline, '\n', round2(pct), '%'),
+  color = project_discipline
+)) +
+  geom_treemap(start = 'topleft', color = 'white', size = 5) +
+  geom_treemap_text(place = "topleft", start = 'topleft', reflow = TRUE, grow = TRUE, 
+                    fontface = "bold", size = 12, 
+                    padding.x = grid::unit(4, "mm"),
+                    padding.y = grid::unit(4, "mm")
+) +
+  scale_fill_custom(guide = "none")  +
+  scale_color_manual(values = lighter_palette) 
+
+
+```
+
+In alignment with the broad aim of the ATE program to improve the education of science and engineering technicians, the disciplinary emphases of ATE grantees are diverse.
+
+## ATE Project Activities
+
+```{r 1.3_prep}
+# Define activity questions and corresponding short names
+project_activities_questions <- c(
+  # Educational Materials Development and Dissemination
+  'In 2020, did your ATE project create or substantially modify educational materials?', 
+  # Professional Development for Educators
+  'In 2020, did your project provide training or professional development to current or future educators?', 
+  # Course Development
+  'In 2020, did your ATE project create or substantially modify an academic course?', 
+  # Instrument Acquisition
+  'In 2020, did your ATE project acquire instrumentation or equipment to prepare students to work in business and industry?', 
+  # Support for Students to Obtain Certifications or Licensing
+  'In 2020, did your ATE project work with students to support them in obtaining specific industry-recognized certifications or licenses?', 
+  # Academic Program Development and Delivery
+  'Program Development In 2020, did your ATE project create or substantially modify an academic degree or certificate program?', 
+  # Workplace-Based Learning
+  'In 2020, did your ATE project offer workplace-based learning to students?', 
+  # Student Mentoring
+  'In 2020, did your ATE project offer mentoring or coaching to students?', 
+  # Publications
+  'In 2020 did your ATE project develop articles, reports, or white papers intended for publication?',
+  # Articulation Agreements
+  'In 2020, did your ATE project create new articulation agreements or maintain articulation agreements created previously through your project?', 
+  # Applied Research
+  'In 2020, did your ATE project conduct targeted research?', 
+  # Business and Entrepreneurial Skills Development
+  'In 2020, did your ATE project work with students specifically to develop their business and entrepreneurial skills?', 
+  # Support for Students Transitioning into College
+  'In 2020, did your project offer programs to help students transition into college?', 
+  # Student Competitions
+  'In 2020, did your ATE project host or organize a student competition?', 
+  # Coordination Networks
+  'Q7.1. Was organizing a coordination network the PRIMARY purpose of your grant?', 
+  # ATE Program Services
+  'Counted as Program Services in Report?', 
+  # Conference, Meeting or Other Events
+  'Q5.1. project was funded with a "conference" grant?'
+)
+
+# Define the mapping from full question to short names
+short_names <- setNames(
+  c(
+    'Educational Materials Development', 
+    'Professional Development for Educators', 
+    'Course Development', 
+    'Instrument Acquisition', 
+    'Support for Students to Obtain Certifications or Licensing', 
+    'Academic Program Development', 
+    'Workplace-Based Learning', 
+    'Student Mentoring', 
+    'Publications', 
+    'Articulation Agreements', 
+    'Applied Research', 
+    'Business and Entrepreneurial Skills Development', 
+    'Support for Students Transitioning into College', 
+    'Student Competitions', 
+    'Coordination Networks', 
+    'ATE Program Services', 
+    'Conference, Meeting or Other Events'
+  ),
+  project_activities_questions  # Vector of full question texts
+)
+
+
+ATE_project_activities_summary <- ATE_data %>%
+  select(all_of(project_activities_questions)) %>%
+  pivot_longer(cols = everything(), names_to = "project_activity", values_to = "response") %>%
+  mutate(response = replace_na(response, 2)) %>% 
+  mutate(
+    response = factor(response, levels = c("1", "3", "2"), labels = c("Projects engaged in activity", "Projects planning for future activity", "No")),
+    project_activity = short_names[project_activity]
+  ) %>%
+  group_by(project_activity, response) %>%
+  summarise(n = n(), .groups = 'drop') %>%
+  group_by(project_activity) %>%
+  mutate(
+    total_responses = sum(n),
+    pct = n / total_responses * 100
+  ) %>%
+  ungroup()
+
+# Determining the order of activities based on the count of 'Projects engaged in activity' responses
+activity_order <- ATE_project_activities_summary %>%
+  filter(response == "Projects engaged in activity") %>%
+  arrange(n) %>%
+  pull(project_activity)
+
+# Applying the ordered factor to the project_activity
+ATE_project_activities_summary$project_activity <- factor(
+  ATE_project_activities_summary$project_activity,
+  levels = activity_order,
+  ordered = TRUE
+)
+```
+
+#### ATE projects engaged in a variety of activities in 2024 to improve the education of science and engineering technicians.
+
+```{r fig1a4, fig.height = 8, fig.width = 7.5, fig.cap = paste0("Percentage of projects that reported engaging in activities in 2024 and planning activities for the future (n=", total_ATE_projects, "). *Responses less than 5% are not labeled.*")}
+
+fig1a4_color = c(color1, color2, '#f2f2f2')
+
+theme_set(theme_void(base_family = "Calibri"))
+theme_update(
+  axis.text.y = element_text(size = 12, hjust = 1, face = "bold", margin = margin(r = 3)),
+  plot.margin = margin(0, 0, 0, 0)
+)
+
+max_pct_yes <- ATE_project_activities_summary %>%
+  filter(response == 'Projects engaged in activity') %>%
+  summarize(max_pct = max(pct)) %>%
+  pull(max_pct)
+
+ATE_project_activities_summary %>%
+  ggplot(aes(x = pct, y = project_activity, fill = response)) +
+  geom_col(width = 0.65, position = position_stack(reverse = TRUE), color = 'white') +
+  geom_text(aes(label = ifelse(pct > 6.5 & response != 'No', paste0(round(pct), '%  '), '')), 
+            size = 3.2, color = 'white', fontface = "bold",
+            position = position_stack(reverse = TRUE), hjust = 1) +
+  geom_text(aes(label = ifelse(pct > 5 & pct <= 6.5 & response != 'No', paste0(round(pct), '%  '), '')), 
+            size = 2, color = 'white', fontface = "bold",
+            position = position_stack(reverse = TRUE), hjust = 1) + # if 5% <= label <= 6.5%, make it size = 2
+  scale_x_continuous(expand = c(0, 2)) +
+  scale_y_discrete(expand = expansion(mult = c(0, .08)), labels = function(x) str_wrap(x, width = 35)) +
+  scale_fill_manual(values = fig1a4_color, guide = 'none') + 
+  annotate("text", label = " Projects engaged in activity", 
+           x = 0, y = nlevels(ATE_project_activities_summary$project_activity) + .6, 
+           family = "Calibri", color = color1, fontface = "bold", size = 4, hjust = 0) +
+  annotate("text", label = " Projects planning for future activity", 
+           x = max_pct_yes, y = nlevels(ATE_project_activities_summary$project_activity) + .6, 
+           family = "Calibri", color = color2, fontface = "bold", size = 4, hjust = 0) 
+```
+
+
+## ATE Projects at Minority-Serving Institutions
+
+```{r 1.4_prep}
+minority_mapping <- data.frame(
+  number = 1:3,
+  minority = c(
+    'Minority-serving IHEs', #1
+    'Non-minority-serving IHEs', #2
+    'Non-minority-serving IHEs' #3
+  )
+)
+
+ATE_minority_summary <- ATE_data %>%
+  process_summary(
+    minority_mapping,
+    'Q1.7.1. Is this institution designated as a minority-serving institution as defined in US law under Title III of the Higher Education Act of 1965?'
+  )
+
+# not required in this year's calculation
+# IHE_serving_mapping <- data.frame(
+#   number = 1:7,
+#   IHE_serving = c(
+#     'Hispanic-serving', #1
+#     'Predominantly or Historically Black', #2
+#     'Predominantly or Historically Black', #3
+#     'Tribal Colleges or Universities', #4
+#     'Alaska Native-serving', #5
+#     'Native Hawaiian-serving', #6
+#     'Unknown' #7 (followed 2020 report naming)
+#   )
+# )
+
+# ATE_IHE_serving_summary <- ATE_data %>%
+#   process_summary(
+#     IHE_serving_mapping,
+#     'Q1.7.1.1. Which designation does your institution hold? Select all that apply. - Selected Choice'
+#   )
+
+total_minority_serving_institutions <- ATE_minority_summary %>%
+  filter(minority == "Minority-serving IHEs") %>%
+  pull(n)
+
+ATE_IHE_serving_summary <- ATE_data %>%
+  process_summary_2(starting_with = 'Q1.7.1.1. ', names_to = 'IHE_serving', summary = 'count_ones') %>%
+  mutate(
+    IHE_serving = case_when(
+      IHE_serving %in% c("Predominately black institution", "Historically black college or university") ~ "Predominantly or historically Black",
+      TRUE ~ IHE_serving
+    )) %>%
+  group_by(IHE_serving) %>%
+  summarize(count_ones = sum(count_ones)) %>%
+  mutate(IHE_serving = fct_reorder(IHE_serving, count_ones, .desc = TRUE),
+         pct = count_ones/total_minority_serving_institutions*100) %>%
+  arrange(desc(count_ones)) %>% 
+  filter(pct > 0)
+
+
+
+
+```
+
+```{r 1.4_inline}
+# paragraph 1
+minority_serving_institutions_pct_en <- ATE_minority_summary %>%
+  filter(minority == 'Minority-serving IHEs') %>%
+  pull(n) %>%
+  {round_and_english(. / total_ATE_projects * 100)}
+minority_serving_institutions_en <- ATE_minority_summary %>%
+  filter(minority == "Minority-serving IHEs") %>%
+  pull(n) %>%
+  round_and_english()
+hispanic_serving_institutions_en <- ATE_IHE_serving_summary %>%
+  filter(IHE_serving == 'Hispanic-serving') %>%
+  pull(count_ones) %>%
+  round_and_english()
+
+# pargraph 2
+total_IHE_projects <- ATE_minority_summary %>%
+  pull(n) %>% 
+  sum() + 30
+minority_serving_institutions_pct <- ATE_minority_summary %>%
+  filter(minority == 'Minority-serving IHEs') %>%
+  pull(pct) %>%
+  round2()
+hispanic_serving_institutions_pct <- ATE_IHE_serving_summary %>%
+  filter(IHE_serving == 'Hispanic-serving') %>%
+  pull(pct) %>%
+  round2()
+alaska_serving_institutions_pct <- ATE_IHE_serving_summary %>%
+  filter(IHE_serving == 'Alaska Native-serving') %>%
+  pull(pct) %>%
+  round2()
+hawaiian_serving_institutions_pct <- ATE_IHE_serving_summary %>%
+  filter(IHE_serving == 'Native Hawaiian-serving') %>%
+  pull(pct) %>%
+  round2()
+black_institutions_pct <- ATE_IHE_serving_summary %>%
+  filter(IHE_serving == 'Predominantly or Historically Black') %>%
+  pull(pct) %>%
+  round2()
+tribal_institutions_pct <- ATE_IHE_serving_summary %>%
+  filter(IHE_serving == 'Tribal Colleges or Universities') %>%
+  pull(pct) %>%
+  round2()
+```
+
+<!--#### Thirty-five percent of ATE projects are located at minority-serving institutions.-->
+
+##### `r minority_serving_institutions_en` ATE projects (35%) are located at `r colorize('minority-serving', color1)` institutions of higher education (IHEs).
+
+##### `r hispanic_serving_institutions_en` ATE projects are located at `r colorize('Hispanic-serving', color2)` institutions of higher education.
+
+```{r fig1a5, fig.cap = paste0("ATE projects at minority-serving institutions (n=", total_minority_serving_institutions, ")"), fig.height = length(ATE_IHE_serving_summary$IHE_serving) * 0.75}
+set_color_palette(ATE_IHE_serving_summary)
+create_bar_chart(ATE_IHE_serving_summary, pct, IHE_serving)
+
+```
+
+Minority-serving institutions are defined in U.S. law under Title III of the Higher Education Act of 1965. The designation is based on the percentage of minority students enrolled in the school. **Of the `r total_IHE_projects` projects at IHEs, `r minority_serving_institutions_pct`% are at minority-serving institutions.** The majority of these IHEs (`r hispanic_serving_institutions_pct`%) are Hispanic-serving. Alaska Native-serving institutions made up `r alaska_serving_institutions_pct`% of IHEs, followed by `r hawaiian_serving_institutions_pct`% of IHEs located at Native Hawaiian-serving institutions, and 8% at predominantly Black or historically Black colleges and universities. 1% projects were reported to be located at Tribal colleges or universities.
+<!-- MANUAL UPDATE `r minority_serving_institutions_pct_en`-->
+<!-- 1% projects were reported to be located at Tribal colleges or universities. -->
+<!-- MANUAL UPDATE `r black_institutions_pct` -->
+
+## ATE Principal Investigators
+
+```{r 1.5_prep}
+race_mapping <- data.frame(
+  number = 1:7,
+  race = c(
+    'American Indian or Alaska Native', #1
+    'Asian', #2
+    'Black or African American', #3
+    'Middle Eastern or North African', #4
+    'Hispanic or Latino/a/e/x', #5
+    'White', #6
+    'Another identity' #7
+  )
+)
+
+ATE_PI_race_summary <- ATE_data %>%
+  process_summary(race_mapping, 'Recode_Race and Ethnicity')
+
+# not required in this year's calculation
+# ATE_PI_race_summary <- ATE_data %>%
+#   rename(race = `Recode_Race and Ethnicity`) %>%
+#   filter(!is.na(race)) %>%
+#   count(race) %>%
+#   mutate(
+#     race = case_when(
+#       str_detect(race, "Black") ~ "Black*",
+#       str_detect(race, "Latino|Latina") ~ "Hispanic*",
+#       str_detect(race, "Multiracial") ~ "Multiracial*",
+#       str_detect(race, "American Indian") ~ "American Indian or Alaskan Native*",
+#       TRUE ~ race  # Retain other values as they are
+#     ),
+#     race = fct_reorder(race, n, .desc = TRUE),
+#     pct = n / sum(n) * 100
+#   ) %>% 
+#   arrange(desc(n))
+  
+PI_gender_mapping <- data.frame(
+  number = 1:3,
+  gender = c(
+    'Male', #1
+    'Female', #2
+    'Other Identity') #3
+  )
+
+ATE_PI_gender_summary <- ATE_data %>% 
+  process_summary(
+    PI_gender_mapping,
+    "Q1.15. PI's gender identity?"
+  )
+
+PI_age_mapping <- data.frame(
+  number = 1:6,
+  age = c(
+    'Under 25 years', #1
+    '25 - 34 years', #2
+    '35 - 44 years', #3
+    '45 - 54 years', #4
+    '55 - 64 years', #5
+    '65 years or older') #6
+  )
+
+ATE_PI_age_summary <- ATE_data %>% 
+  process_summary(
+    PI_age_mapping,
+    "Q1.16. PI's age?"
+  )
+```
+
+```{r 1.5_inline}
+# paragraph 1
+underrepresented_race_pct_en <- 
+  ATE_PI_race_summary %>%
+  filter(str_detect(race, "Black|Hispanic|Multiracial|American Indian|Alaskan") & !str_detect(race, "White")) %>% 
+  pull(pct) %>% 
+  sum() %>% 
+  round_and_english()
+majority_PI_gender <- 
+  ATE_PI_gender_summary %>%
+  slice_max(pct) %>%
+  pull(gender) %>%
+  tolower()
+
+# paragraph 2
+female_PI_pct <- 
+  ATE_PI_gender_summary %>% 
+  filter(gender == 'Female') %>% 
+  pull(pct) %>% 
+  round2()
+# not required in this year's calculation
+# majority_PI_ethnicity <- 
+#   ATE_PI_race_summary %>%
+#   slice_max(pct) %>%
+#   pull(race) %>% 
+#   tolower()
+# not required in this year's calculation
+# majority_PI_age <- 
+#   ATE_PI_age_summary %>%
+#   slice_max(pct) %>%
+#   pull(age) %>% 
+#   tolower()
+over_65_pct_en <- ATE_PI_age_summary %>%
+  filter(str_detect(age, "65")) %>%
+  pull(pct) %>%
+  round_and_english()
+between_55_64_pct <- ATE_PI_age_summary %>%
+  filter(str_detect(age, "55")) %>%
+  pull(pct) %>%
+  round2()
+between_45_54_pct <- ATE_PI_age_summary %>%
+  filter(str_detect(age, "45")) %>%
+  pull(pct) %>%
+  round2()
+between_35_44_pct <- ATE_PI_age_summary %>%
+  filter(str_detect(age, "35")) %>%
+  pull(pct) %>%
+  round2()
+between_25_34_pct <- ATE_PI_age_summary %>%
+  filter(str_detect(age, "25")) %>%
+  pull(pct) %>%
+  round2()
+
+# paragraph 3
+white_PI_pct_en <-
+  ATE_PI_race_summary %>%
+  filter(str_detect(race, "White")) %>% 
+  pull(pct) %>% 
+  sum() %>% 
+  round_and_english()
+```
+
+<!-- #### `r underrepresented_race_pct_en` percent of ATE projects have PIs from racial and ethnic groups historically underrepresented in STEM. -->
+
+
+
+The ATE community is still working toward increasing diversity among PIs. Females make up 51% of the U.S. population [@uscensus2023acs]. Comparatively, females are underrepresented as ATE PIs, since only `r female_PI_pct`% of ATE PIs in 2024 identified as female. `r over_65_pct_en` percent of ATE projects have PIs who are over the age of 65, while `r between_55_64_pct`% are between the ages of 55 and 64, `r between_45_54_pct`% are 45–54, `r between_35_44_pct`% are 35–44, and `r between_25_34_pct`% are 25–34.
+<!-- Manual Update -->
+
+
+
+```{r fig1a6, fig.cap = paste0("Gender identities of ATE PIs (n=", sum(ATE_PI_gender_summary$n), "). Each icon represents 1%.")}
+
+evaluate_color_palette = c(color1, color2, color3)
+
+
+# Ensures small percentages are represented in the waffle chart by assigning at least one waffle.
+# Adjusts percentages so they always sum to 100, ensuring the chart consistently displays 100 waffles.
+adjust_waffle_values <- function(percentages, total_waffles = 100) {
+  waffle_counts <- round(percentages * total_waffles / 100)
+  
+  # Ensure every non-zero percentage gets at least one waffle
+  adjusted_waffle_counts <- ifelse(waffle_counts == 0 & percentages > 0, 1, waffle_counts)
+  
+  # Adjust the total to fit exactly 100 waffles
+  difference <- total_waffles - sum(adjusted_waffle_counts)
+  if (difference != 0) {
+    indices <- order(percentages - adjusted_waffle_counts / total_waffles * 100, decreasing = TRUE)
+    adjusted_waffle_counts[indices[1:abs(difference)]] <- 
+      adjusted_waffle_counts[indices[1:abs(difference)]] + sign(difference)
+  }
+  
+  return(adjusted_waffle_counts)
+}
+
+
+# manual change
+ATE_PI_gender_summary <- ATE_PI_gender_summary %>%
+  mutate(pct = adjust_waffle_values(pct))
+
+create_waffle_icon_chart(data = ATE_PI_gender_summary, label = gender, value = pct)
+
+```
+
+\newpage
+
+**`r underrepresented_race_pct_en` percent of ATE projects have PIs from historically underrepresented racial and ethnic groups**, which includes Black, Hispanic, American Indian or Alaska Native, and Middle Eastern or North African.
+
+##### `r white_PI_pct_en` percent of ATE projects have a PI who identifies as `r colorize('white', color3)`.
+
+```{r fig1a7, fig.cap = paste0("Racial and ethnic identities of ATE PIs (n=", sum(ATE_PI_race_summary$n), "). Each icon represents 1%. *Historically underrepresented racial and ethnic groups.")}
+evaluate_color_palette = c(color1, color2, color3, color4, color5, color6, color7)
+
+ATE_PI_race_summary <- ATE_PI_race_summary %>%
+  mutate(pct = adjust_waffle_values(pct))
+
+create_waffle_icon_chart(data = ATE_PI_race_summary, label = race, value = pct, adjust_left = 130)
+
+```
+

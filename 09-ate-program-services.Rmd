@@ -1,0 +1,122 @@
+# ATE Program Services
+
+##### For a few ATE projects, the primary purpose is to provide activities, materials, or services to enhance the capacity of ATE grantseekers, grantees, and affiliated stakeholders to plan and conduct successful ATE projects. In some other programs within NSF’s Education and Human Resources directorate, these types of program-oriented services are consolidated and provided by a single organization. The ATE program is configured differently; ATE program- specific support, technical assistance, and other services are delivered by multiple grant- funded entities that focus on narrower areas of expertise, with an array of other projects contributing to program capacity in various ways. The ATE program also has a culture of sharing and support to advance the shared interests of program stakeholders.
+
+##### ATE PIs were asked to identify the ways in which their projects supported the ATE community and the number of people served through their service activities.
+
+## ATE Program Services
+
+```{r 9.1_prep}
+# set.seed(123) 
+# 
+# ATE_data$`Counted as Program Services in Report?` <- sample(c("Yes", "No", NA), size = 312, replace = TRUE, prob = c(0.4, 0.4, 0.2))
+
+ATE_additional_program_services_type_summary <- ATE_data %>%
+  filter(`Counted as Program Services in Report?` == 1) %>%
+  process_summary_2(starting_with = 'Q8.1. ', names_to = 'type', summary = 'sum')
+
+ATE_program_services_type_summary <- ATE_data %>%
+  filter(`Counted as Program Services in Report?`== 1) %>%
+  select(matches("^Q8\\.[2-6]")) %>%
+  process_summary_2(names_to = 'type', summary = 'sum')
+
+```
+
+```{r 9.1_inline}
+# paragraph 1 & 3
+total_funded_to_serve <-
+  ATE_data %>%
+  filter(`Counted as Program Services in Report?`== 1) %>%
+  nrow()
+
+funded_to_serve_pct_en <- 
+  round_and_english(total_funded_to_serve / total_ATE_projects * 100)
+
+# paragraph 2
+total_funded_to_serve_en <-
+  ATE_data %>%
+  filter(`Counted as Program Services in Report?` == 1) %>%
+  nrow() %>%
+  round_and_english()
+
+
+# paragraph 4
+total_additional_projects_program_services_en <- 
+  ATE_data %>%
+  filter(`In 2020, did your ATE project provide services specifically for the ATE community?` == 1) %>%
+  filter(`Counted as Program Services in Report?` == 1) %>%
+  nrow() %>%
+  round_and_english()
+additional_projects_program_services_resource_materials_en <- 
+  ATE_additional_program_services_type_summary %>%
+  filter(type == 'Resource materials') %>%
+  pull(sum) %>%
+  round_and_english()
+additional_projects_program_services_workshops_en <- 
+  ATE_additional_program_services_type_summary %>%
+  filter(type == 'In-person workshops') %>%
+  pull(sum) %>%
+  round_and_english()
+additional_projects_program_services_webinars_en <- 
+  ATE_additional_program_services_type_summary %>%
+  filter(type == 'Webinars') %>%
+  pull(sum) %>%
+  round_and_english()
+additional_projects_program_services_technical_service <- 
+  ATE_additional_program_services_type_summary %>%
+  filter(type == 'Technical service') %>%
+  pull(sum) %>%
+  round2()
+
+# callout graph
+total_webinars <-
+  ATE_program_services_type_summary %>% 
+  filter(str_detect(type, 'How many webinars')) %>% 
+  pull(sum)
+average_people_webinar <- ATE_data %>% 
+  filter(`Counted as Program Services in Report?` == 1) %>% 
+  select(starts_with("Q8.5")) %>% 
+  process_summary_2(summary = 'mean') %>% 
+  pull(mean) %>% 
+  round2()
+total_people_technical_assistance <-
+  ATE_program_services_type_summary %>% 
+  filter(str_detect(type, 'one-on-one')) %>% 
+  pull(sum)
+
+```
+
+#### `r funded_to_serve_pct_en` percent of projects were funded specifically to serve the ATE program.
+
+`r total_funded_to_serve_en` ATE projects are funded to provide services and support specifically for ATE grantseekers and grantees and their affiliates. These projects include the following:
+
+-   **AccessATE** supported ATE projects in making their materials and activities more accessible to all students and faculty, including those with disabilities.
+-   **ATE Central** served as the ATE program’s information hub, dedicated to highlighting ATE projects' work and supporting them in various aspects of their work, such as archiving, outreach, and connecting with others in the ATE community.
+-   **ATE for 2 Year Colleges (ATE-2YC)** provided proposal writing workshops and a mentoring program for two-year college STEM faculty.
+-   **ATE Collaborative Outreach and Engagement** raised awareness of the ATE program, primarily through the publication of the ATE Impacts book.
+-   **BILT and Mentoring Academies** supported ATE projects in integrating the Business Industry Leadership Team model for productive partnerships with industry.
+-   **EvaluATE** strengthened the evaluation capacity of those involved with ATE projects through training, networking opportunities, and research, including administration of the ATE Survey.
+-   **Formative Assessment Systems for ATE (FAS4ATE)** provided workshops to improve the assessment of professional development activities by ATE projects.
+-   **HIS ATE Hub** supported Hispanic serving institutions to apply for ATE funding.
+-   **Mentor-Connect** served as a mentoring and leadership development program for two-year institutions of higher education new to the ATE program.
+-   **Mentor Links** served as a mentoring initiative that supports community colleges in developing new or strengthening existing STEM technician education programs.
+-   **Mentor Up** served as a mentoring initiative that supports teams in developing and submitting a successful ATE proposal.
+-   **Project Vision** encouraged presidents of colleges new to NSF funding to apply for grant programs in the NSF Division of Undergraduate Education.
+-   **Working Partner Workshops** provided training to ATE project teams on how to effectively and sustainably collaborate with industry partners.
+
+Collectively, these `r total_funded_to_serve` projects reported the following achievements:
+
+```{r, fig.height = 2}
+icons_list <- c("&#xf109", "&#xf590")
+text_list <- c(paste0(total_webinars, " webinars engaged<br>", average_people_webinar, " engaged on average per webinar"),
+               paste0(total_people_technical_assistance, " people provided with one-on-one technical assistance"))
+colors_list <- c(color1, color2)
+
+df <- create_callout_df(icons = icons_list, text = text_list, colors = colors_list)
+
+create_callout_chart(df)
+```
+
+<!-- manual update
+All survey respondents were invited to report on the ways in which their projects served and supported the ATE program, even if that was not the main focus of their work. `r total_additional_projects_program_services_en` additional projects identified ways that their projects served the ATE community. `r additional_projects_program_services_resource_materials_en` projects developed and disseminated resource materials. `r additional_projects_program_services_workshops_en` projects held in-person workshops. `r additional_projects_program_services_webinars_en` projects offered webinars. And `r additional_projects_program_services_technical_service` projects provided technical assistance to individuals.
+-->

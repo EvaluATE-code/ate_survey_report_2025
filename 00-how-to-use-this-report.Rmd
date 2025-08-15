@@ -1,0 +1,29 @@
+# How to Use This Report {-}
+
+This report is intended for a broad audience, including ATE project staff, evaluators of ATE projects, those interested in submitting to the ATE program, NSF program officers, and others interested in learning more about advanced technological education. To encourage use of this report and translate findings into action, we have outlined how each of these audiences can use this report.
+
+#### ATE Project Staff
+
+ATE project staff, including PIs, co-PIs, and others who work on ATE-funded projects, can benefit from this report through an increased awareness of how their project fits into the larger ATE program portfolio. Reading about the activities and achievements of other projects can provide insights about the similarities and differences between their project and others’. Project staff can use this report to better understand how their project fits amidst the larger framework of ATE projects across the country. Additionally, the survey report can be used to identify potential practices to add to their current project or inspire ideas for future projects.
+
+#### ATE Evaluators
+
+ATE evaluators can benefit from understanding standard practices for evaluations of ATE projects, including types of reports produced and use of those reports. Additionally, ATE evaluators new to projects may gain insight about the types of data projects are already asked to collect in order to respond to this survey.
+
+#### ATE Program Grantseekers
+
+For those interested in submitting a proposal to the ATE program, this report provides a sense of what funded projects are already doing. A detailed understanding of ATE activities can benefit proposers in the planning stages, as well as in their final submissions to NSF. Grantseekers might use data from this report either to support the continuation of a common activity or to justify an alternative activity to fill a need or gap in ATE activities. The findings in this report may also inspire ideas for targeted research projects.
+
+#### NSF Program Officers
+
+The survey report provides a comprehensive overview of the ATE program, allowing NSF program officers to identify larger trends or needs in the ATE program. Additionally, this report can be shared with Congress as evidence of the program’s achievements.
+
+#### Others Interested in Advanced Technological Education
+
+This survey report is freely available from the EvaluATE website, open to anyone who has interest in advanced technological education. Efforts to increase courses and programs in career and technical education are not limited to the ATE program. Other academic programs or projects intended to advance career and technical education can benefit from understanding ATE project activities.
+
+#### Suggested Citation
+
+<div class="custom_citation">Marshall, V. A., Sturgis, E., Becho, L. W., Wingate, L. A., & Gullickson, A. (2024). ATE Survey: 2024 report. Kalamazoo, MI: The Evaluation Center, Western Michigan University. Retrieved from https://atesurvey.evalu-ate.org/</div>
+
+

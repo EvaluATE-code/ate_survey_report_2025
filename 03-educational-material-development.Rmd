@@ -1,0 +1,303 @@
+# Educational Material Development
+
+##### Instructors’ use of curriculum materials is believed to have three general types of outcomes: (1) improvement of educators’ pedagogical knowledge and “design capacity”; (2) increased opportunities for students to engage in “ambitious science,” aimed at developing their skills in both generation and use of scientific knowledge; and (3) improved student learning outcomes [@davis2016teachers]. The ATE program supports the creation, validation, and dissemination of educational materials in print or digital formats to be used for instructional or assessment purposes. Such materials include—but are not limited to— tests, lab experiments, instructional modules, and textbooks.
+
+##### The PIs whose projects developed educational materials were asked to report the type and number of materials they developed or adapted and how those materials were disseminated beyond their institutions.
+
+## Educational Material Development
+
+```{r 3.1_prep}
+ATE_educational_material_development_summary <- ATE_data %>% 
+  process_summary(
+    yes_no_planning_mapping,
+    'In 2020, did your ATE project create or substantially modify educational materials?'
+  )
+
+total_educational_material_development_projects <-
+  ATE_educational_material_development_summary %>% 
+  filter(yes_no_planning == "Yes") %>% 
+  pull(n)
+
+ATE_educational_material_development_type_summary <- ATE_data %>% 
+  process_summary_2(starting_with = 'Q2.14. ', names_to = "type", summary = "sum")
+
+ATE_educational_material_development_dissemination_summary <- ATE_data %>% 
+  process_summary_2(starting_with = 'Q2.14.1. ', names_to = 'dissemination', summary = "count_ones") %>% 
+  mutate(
+    dissemination = str_remove_all(dissemination, "^Dissemination "), 
+    pct = count_ones/total_educational_material_development_projects*100
+    )
+
+ATE_disseminate_earlier_summary <- ATE_data %>% 
+  process_summary(
+    yes_no_planning_mapping,
+    'In 2020, did your ATE project disseminate educational materials previously created (in 2019 or earlier) by your project?'
+  )
+
+total_disseminate_earlier <-
+  ATE_disseminate_earlier_summary %>% 
+  filter(yes_no_planning == "Yes") %>% 
+  pull(n)
+
+ATE_diseeminate_earlier_type_summary <- ATE_data %>% 
+  process_summary_2(starting_with = 'Q2.15. ', names_to = 'type', summary = 'count_ones') %>% 
+  mutate(pct = count_ones/total_disseminate_earlier*100)
+
+ATE_disseminate_earlier_dissemination_summary <- ATE_data %>% 
+  process_summary_2(starting_with = 'Q2.15.1. ', names_to = 'dissemination', summary = 'count_ones') %>% 
+  mutate(pct = count_ones/total_disseminate_earlier*100)
+
+ATE_educational_material_development_keep_track_summary <- ATE_data %>% 
+  process_summary(
+    yes_no_planning_mapping,
+    'Q2.16. Does your ATE project keep track of what other institutions are using the program and/or course curriculum created by your project?'
+  )
+```
+
+```{r 3.1_inline}
+# paragraph 1
+total_educational_material_development_projects_pct_en <-
+  ATE_educational_material_development_summary %>% 
+  filter(yes_no_planning == "Yes") %>% 
+  pull(pct) %>% 
+  round_and_english()
+total_educational_material_development <-
+  ATE_educational_material_development_type_summary %>% 
+  pull(sum) %>% 
+  sum() %>% 
+  round_to_ten()
+
+# callout graph
+assessment_activities <- 
+  ATE_educational_material_development_type_summary %>%
+  filter(str_starts(type, "Assessment activities")) %>%
+  pull(sum) %>% 
+  round_to_ten()
+module_instructional_unit <-
+  ATE_educational_material_development_type_summary %>%
+  filter(str_starts(type, "Module")) %>%
+  pull(sum) %>% 
+  round_to_ten()
+lesson_plan <-
+  ATE_educational_material_development_type_summary %>%
+  filter(str_starts(type, "Lesson")) %>%
+  pull(sum) %>% 
+  round_to_ten()
+lab_experiment <-
+  ATE_educational_material_development_type_summary %>%
+  filter(str_starts(type, "Lab")) %>%
+  pull(sum) %>% 
+  round_to_ten()
+curriculum <-
+  ATE_educational_material_development_type_summary %>%
+  filter(str_starts(type, "Curriculum for a course")) %>%
+  pull(sum) %>% 
+  round_to_ten()
+case_study <-
+  ATE_educational_material_development_type_summary %>%
+  filter(str_starts(type, "Case study")) %>%
+  pull(sum) %>% 
+  round_to_ten()
+
+# paragraph 2
+instructor_guide <- 
+  ATE_educational_material_development_type_summary %>%
+  filter(str_starts(type, "Instructor guide")) %>%
+  pull(sum) %>% 
+  round_to_ten()
+# interactive_simulation <-
+#   ATE_educational_material_development_type_summary %>%
+#   filter(str_starts(type, "Interactive")) %>%
+#   pull(sum) %>% 
+#   round_to_ten()
+case_studies <-
+  ATE_educational_material_development_type_summary %>%
+  filter(str_starts(type, "Case study")) %>%
+  pull(sum) %>% 
+  round_to_ten()
+program_curriculum <-
+  ATE_educational_material_development_type_summary %>%
+  filter(str_starts(type, "Curriculum for a program")) %>%
+  pull(sum) %>% 
+  round_to_ten()
+textbook <-
+  ATE_educational_material_development_type_summary %>%
+  filter(str_starts(type, "Textbook")) %>%
+  pull(sum) %>% 
+  round_to_ten()
+other_educational_material <-
+  ATE_educational_material_development_type_summary %>%
+  filter(str_starts(type, "Other")) %>%
+  pull(sum) %>% 
+  round_to_ten()
+
+# paragraph 3
+dissemination_projects_websites_pct <- 
+  ATE_educational_material_development_dissemination_summary %>%
+  filter(str_starts(dissemination, "Project webpage")) %>%
+  pull(pct) %>% 
+  round2()
+dissemination_conferences_pct <- 
+  ATE_educational_material_development_dissemination_summary %>%
+  filter(str_starts(dissemination, "Conference")) %>%
+  pull(pct) %>% 
+  round2()
+dissemination_workshops_pct <- 
+  ATE_educational_material_development_dissemination_summary %>%
+  filter(str_starts(dissemination, "Workshop")) %>%
+  pull(pct) %>% 
+  round2()
+dissemination_ATE_Central_pct <- 
+  ATE_educational_material_development_dissemination_summary %>%
+  filter(str_starts(dissemination, "ATE Central")) %>%
+  pull(pct) %>% 
+  round2()
+dissemination_clearinghouse_pct <- 
+  ATE_educational_material_development_dissemination_summary %>%
+  filter(str_detect(dissemination, "learinghouse")) %>%
+  pull(pct) %>% 
+  round2()
+dissemination_clearinghouse_pct <- 
+  ATE_educational_material_development_dissemination_summary %>%
+  filter(str_detect(dissemination, "Commercial publication")) %>%
+  pull(pct) %>% 
+  round2()
+dissemination_other_en <- 
+  ATE_educational_material_development_dissemination_summary %>%
+  filter(str_starts(dissemination, "Other")) %>%
+  pull(count_ones) %>% 
+  round_and_english()
+
+# paragraph 4
+total_disseminate_earlier_en <-
+  ATE_disseminate_earlier_summary %>% 
+  filter(yes_no_planning == "Yes") %>% 
+  pull(n) %>% 
+  round_and_english()
+disseminate_early_course_curriculum_pct <- 
+  ATE_diseeminate_earlier_type_summary %>%
+  filter(str_detect(type, "Curriculum for a course")) %>%
+  pull(pct) %>% 
+  round2()
+disseminate_early_instructional_unit_pct <- 
+  ATE_diseeminate_earlier_type_summary %>%
+  filter(str_detect(type, "Module")) %>%
+  pull(pct) %>% 
+  round2()
+disseminate_early_lab_experiment_pct <- 
+  ATE_diseeminate_earlier_type_summary %>%
+  filter(str_detect(type, "Lab experiment")) %>%
+  pull(pct) %>% 
+  round2()
+disseminate_early_program_curriculum_pct <- 
+  ATE_diseeminate_earlier_type_summary %>%
+  filter(str_detect(type, "Curriculum for a program")) %>%
+  pull(pct) %>% 
+  round2()
+disseminate_early_instructor_guides_pct <- 
+  ATE_diseeminate_earlier_type_summary %>%
+  filter(str_detect(type, "Instructor")) %>%
+  pull(pct) %>% 
+  round2()
+disseminate_early_lesson_plans_pct <- 
+  ATE_diseeminate_earlier_type_summary %>%
+  filter(str_detect(type, "Lesson")) %>%
+  pull(pct) %>% 
+  round2()
+disseminate_early_assessment_activity_pct <- 
+  ATE_diseeminate_earlier_type_summary %>%
+  filter(str_detect(type, "Assessment activity")) %>%
+  pull(pct) %>% 
+  round2()
+
+
+# paragraph 5
+dissemination_early_projects_websites_pct <- 
+  ATE_disseminate_earlier_dissemination_summary %>%
+  filter(str_starts(dissemination, "Project webpage")) %>%
+  pull(pct) %>% 
+  round2()
+dissemination_early_workshop_pct <- 
+  ATE_disseminate_earlier_dissemination_summary %>%
+  filter(str_starts(dissemination, "Workshop")) %>%
+  pull(pct) %>% 
+  round2()
+dissemination_early_conference_pct <- 
+  ATE_disseminate_earlier_dissemination_summary %>%
+  filter(str_starts(dissemination, "Conference")) %>%
+  pull(pct) %>% 
+  round2()
+
+# paragraph 6
+total_keep_track_en <-
+  ATE_educational_material_development_keep_track_summary %>% 
+  filter(yes_no_planning == 'Yes') %>% 
+  pull(n) %>% 
+  round_and_english()
+
+# callout graph
+institutions_using_program <- ATE_data %>%
+  summarize(total = sum(`Q2.16.1. How many other institutions are using the program and/or course curriculum created by your project?`, na.rm = TRUE)) %>%
+  pull(total) %>% 
+  round_to_ten()
+total_keep_track <-
+  ATE_educational_material_development_keep_track_summary %>% 
+  filter(yes_no_planning == 'Yes') %>% 
+  pull(n)
+total_developed_and_or_disseminated <- 
+  ATE_educational_material_development_keep_track_summary %>% 
+  pull(n) %>% 
+  sum()
+
+```
+
+
+
+#### `r total_educational_material_development_projects_pct_en` percent of ATE projects created or substantially modified educational materials.
+
+##### `r total_educational_material_development_projects` ATE projects developed or modified over `r total_educational_material_development` educational materials in 2024.
+
+
+```{r, fig.height = 6}
+
+icons_list <- c("&#xf15c", "&#xf303", "&#xf0c3", "&#xf51c", "&#xf02d", "&#xf002")
+text_list <- c(paste0(assessment_activities, " Assessment activities or tests"),
+               paste0(module_instructional_unit, " Modules or instructional units"),
+               paste0(lab_experiment, " Lab experiments"),
+               paste0(lesson_plan, " Lessons or lesson plans"),
+               paste0(curriculum, " Course curricula"),
+               paste0(case_study, " Case studies or problem sets"))
+colors_list <- c(color1, color2, color3, color4, color5, color6)
+
+df <- create_callout_df(icons = icons_list, text = text_list, colors = colors_list)
+
+
+create_callout_chart(df)
+```
+
+Additional materials developed include `r instructor_guide` instructor guides,`r case_studies` case studies or problem sets, `r program_curriculum` program curricula, and `r textbook` textbooks. ATE projects also developed `r other_educational_material` other types of materials.
+
+
+\newpage
+
+**Educational materials created in 2024 by ATE projects were primarily disseminated through the projects’ websites (`r dissemination_projects_websites_pct`%) and conference presentations or booths (`r dissemination_conferences_pct`%). This was followed by workshops (`r dissemination_workshops_pct`%), ATE Central (the ATE program’s archiving platform; `r dissemination_ATE_Central_pct`%), and commercial publication (`r dissemination_clearinghouse_pct`%).**
+
+**`r total_disseminate_earlier_en` ATE projects disseminated educational materials that were created prior to 2024.** These materials were primarily course curricula (`r disseminate_early_course_curriculum_pct`%), modules or instructional units (`r disseminate_early_instructional_unit_pct`%), and program curricula (`r disseminate_early_program_curriculum_pct`%). ATE projects also reported continued dissemination of lab experiments (`r disseminate_early_lab_experiment_pct`%), assessment activities or tests (`r disseminate_early_assessment_activity_pct`%), and lesson plans (`r disseminate_early_lesson_plans_pct`%) created in previous years.
+
+Conference presentations or booths (`r dissemination_early_conference_pct`%) was the most prominent avenue for disseminating materials created in previous years. `r dissemination_early_workshop_pct`% distributed materials at workshops and `r dissemination_early_projects_websites_pct`% on a project webpage or website.
+
+
+`r total_keep_track_en` of the <!--`r total_developed_and_or_disseminated`--> 153 projects that developed and/or disseminated educational materials kept track of which other institutions are using their program and/or course curricula.
+
+```{r, fig.height = 1}
+icons_list <- c("&#xf19c")
+text_list <- c(paste0(institutions_using_program, " institutions used program and/or course curricula created by<br>", total_keep_track , " ATE projects"))
+colors_list <- c(color1)
+
+df <- create_callout_df(icons = icons_list, text = text_list, colors = colors_list)
+
+create_callout_chart(df)
+```
+
+
+

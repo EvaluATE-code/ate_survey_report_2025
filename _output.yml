@@ -1,0 +1,31 @@
+bookdown::gitbook:
+  includes:
+    before_body: assets/hero-image.html
+  css: assets/style.css
+  cache: .cache
+  anchor_sections: false
+  config:
+    toc:
+      collapse: section
+      before: |
+        <li class="toc-logo"><a href="./"><img src="images/evaluate.png"></a></li>
+      after: |
+        <li><a href="https://evalu-ate.org/" target="blank">EvaluATE</a></li>
+    download:
+        - ["_main.pdf", "PDF"]
+    fontsettings: null
+    info: false
+    sharing:
+      facebook: true
+      twitter: true
+      linkedin: true
+      all: ['facebook', 'twitter', 'linkedin', 'instapaper']
+
+bookdown::pdf_book:
+  includes:
+    in_header: latex/preamble.tex
+  latex_engine: xelatex
+  citation_package: biblatex
+  keep_tex: yes
+
+

@@ -1,0 +1,194 @@
+# Evaluation
+
+##### Each ATE project is required to have an evaluation component to assess its quality and effectiveness. Evaluation of ATE and other NSF-funded projects is intended to serve two distinct purposes: (1) Produce information that can be used to improve a project as it is being implemented and (2) Determine and document a project’s achievements [@frechtling2010user].
+
+##### ATE PIs were asked about their evaluators and interactions with them, as well as their projects’ use and dissemination of evaluation results.
+
+## Evaluation
+
+```{r 11.1_prep}
+ATE_evaluation_summary <- 
+  ATE_data %>% 
+  process_summary(
+    yes_no_planning_mapping,
+    'Q10.1. Did your project have an evaluator in 2020?'
+  )
+
+evaluator_type_mapping = data.frame(
+  number = 1:3,
+  evaluator_type = c('External evaluator only', 'Internal evaluator','Both internal and external evaluators')
+)
+
+ATE_evaluator_type_mapping <- ATE_data %>% 
+  process_summary(
+    evaluator_type_mapping,
+    'Q10.2. Which type of evaluator(s) did your project have in 2020?'
+  )
+
+evaluator_interaction_frequency_mapping <- data.frame(
+  number = 1:5,
+  evaluator_interaction_frequency = c(
+    'Rarely (annually or semiannually)', 
+    'Infrequently (not every month but at least quarterly)',
+    'Occasionally (more often than quarterly and as much as monthly)',
+    'Often (more often than monthly and as much as biweekly)',
+    'Continually (very nearly weekly, weekly, or more often)'
+  )
+)
+
+ATE_evaluator_interaction_frequency_summary <-
+  ATE_data %>% 
+  process_summary(
+    evaluator_interaction_frequency_mapping,
+    "Q10.3. How frequently did your external evaluator interact with your project's staff (e.g., by email, teleconference, face-to-face) in 2020?"
+  )
+
+evaluation_report_type_mapping <- data.frame(
+  number = 1:4,
+  evaluator_interaction_frequency = c(
+    'Written', 
+    'Oral',
+    'Both oral and written',
+    'None'
+  )
+)
+
+ATE_evaluation_report_type_summary <-
+  ATE_data %>% 
+  process_summary(
+    evaluation_report_type_mapping,
+    'Q10.4. What type of report did you receive from your evaluator in 2020?'
+)
+
+
+evaluation_caused_goals_changes_total <-
+  ATE_data %>%
+  select(starts_with('Q10.8. '), -ends_with('Text')) %>%
+  filter(rowSums(. == 1, na.rm = TRUE) > 0) %>%
+  nrow()
+
+ATE_evaluation_shared_results_to_summary <- ATE_data %>% 
+  process_summary_2(starting_with = 'Q10.8. ', names_to = 'shared_results_to', summary = 'count_ones') %>% 
+  mutate(pct = count_ones/evaluation_caused_goals_changes_total * 100)
+```
+
+```{r 11.1_inline}
+# paragraph 1
+projects_engaged_evaluator_pct_en <- 
+  ATE_evaluation_summary %>%
+  filter(yes_no_planning == 'Yes') %>%
+  pull(pct) %>%
+  round_and_english()
+
+# paragraph 2
+projects_engaged_evaluator_en <- 
+  ATE_evaluation_summary %>%
+  filter(yes_no_planning == 'Yes') %>%
+  pull(n) %>%
+  round_and_english()
+no_projects_engaged_evaluator <- 
+  ATE_evaluation_summary %>% 
+  filter(yes_no_planning == 'No') %>%
+  pull(n) %>%
+  round2()
+no_projects_engaged_evaluator_first_year_en <- 
+  ATE_data %>%
+  filter(`Q1.2. Was 2020 the first year of your current grant?` == 1, 
+         `Q10.1. Did your project have an evaluator in 2020?` == 5) %>%
+  nrow()
+projects_engaged_evaluator <- 
+  ATE_evaluation_summary %>%
+  filter(yes_no_planning == 'Yes') %>%
+  pull(n) %>%
+  round2()
+external_evaluator_pct <- 
+  ATE_evaluator_type_mapping %>%
+  filter(evaluator_type == 'External evaluator only') %>%
+  pull(pct) %>%
+  round2()
+internal_and_external_evaluator_pct <- 
+  ATE_evaluator_type_mapping %>%
+  filter(evaluator_type == 'Both internal and external evaluators') %>%
+  pull(pct) %>%
+  round2()
+internal_evaluator_pct <- 
+  ATE_evaluator_type_mapping %>%
+  filter(evaluator_type == 'Internal evaluator') %>%
+  pull(pct) %>%
+  {2} %>%
+  round2()
+
+# paragraph 3
+continually_or_often <- 
+  ATE_evaluator_interaction_frequency_summary %>%
+  filter(str_detect(evaluator_interaction_frequency, "^Continually") | 
+         str_detect(evaluator_interaction_frequency, "^Often")) %>%
+  pull(pct) %>%
+  sum() %>% 
+  round_and_english()
+occasionally <- 
+  ATE_evaluator_interaction_frequency_summary %>%
+  filter(str_detect(evaluator_interaction_frequency, "^Occasionally")) %>%
+  pull(pct) %>%
+  sum() %>% 
+  round2()
+infrequently <- 
+  ATE_evaluator_interaction_frequency_summary %>%
+  filter(str_detect(evaluator_interaction_frequency, "^Infrequently")) %>%
+  pull(pct) %>%
+  sum() %>% 
+  round2()
+
+# figure 22
+total_evaluation_report_type <- sum(ATE_evaluation_report_type_summary$n)
+
+# paragraph 4
+total_received_evaluation_report <- ATE_evaluation_report_type_summary %>% 
+  filter(evaluator_interaction_frequency != 'None') %>% 
+  pull(n) %>% 
+  sum()
+# evaluation_caused_implementation_changes_pct <-
+#   ATE_data %>%
+#   filter(`Q10.4. What type of report did you receive from your evaluator in 2020?` != 'None') %>%
+#   select(starts_with('Q10.6. '), -ends_with('Text')) %>%
+#   filter(rowSums(!is.na(.)) != 0) %>%
+#   nrow() / total_received_evaluation_report * 100
+# evaluation_caused_goals_changes_pct <-
+#   ATE_data %>%
+#   filter(`Q10.4. What type of report did you receive from your evaluator in 2020?` != 'None') %>%
+#   select(starts_with('Q10.7. '), -ends_with('Text')) %>%
+#   filter(rowSums(!is.na(.)) > 0) %>%
+#   nrow() / total_received_evaluation_report * 100
+```
+
+#### `r projects_engaged_evaluator_pct_en` percent of ATE projects engaged an evaluator.
+
+`r projects_engaged_evaluator_en` ATE projects had evaluators in 2023. Of the `r no_projects_engaged_evaluator` PIs who said they did not have evaluators, 12 were in their first year of funding. **Of the `r projects_engaged_evaluator` projects with evaluators, `r external_evaluator_pct`% reported having an external evaluator, with `r internal_and_external_evaluator_pct`% having both an internal and external evaluator and `r internal_evaluator_pct`% having only an internal evaluator.**
+
+`r continually_or_often` percent of PIs reported that they interacted with their evaluators continually (at least once a week) or often (two or three times a month), while `r occasionally`% interacted with their evaluators occasionally (more often than quarterly) and `r infrequently`% did so infrequently or rarely (once a quarter or less).
+
+<!-- manual update -->
+##### More than half of ATE projects received `r colorize('both oral and written', color1)` evaluation reports.
+<!-- manual update -->
+
+```{r fig11a1, fig.cap = paste0("Types of evaluation report received by ATE projects (n=", total_evaluation_report_type, ")"), fig.height=2}
+set_color_palette(ATE_evaluation_report_type_summary)
+create_bar_chart_single(ATE_evaluation_report_type_summary, pct, evaluator_interaction_frequency,  elevate_labels = FALSE)
+
+```
+
+<!-- manual update -->
+**Of the `r total_received_evaluation_report` PIs who received evaluation reports, 53% indicated their project’s evaluation caused them to make a change in implementing their project,** and 46% indicated that the evaluation caused them to make a change in their project’s goals, objectives, or target audience.
+<!-- manual update -->
+
+\newpage
+
+<!-- manual update -->
+##### Most projects shared their evaluation results with `r colorize('NSF program officers', color1)`, their `r colorize('faculty or staff at their host institution', color2)`, and `r colorize('executive administrators', color3)`.
+<!-- manual update -->
+
+```{r fig11a2, fig.cap = paste0("Percentage of projects that shared their evaluation results with various audiences (n=", evaluation_caused_goals_changes_total, ")"), fig.height = length(ATE_evaluation_shared_results_to_summary$shared_results_to) * 0.75}
+set_color_palette(ATE_evaluation_shared_results_to_summary)
+create_bar_chart(ATE_evaluation_shared_results_to_summary, pct, shared_results_to)
+```
+

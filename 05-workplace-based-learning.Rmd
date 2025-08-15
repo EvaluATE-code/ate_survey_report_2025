@@ -1,0 +1,235 @@
+# Workplace-Based Learning
+
+##### Workplace-based learning includes any situation in which a student gains experience at a work site, such as through internships, apprenticeships, co-op learning, and job shadowing. Research indicates that such experiences contribute to students’ confidence in their abilities and enhance employability skills, such as problem-solving, communication, and professionalism [@jackson2014employability].
+
+##### ATE PIs whose projects offered workplace-based learning were asked about key characteristics of the workplace-based learning opportunities they offered and about the number of students who participated in these activities in 2024.
+
+## Workplace-Based Learning
+
+```{r 5.1_prep}
+# If an ATE project only reported field trips, it didn't offer true workplace-based learning
+# The code below adds the column `Only reported field trips` (1 if only field trips were reported)
+# To count projects offering workplace-based learning, filter for is.na(`Only reported field trips`)
+ATE_data <- ATE_data %>%
+  mutate(
+    `Only reported field trips` = ifelse(
+      `Q3.3. Field trips to business/industry sites` == 1 &
+      rowSums(select(ATE_data, starts_with('Q3.3. ')) == 1, na.rm = TRUE) == 1,
+      1,
+      NA
+    )
+  )
+
+total_wbl <- ATE_data %>% 
+  filter(`In 2020, did your ATE project offer workplace-based learning to students?` == 1, is.na(`Only reported field trips`)) %>%
+  summarize(total = n()) %>%
+  pull(total)
+
+ATE_wbl_offered_summary <- ATE_data %>%
+  process_summary_2(starting_with = 'Q3.3. ', names_to = 'wbl_offered', summary = 'count_ones') %>% 
+  mutate(pct = count_ones/total_wbl * 100)
+
+ATE_wbl_student_participation_summary <- ATE_data %>%
+  process_summary_2(starting_with = 'Q3.5. ', names_to = 'type', summary = 'sum') 
+
+
+```
+
+```{r 5.1_inline}
+# paragraph 1
+wbl_pct_en <- round_and_english(total_wbl/total_ATE_projects * 100)
+
+# paragraph 2
+total_students_wbl <- ATE_wbl_student_participation_summary %>% 
+  pull(sum) %>% 
+  sum() %>% 
+  round_to_ten()
+
+only_field_trips <- ATE_data %>% 
+  filter(`Only reported field trips` == 1) %>% 
+  summarize(total = n()) %>%
+  pull(total)
+
+wbl_pct <- round2(total_wbl/total_ATE_projects * 100)
+
+
+# paragraph 3
+weekly_hours_medians <- ATE_data %>%
+  select(starts_with('Q3.4. Hours')) %>%
+  summarize(across(everything(), ~ median(.x, na.rm = TRUE))) 
+min_weekly_hours_median <- weekly_hours_medians %>%
+  unlist() %>%
+  min(na.rm = TRUE) %>% 
+  round2()
+max_weekly_hours_median <- weekly_hours_medians %>%
+  unlist() %>%
+  max(na.rm = TRUE) %>% 
+  round2()
+weeks_medians <- ATE_data %>%
+  select(starts_with('Q3.4. How many weeks')) %>%
+  summarize(across(everything(), ~ median(.x, na.rm = TRUE))) 
+min_weeks_medians <- weeks_medians %>%
+  unlist() %>%
+  min(na.rm = TRUE) %>% 
+  round2()
+max_weeks_medians <- weeks_medians %>%
+  unlist() %>%
+  max(na.rm = TRUE) %>% 
+  round2()
+```
+
+#### `r wbl_pct_en` percent of ATE projects provided workplace-based learning opportunities for students.
+
+**In 2024, `r total_students_wbl` students participated in workplace-based learning opportunities offered by `r total_wbl` ATE projects.** An additional `r only_field_trips` ATE projects reported offering field trips to business and industry sites. The `r wbl_pct`% of projects that provided workplace-based learning in 2020 excludes the `r only_field_trips` projects that only reported offering field trips.
+<!-- manual update -->
+<!-- in 2020 -->
+
+
+##### Most ATE projects offered workplace-based learning through `r colorize('internships', color1)` and `r colorize('apprenticeships', color2)`.
+<!-- manual update -->
+<!-- Most ATE projects offered workplace-based learning through *internships* and *apprenticeships*-->
+
+
+```{r fig5a1, fig.cap = paste0("Percentage of ATE projects that offered each type of workplace-based learning (n=", total_wbl, ")"), fig.height = length(filter(ATE_wbl_offered_summary, !wbl_offered %in% c('Other', 'Field trips to business/industry sites'))$wbl_offered)* 0.75}
+
+create_lollipop_chart(
+  filter(ATE_wbl_offered_summary, !wbl_offered %in% c('Other', 'Field trips to business/industry sites')),
+  pct,
+  wbl_offered)
+ 
+
+```
+
+
+The median number of weekly hours that students spent in a workplace-based learning activity ranged from `r min_weekly_hours_median` to `r max_weekly_hours_median`, and the median number of weeks spent in an activity ranged from `r min_weeks_medians` (job shadowing) to `r max_weeks_medians` (apprenticeships).
+
+\newpage
+
+<!-- manual update -->
+Respondents discussed a variety of benefits to both students and employers. As one respondent noted:
+
+> "The students improve their scientific communication skills and gain confidence in communicating the work that they are doing… In addition, the students learn what it takes to be successful in an industry… Finally, networking with other people in the industry is very important as many times this leads to employment in the field."
+
+<!-- manual update -->
+
+Survey respondents reported on the characteristics of the workplace-based learning their projects offered. The table shows variation both within and across activities.
+
+<!--old code
+```{r table1}
+# manual update
+# Calculate totals
+total_internships <- ATE_data %>%
+  select(starts_with('Q3.4.1.') & contains('internships')) %>%
+  filter(rowSums(!is.na(.)) > 0) %>%
+  nrow()
+
+total_job_shadowing <- ATE_data %>%
+  select(starts_with('Q3.4.1.') & contains('job shadowing')) %>%
+  filter(rowSums(!is.na(.)) > 0) %>%
+  nrow()
+
+total_externships <- ATE_data %>%
+  select(starts_with('Q3.4.1.') & contains('externship')) %>%
+  filter(rowSums(!is.na(.)) > 0) %>%
+  nrow()
+
+# Create and format ATE_wbl_characteristics
+ATE_wbl_characteristics <- ATE_data %>% 
+  select(starts_with('Q3.4.1.')) %>% 
+  summarise_all(~sum(. == 1, na.rm = TRUE)) %>% 
+  pivot_longer(cols = everything()) %>% 
+  mutate(name = str_remove_all(name, "^Q\\d{1,2}(\\.\\d+)+\\.? | \\(describe\\)$| \\(.*")) %>%
+  filter(str_detect(name, regex("Internships|Job Shadowing|Externships", ignore_case = TRUE))) %>%
+  separate(name, into = c("category", "type"), sep = " - ") %>%
+  mutate(category = factor(str_to_sentence(category), levels = c("Required by program", "Academic credit", "Course(s)", "Students received payment"))) %>%
+  pivot_wider(names_from = type, values_from = value) %>%
+  select(category, Internships, `Job shadowing`, Externships) %>%
+  arrange(category) %>%
+  column_to_rownames(var = "category") %>%
+  mutate(
+    Internships = percent(Internships / total_internships, accuracy = 1L),
+    `Job shadowing` = percent(`Job shadowing` / total_job_shadowing, accuracy = 1L),
+    Externships = percent(Externships / total_externships, accuracy = 1L)
+  ) 
+
+# Rename the rows in the first column
+rownames(ATE_wbl_characteristics) <- c("Required by program", "Academic credit", "Coupled with a course", "Received payment")
+
+# Update column names to include totals
+colnames(ATE_wbl_characteristics) <- c(
+  paste0("Internships (n=", total_internships, ")"),
+  paste0("Job Shadowing (n=", total_job_shadowing, ")"),
+  paste0("Externships (n=", total_externships, ")")
+)
+
+
+ATE_wbl_characteristics %>%
+  kbl(caption = 'Characteristics of the three most frequently reported workplace-based learning activities', align = 'c') %>%
+  kable_styling() %>%
+  row_spec(0, bold = TRUE, background = color7, color = "white") 
+# manual update
+```
+-->
+
+```{r table5.1}
+# Table 5.1: Internships, Apprenticeships, and Job Shadowing
+
+# Calculate totals
+total_internships <- ATE_data %>%
+  select(starts_with('Q3.4.1.') & contains('internships')) %>%
+  filter(rowSums(!is.na(.)) > 0) %>%
+  nrow()
+
+total_apprenticeships <- ATE_data %>%
+  select(starts_with('Q3.4.1.') & contains('apprenticeships')) %>%
+  filter(rowSums(!is.na(.)) > 0) %>%
+  nrow()
+
+total_job_shadowing <- ATE_data %>%
+  select(starts_with('Q3.4.1.') & contains('job shadowing')) %>%
+  filter(rowSums(!is.na(.)) > 0) %>%
+  nrow()
+
+# Create and format ATE_wbl_characteristics
+ATE_wbl_characteristics <- ATE_data %>% 
+  select(starts_with('Q3.4.1.')) %>% 
+  summarise_all(~sum(. == 1, na.rm = TRUE)) %>% 
+  pivot_longer(cols = everything()) %>% 
+  mutate(name = str_remove_all(name, "^Q\\d{1,2}(\\.\\d+)+\\.? | \\(describe\\)$| \\(.*")) %>% 
+  filter(str_detect(name, regex("Internships|Apprenticeships|Job Shadowing", ignore_case = TRUE))) %>% 
+  separate(name, into = c("category", "type"), sep = " - ") %>% 
+  mutate(category = factor(str_to_sentence(category), 
+                           levels = c("Required by program", 
+                                      "Academic credit", 
+                                      "Course(s)", 
+                                      "Students received payment"))) %>% 
+  pivot_wider(names_from = type, values_from = value) %>% 
+  select(category, Internships, Apprenticeships, `Job shadowing`) %>% 
+  arrange(category) %>% 
+  column_to_rownames(var = "category") %>% 
+  mutate(
+    Internships = percent(Internships / total_internships, accuracy = 1L),
+    Apprenticeships = percent(Apprenticeships / total_apprenticeships, accuracy = 1L),
+    `Job shadowing` = percent(`Job shadowing` / total_job_shadowing, accuracy = 1L)
+  ) 
+
+# Rename the rows in the first column
+rownames(ATE_wbl_characteristics) <- c("Required by program", 
+                                       "Academic credit", 
+                                       "Coupled with a course", 
+                                       "Received payment")
+
+# Update column names to include totals
+colnames(ATE_wbl_characteristics) <- c(
+  paste0("Internships (n=", total_internships, ")"),
+  paste0("Apprenticeships (n=", total_apprenticeships, ")"),
+  paste0("Job Shadowing (n=", total_job_shadowing, ")")
+)
+
+ATE_wbl_characteristics %>%
+  kbl(caption = 'Characteristics of the three most frequently reported workplace-based learning activities', align = 'c') %>%
+  kable_styling() %>%
+  row_spec(0, bold = TRUE, background = color7, color = "white")
+```
+
+

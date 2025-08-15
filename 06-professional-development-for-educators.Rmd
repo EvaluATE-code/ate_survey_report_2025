@@ -1,0 +1,254 @@
+# Professional Development for Educators
+
+##### Community college faculty have diverse responsibilities. They design and deliver courses and are often charged with responsibilities related to student retention or institutional administration. Incoming faculty are typically subject matter experts with minimal training in pedagogy [@strickland2019impact]. Furthermore, instructors in advanced technological fields must keep pace with rapidly changing technology and workforce needs. Increasingly, secondary school teachers are being called up to play a part in building students’ STEM knowledge and skills and instilling interest in STEM careers.
+
+##### The ATE program provides support for projects to develop and deliver professional development for educators, with a focus on enhancing their “disciplinary capabilities, teaching skills, understanding of current technologies and practices, and employability skills” [@nsf2021, p. 5]. ATE PIs were asked to report on the focus, number, and length of professional development activities provided by their projects, as well as the number and type of participants and number of students subsequently impacted by those participants.
+
+## Professional Development for Educators
+
+```{r 6.1_prep}
+ATE_professional_development_summary <- ATE_data %>% 
+  process_summary(
+    yes_no_planning_mapping,
+    'In 2020, did your project provide training or professional development to current or future educators?')
+
+ATE_professional_development_length_summary = ATE_data %>% 
+  process_summary_2(starting_with = 'Q4.1. ', names_to = 'activity_length', summary = "sum") %>% 
+  mutate(pct = sum/sum(sum) * 100)
+
+# we might need this specific naming convention for figure 18
+# ATE_professional_development_length_summary = ATE_data %>% 
+#   select(starts_with('Q4.1. ')) %>% 
+#   rename(
+#     'Activities lasting less than one day' = 'Q4.1. Instructional activities of one day or less (e.g., webinar, one-day workshop) - Total Number of Activities Offered',
+#     'Activities lasting between one day and one week' = 'Q4.1. Instructional activities that lasted more than one day, but less than one week (e.g., workshop, online module) - Total Number of Activities Offered',
+#     'Activities lasting several weeks' = 'Q4.1. Instructional activities that lasted from one to several weeks (e.g., course, summer institute) - Total Number of Activities Offered',
+#     'Long-term, periodic professional development' = 'Q4.1. Long-term periodic instructional activities (e.g., internship, peer coaching) - Total Number of Activities Offered'
+#   ) %>% 
+#   summarize(across(everything(), ~ sum(.x, na.rm = TRUE))) %>% 
+#   pivot_longer(cols = everything(), names_to = 'activity_length', values_to = 'n') %>% 
+#   mutate(
+#     activity_length = fct_reorder(activity_length, n, .desc = TRUE),
+#     pct = n/sum(n) * 100
+#     )
+
+total_professional_development <- 
+  ATE_professional_development_summary %>%
+  filter(yes_no_planning == 'Yes') %>%
+  pull(n) %>%
+  round2()
+
+ATE_professional_development_areas_of_focus_summary = ATE_data %>% 
+  process_summary_2(starting_with = 'Q4.3. ', names_to = 'area_of_focus', summary = 'count_ones') %>% 
+  mutate(pct = count_ones/total_professional_development * 100)
+
+ATE_professional_development_educators_summary <- ATE_data %>%
+  select(
+    starts_with('Q4.2.') & (ends_with('Preservice Teachers') | 
+                            ends_with('High School Teachers') | 
+                            ends_with('2-Year College Faculty') | 
+                            ends_with('4-Year College Faculty') | 
+                            ends_with('Other or Unknown'))
+  ) %>% 
+  pivot_longer(
+    cols = everything(),
+    names_to = c(".value"),
+    names_pattern = "(Preservice Teachers|High School Teachers|2\\-Year College Faculty|4\\-Year College Faculty|Other or Unknown)$"
+  ) %>% 
+  summarize(across(everything(), ~ sum(.x, na.rm = TRUE))) %>% 
+  pivot_longer(cols = everything(), names_to = 'educators', values_to = 'sum') %>% 
+  mutate(
+    educators = fct_reorder(educators, sum, .desc = TRUE),
+    pct = sum/sum(sum) * 100
+    ) %>% 
+  arrange(desc(sum))
+
+  
+```
+
+```{r 6.1_inline}
+# paragraph 1
+total_professional_development_pct_en <- 
+  ATE_professional_development_summary %>%
+  filter(yes_no_planning == 'Yes') %>%
+  pull(pct) %>%
+  round_and_english()
+
+# paragraph 2
+total_professional_development_en <- 
+  ATE_professional_development_summary %>%
+  filter(yes_no_planning == 'Yes') %>%
+  pull(n) %>%
+  round_and_english()
+total_activities <- ATE_professional_development_length_summary %>% 
+  pull(sum) %>% 
+  sum() %>% 
+  round_to_ten()
+day_or_less_pct <- 
+  ATE_professional_development_length_summary %>%
+  filter(str_detect(activity_length, 'one day or less')) %>%
+  pull(pct) %>%
+  round2()
+one_to_several_weeks_pct_en <-
+  ATE_professional_development_length_summary %>%
+  filter(str_detect(activity_length, 'one to several weeks')) %>%
+  pull(pct) %>%
+  round_and_english()
+one_day_to_one_week_pct_en <- 
+  ATE_professional_development_length_summary %>%
+  filter(str_detect(activity_length, 'one week')) %>%
+  pull(pct) %>%
+  round_and_english()
+long_term_pct <-
+  ATE_professional_development_length_summary %>%
+  filter(str_detect(activity_length, 'Long-term')) %>%
+  pull(pct) %>%
+  round2()
+
+# paragraph 3
+total_professional_development_activities <- 
+  ATE_professional_development_length_summary %>%
+  pull(sum) %>%
+  sum() %>% 
+  round_to_ten()
+
+# paragraph 4
+discipline_or_industry_pct_en <- 
+  ATE_professional_development_areas_of_focus_summary %>%
+  filter(str_detect(area_of_focus, 'Discipline')) %>%
+  pull(pct) %>%
+  round_and_english()
+pedagogy_pct <- 
+  ATE_professional_development_areas_of_focus_summary %>%
+  filter(str_detect(area_of_focus, 'Pedagogy')) %>%
+  pull(pct) %>%
+  round2()
+training_on_equipment_pct <- 
+  ATE_professional_development_areas_of_focus_summary %>%
+  filter(str_detect(area_of_focus, 'Training on')) %>%
+  pull(pct) %>%
+  round2()
+recruiement_or_retention_pct <- 
+  ATE_professional_development_areas_of_focus_summary %>%
+  filter(str_detect(area_of_focus, 'Recruitment')) %>%
+  pull(pct) %>%
+  round2()
+addressing_die_issues_pct <- 
+  ATE_professional_development_areas_of_focus_summary %>%
+  filter(str_detect(area_of_focus, 'Addressing')) %>%
+  pull(pct) %>%
+  round2()
+other_professional_skills_pct <- 
+  ATE_professional_development_areas_of_focus_summary %>%
+  filter(str_detect(area_of_focus, 'Other')) %>%
+  pull(pct) %>%
+  round2()
+
+# paragraph 5
+# two_year_college_faculty_pct_en <- 
+#   ATE_professional_development_educators_summary %>%
+#   filter(educators == '2-Year College Faculty') %>%
+#   pull(pct) %>%
+#   round_and_english()
+# four_year_college_faculty_pct <- 
+#   ATE_professional_development_educators_summary %>%
+#   filter(educators == '4-Year College Faculty') %>%
+#   pull(pct) %>%
+#   round2()
+# high_school_teachers_pct <- 
+#   ATE_professional_development_educators_summary %>%
+#   filter(educators == 'High School Teachers') %>%
+#   pull(pct) %>%
+#   round2()
+# preservice_pct <- 
+#   ATE_professional_development_educators_summary %>%
+#   filter(educators == 'Preservice Teachers') %>%
+#   pull(pct) %>%
+#   round2()
+# other_educators_pct <- 
+#   ATE_professional_development_educators_summary %>%
+#   filter(educators == 'Other or Unknown') %>%
+#   pull(pct) %>%
+#   round2()
+
+# callout values
+total_educators_participated <- 
+  ATE_professional_development_educators_summary %>%
+  filter(!educators %in% c('Other or Unknown')) %>%
+  pull(sum) %>%
+  sum() %>% 
+  round_to_ten()
+total_others <- 
+  ATE_professional_development_educators_summary %>%
+  filter(educators %in% c('Other or Unknown')) %>%
+  pull(sum) %>%
+  sum() %>% 
+  round_to_ten()
+total_students_participated <- 
+  ATE_data %>%
+  summarise(total = sum(`Q4.4.1. How many students were taught by the educators who participated in the professional development offered by your ATE project in 2020?`, na.rm = TRUE)) %>%
+  pull(total) %>%
+  round_to_ten()
+total_educators_participated_n<- ATE_data %>%
+  select(
+    starts_with('Q4.2.') & (ends_with('High School Teachers') | 
+                            ends_with('2-Year College Faculty') | 
+                            ends_with('4-Year College Faculty') | 
+                            ends_with('Preservice Teachers'))
+  ) %>% 
+  filter(rowSums(!is.na(.)) > 0) %>% 
+  nrow()
+total_others_n  <- ATE_data %>%
+  select(
+    starts_with('Q4.2.') & (ends_with('Other or Unknown'))
+  ) %>% 
+  filter(rowSums(!is.na(.)) > 0) %>% 
+  nrow() 
+total_students_participated_n <- 
+  ATE_data %>%
+  select(`Q4.4.1. How many students were taught by the educators who participated in the professional development offered by your ATE project in 2020?`) %>%
+  filter(rowSums(!is.na(.)) > 0) %>% 
+  nrow()
+
+
+```
+
+#### `r total_professional_development_pct_en` percent of ATE projects provided training or professional development to current or future educators.
+
+**`r total_professional_development_en` ATE projects provided `r total_activities` training or professional development activities for educators in 2024.** Over half of these activities were a day or less in length (`r day_or_less_pct`%), including webinars and one-day workshops. `r one_day_to_one_week_pct_en` percent lasted more than one day but less than one week, including workshops and online modules.`r one_to_several_weeks_pct_en` percent lasted from one to several weeks, including courses and summer institutes. The remaining `r long_term_pct`% were long-term and periodic and included internships and peer coaching.
+<!-- manual update -->
+<!-- Over half of these activities were a day or less in length -->
+
+##### ATE projects offered `r total_professional_development_activities` professional development activities for educators in 2024.
+
+```{r fig6a1, fig.cap = paste0("Number of professional development activities for educators by length of time (n=", total_professional_development, ")"), fig.height = length(ATE_professional_development_length_summary$activity_length) * 0.75}
+set_color_palette(ATE_professional_development_length_summary)
+create_bar_chart(ATE_professional_development_length_summary, sum, activity_length, pct = FALSE)
+
+```
+
+\newpage
+
+Professional development activities focused on a range of skills and topic areas. `r discipline_or_industry_pct_en` percent focused on discipline- or industry-specific knowledge or skills, `r pedagogy_pct`% on pedagogy, and `r training_on_equipment_pct`% on training on specific equipment. Additional professional development topics reported by ATE projects included recruitment or retention of students (`r recruiement_or_retention_pct`%), addressing issues of equity, diversity, or inclusion (`r addressing_die_issues_pct`%), and other professional skills, such as leadership (`r other_professional_skills_pct`%).
+
+<!-- manual update -->
+The most common professional development audience was in the “Other or Unknown” category (50%) followed by 2-year faculty (33%). At least 16,430 students were taught by educators who participated in ATE-sponsored professional development (most likely many more, due to underreporting and projects’ inability to collect this data).
+<!-- manual update -->
+
+
+```{r, fig.height = 3}
+icons_list <- c("&#xf51c", "&#xf0c0", "&#xf501")
+text_list <- c(paste0(total_educators_participated, " educators<br>participated in ATE-sponsored professional development in 2024",
+                      " <span style='color: #bfbfbf;'>(n=", total_educators_participated_n, ")</span>"),
+               paste0(total_others, " pre-service teachers and others <br>participated in ATE-sponsored professional development in 2024",
+                      " <span style='color: #bfbfbf;'>(n=", total_others_n, ")</span>"),
+               paste0(total_students_participated, " students<br>were taught by educators who participated in ATE-sponsored<br>professional development",
+                      " <span style='color: #bfbfbf;'>(n=", total_students_participated_n, ")</span>"))
+colors_list <- c(color5, color6, color7)
+
+df <- create_callout_df(icons = icons_list, text = text_list, colors = colors_list)
+
+create_callout_chart(df)
+
+
+```

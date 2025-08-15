@@ -1,0 +1,259 @@
+# ATE Survey 2024 Highlights
+
+```{r 12.1_prep}
+ATE_students_served_by_projects_summary <- tibble(
+  activities = c("Attended academic programs", "Completed courses",
+                             "Participated in a transition program", "Received business and entrepreneurial skills development",
+                             "Participated in student competitions", "Received mentoring",
+                             "Engaged in workplace-based learning"),  
+  n = as.integer(str_replace_all(c(total_students_attended, total_students_completed_course,
+                                   total_students_transition_program, total_students_business_skills,
+                                   total_students_competition, total_students_mentoring_coaching,
+                                   total_students_wbl), ",", ""))  # Convert to integer
+) %>% 
+  mutate(activities = fct_reorder(activities, n, .desc = TRUE))
+
+ATE_professional_development_educators_summary <- ATE_data %>%
+  select(
+    starts_with('Q4.2.') & (ends_with('High School Teachers') | 
+                            ends_with('2-Year College Faculty') | 
+                            ends_with('4-Year College Faculty'))
+  ) %>% 
+  pivot_longer(
+    cols = everything(),
+    names_to = c(".value"),
+    names_pattern = "(High School Teachers|2\\-Year College Faculty|4\\-Year College Faculty)$"
+  ) %>% 
+  summarize(across(everything(), ~ sum(.x, na.rm = TRUE))) %>% 
+  pivot_longer(cols = everything(), names_to = 'educators', values_to = 'n') %>% 
+  mutate(
+    educators = fct_reorder(educators, n, .desc = TRUE),
+    n = round(n, -1),  # Round n to the nearest ten
+    pct = n/sum(n) * 100
+    ) %>% 
+  arrange(desc(n))
+
+ATE_articulation_detail_summary_updated <- ATE_articulation_detail_summary %>%
+  filter(str_detect(detail, 'Articulation')) %>%
+  group_by(detail) %>%
+  mutate(pct = (n / sum(n)) * 100,
+         detail = str_replace(detail, "Articulation agreements in place in 2020", "Agreements Maintained"),
+         detail = str_replace(detail, "Articulation agreements developed", "Agreements Developed"),
+         detail = fct_inorder(detail),
+         education = str_replace(education, "High school to Two-year college", "High school to  \n Two-year college"),
+         education = str_replace(education, "Two-year college to Four-year college", "Two-year college to  \n Four-year college"))
+
+collaboration_business <- ATE_collaboration_organizations_summary %>%
+  filter(organization == 'Business/industry') %>%
+  add_row(organization = '', pct = 100 - .$pct) %>%
+  mutate(organization = fct_inorder(organization))
+
+collaboration_college <- ATE_collaboration_organizations_summary %>%
+  filter(organization == '2- or 4-year colleges') %>%
+  add_row(organization = '', pct = 100 - .$pct) %>%
+  mutate(organization = fct_inorder(organization))
+
+
+
+total_primary_purpose_coordination <- 
+  ATE_coordination_network_summary %>%
+  filter(yes_no_planning == 'Yes') %>%
+  pull(n) 
+```
+
+
+```{r 12.1_inline}
+# 130 DEGREE PROGRAMS AND 370 COURSES
+conferences = ATE_grant_type_summary %>% 
+  filter(str_detect(grant_type, 'Conference')) %>% 
+  pull(n)
+total_projects_on_degree_program_and_courses <- ATE_data %>%
+  select(starts_with('Q2.2') & contains('Degree'),
+         starts_with('Q2.10.') & ends_with('Audience')) %>% 
+  rowwise() %>%  # Treat each row independently
+  filter(any(!is.na(c_across(everything())))) %>%  # Filter rows with at least one non-NA value
+  nrow()
+
+# 8,630 EDUCATORS
+two_year_college_faculty <- 
+  ATE_professional_development_educators_summary %>%
+  filter(str_detect(educators, '2-Year')) %>%
+  pull(n) %>%
+  round_to_ten()
+four_year_college_faculty <- 
+  ATE_professional_development_educators_summary %>%
+  filter(str_detect(educators, '4-Year')) %>%
+  pull(n) %>%
+  round_to_ten()
+
+# 39,500+ STUDENTS
+total_students_all_activities <- ATE_students_served_by_projects_summary %>% 
+  pull(n) %>% 
+  sum() %>% 
+  round_to_ten()
+
+# 630 ARTICULATION AGREEMENTS
+total_articulation_agreements_developed_maintained <- ATE_articulation_detail_summary %>% 
+  filter(str_detect(detail, 'Articulation')) %>% 
+  pull(n) %>% 
+  sum() %>% 
+  round_to_ten()
+
+students_matriculated <- ATE_articulation_detail_summary %>% 
+  filter(str_detect(detail, 'transferred')) %>% 
+  pull(n) %>% 
+  sum() %>% 
+  round_to_ten()
+
+
+total_collaborators <- ATE_collaboration_organizations_summary %>% 
+  pull(sum) %>% 
+  sum() %>% 
+  round_to_ten()
+```
+
+<!-- manual update -->
+This summary of activities and achievements of the Advanced Technology Education (ATE) program is based on the 2024 ATE Survey. Principal investigators for 97% of ATE grants (n= `r total_ATE_grants`, out of a total of 322 active ATE grants) completed the survey. Respondents represented grants supporting `r projects` projects, `r center` centers, `r conferences` conferences, and `r targeted_research` targeted research projects. 
+<!-- manual update -->
+
+\newpage
+
+##### `r colorize(paste(total_programs, "degree programs and", total_developed_courses, "courses were developed by", total_projects_on_degree_program_and_courses, "ATE projects."), color7)`
+
+<!-- manual update -->
+Most (`r certificate_pct`%) of all academic degree programs developed were certificate programs, and a majority (`r developed_courses_two_year_college_audience`%) of courses developed were at the associate degree level. 
+<!-- manual update -->
+
+
+
+```{r, fig.height = 2}
+icons_list <- c("&#xf0a3", "&#xf70e")
+text_list <- c(paste0(certificate, " certificate programs served<br>", certificate_students, " students"),
+               paste0(associate, " associate degree programs served<br>", associate_students, " students"))
+colors_list <- c(color1,color2)
+
+df <- create_callout_df(icons = icons_list, text = text_list, colors = colors_list)
+
+create_callout_chart(df)
+```
+
+##### `r colorize(paste(total_educators_participated, "educators participated in", total_activities, "professional development activities."), color7)`
+
+`r two_year_college_faculty` educators who received professional development were located at two-year colleges followed by `r four_year_college_faculty` educators at four-year colleges. 
+<!-- manual update -->
+<!-- *over* `r two_year_college_faculty` educators-->
+
+
+```{r fig.height= 2 + 0.1 * nlevels(ATE_professional_development_educators_summary$educators)}
+ATE_professional_development_educators_summary_filtered <- ATE_professional_development_educators_summary %>%
+  filter(!(educators %in% c("2-Year College Faculty", "4-Year College Faculty", "High School Teachers")))
+set_color_palette(ATE_professional_development_educators_summary)
+create_bar_chart_single(ATE_professional_development_educators_summary, n, educators, pct = FALSE)
+```
+
+\newpage
+
+##### `r colorize(paste(total_students_all_activities, "students were served by ATE projects."), color7)`
+
+ATE projects served over `r total_students_all_activities` students through a variety of activities in 2020.* ATE projects served the most students through developing or modifying academic programs, followed by courses. 
+<!-- manual update -->
+<!-- `r total_students_all_activities`*+* -->
+<!-- *over* `r total_students_all_activities` students -->
+
+```{r, fig.height = length(ATE_students_served_by_projects_summary$activities) * 0.75}
+set_color_palette(ATE_students_served_by_projects_summary)
+create_bar_chart(ATE_students_served_by_projects_summary, n, activities, pct = FALSE)
+```
+
+* Due to the structure of the survey questions, the total number of students served may not represent a count of unique students.
+
+\newpage
+
+##### `r colorize(paste(total_educational_material_development, "educational materials were developed by", total_educational_material_development_projects, "ATE projects."), color7)`
+
+Educational materials developed included assessment activities, modules or instructional units, lessons, lab experiments, curricula, case studies, instructor guides, and textbooks.
+
+```{r, fig.height = 3}
+icons_list <- c("&#xf15c", "&#xf303", "&#xf51c")
+text_list <- c(paste0(assessment_activities, " Assessment activities or tests"),
+               paste0(module_instructional_unit, " Modules or instructional units"),
+               paste0(lesson_plan, " Lessons or lesson plans"))
+colors_list <- c(color1, color2, color3)
+
+df <- create_callout_df(icons = icons_list, text = text_list, colors = colors_list)
+
+
+create_callout_chart(df)
+```
+
+
+##### `r colorize(paste(total_articulation_agreements_developed_maintained, "articulation agreements were developed or maintained by", total_articulation, "ATE projects."), color7)`
+
+`r students_matriculated` students matriculated to a higher-level education institution with the aid of an ATE-supported articulation agreement.
+
+```{r, fig.height=nlevels(ATE_articulation_detail_summary_updated$detail) * 1.6, fig.width = 8.5}
+set_color_palette(ATE_articulation_detail_summary_updated)
+create_bar_chart_proportional(ATE_articulation_detail_summary_updated, pct, detail, education)
+```
+
+\newpage
+
+##### `r colorize(paste(total_collaborators, "collaborators were engaged by ATE projects."), color7)`
+
+ATE projects most frequently collaborated with business and industry groups and other colleges and universities.
+
+```{r, fig.width = 8, fig.height = 3}
+p1 <- collaboration_business %>%
+  ggplot(aes(fill = organization, values = round(pct))) +
+  geom_waffle(size = 1, colour = "white", flip = TRUE) +
+  scale_fill_manual(guide = "none", values = c('#783a6b','#e7e6e6'))+
+  scale_x_continuous(expand = expansion(mult = c(0, .9)))+
+  annotate("text", label = paste0(round(collaboration_business$pct[1]), "% \ncollaborated with \nbusiness and \nindustry groups"),
+           x = 11, y = 10,
+           color = "#783a6b", fontface = 'bold', size = 5, hjust = 0, vjust = 1) +
+  coord_equal() +
+  theme_void()
+
+p2 <- collaboration_college %>%
+  ggplot(aes(fill = organization, values = round(pct))) +
+  geom_waffle(size = 1, colour = "white", flip = TRUE) +
+  scale_fill_manual(guide = "none", values = c(color1,'#e7e6e6'))+
+  scale_x_continuous(expand = expansion(mult = c(0, .9)))+
+  annotate("text", label = paste0(round(collaboration_college$pct[1]), "% \ncollaborated with \nother two- and \nfour-year colleges"),
+           x = 11, y = 10,
+           color = color1, fontface = 'bold', size = 5, hjust = 0, vjust = 1) +
+  coord_equal() +
+  theme_void()
+
+p1 + p2
+```
+
+
+
+
+##### `r colorize("Other activities were conducted by ATE projects in 2023 in support of advanced technological education.", color7)`
+<!-- MANUAL UPDATE -->
+
+ATE projects engaged in a wide range of activities. More information about those listed below and others can be found in the full report.
+
+
+```{r, fig.height = 4}
+
+icons_list <- c("&#xe068", "&#xf518", "&#xe4da", "&#xf1ea")
+text_list <- c(paste0(total_primary_purpose_coordination, " coordination networks operated"),
+               paste0(total_research_studies, " research studies conducted"),
+               paste0(total_funded_conferences, " conferences hosted"),
+               paste0(total_publications, " publications developed"))
+colors_list <- c(color2, color3, color4, color5)
+
+df <- create_callout_df(icons = icons_list, text = text_list, colors = colors_list)
+
+
+create_callout_chart(df)
+
+
+
+
+
+```
+

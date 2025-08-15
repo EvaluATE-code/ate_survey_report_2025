@@ -1,0 +1,1016 @@
+# Academic Programs, Courses, and Pathways
+
+##### The ATE program supports the creation and improvement of academic programs that lead to “an appropriate associate degree or specific occupational competency or certification” [@nsf2021, p. 5]. Examples of funded activities include creating new degree or certificate programs or courses; modifying the content, instructional strategies, or delivery modes of existing programs and courses; enhancing programs through the acquisition of instruments or equipment for use in instruction; and developing educational pathways (including articulation agreements) that facilitate students’ movement across education levels.
+
+## Academic Program Development
+
+```{r 2.1_prep}
+##################################################################################################################
+# The code encapsulated is crucial for processing the wide format structure of the Section 2 data.
+# Create an empty list to store results
+ATE_data_section_two <- ATE_data %>%
+  select(starts_with('Q2.2. ') & ends_with('Degree'),
+         starts_with('Q2.2.1. ') & ends_with('Audience'),
+         starts_with('Q2.3. ') & ends_with('Number of Students'),
+         starts_with('Q2.4. '),
+         starts_with('Q2.4.1. '),
+         starts_with('Q2.5. '),
+         starts_with('Q2.6. '), 
+         starts_with('Q2.6.1. ')) %>%
+  select(matches("(?i)program ?1")) %>%
+  head(0)
+
+# Loop through program numbers 1 to 5, and union the results 
+for (i in 1:5) {
+  # Perform the selection for each program
+  results <- ATE_data %>%
+    select(starts_with('Q2.2. ') & ends_with('Degree'),
+           starts_with('Q2.2.1. ') & ends_with('Audience'),
+           starts_with('Q2.3. ') & ends_with('Number of Students'),
+           starts_with('Q2.4. '),
+           starts_with('Q2.4.1. '),
+           starts_with('Q2.5. '),
+           starts_with('Q2.6. '),
+           starts_with('Q2.6.1. ')) %>%
+    select(matches(paste0("(?i)program ?", i)))  # Change program number dynamically
+
+  # Append the result to the list
+  ATE_data_section_two <- rbind(ATE_data_section_two, setNames(results, names(ATE_data_section_two)))
+}
+##################################################################################################################
+
+ATE_create_modify_program_summary <- ATE_data %>% 
+  process_summary(
+    yes_no_planning_mapping, 
+    'Program Development In 2020, did your ATE project create or substantially modify an academic degree or certificate program?'
+  )
+
+degree_mapping <- data.frame(
+  number = 1:4,
+  degree = c(
+    "Certificates", #1
+    "Associate degree", #2
+    "Bachelor's degree", #3
+    "Other") #4
+)
+
+ATE_program_degree_summary <- ATE_data_section_two %>%
+  process_summary(
+    degree_mapping,
+    'Q2.2. Program 1 Degree'
+  )
+
+ATE_program_degree_students_summary <- ATE_data_section_two %>%
+  inner_join(degree_mapping, by = c("Q2.2. Program 1 Degree" = "number")) %>%
+  group_by(degree) %>%
+  summarise(
+    audience = sum(`Q2.3. Program 1 Number of Students`, na.rm = TRUE)
+  )
+
+# for completed
+ATE_program_degree_completed_summary <- ATE_data_section_two %>%
+  inner_join(degree_mapping, by = c("Q2.2. Program 1 Degree" = "number")) %>%
+  filter(`Q2.6. Program 1 complete` == 1) %>% # Q2.6. == 1 means that students completed the program
+  group_by(degree) %>%
+  summarise(
+    completed = sum(`Q2.6.1. Program 1 Number Completed`, na.rm = TRUE), # Sum with NA values removed
+    n = n()
+  )
+
+total_create_modify_programs <-
+  ATE_create_modify_program_summary %>% 
+  filter(yes_no_planning == 'Yes') %>% 
+  pull(n)
+
+# for 2021, we use Q2.8.
+# ATE_student_recruitment_summary <- ATE_data %>% 
+#   process_summary_2(starting_with = 'Q2.8. ', names_to = 'student_recruitment', summary = "count_ones") %>% 
+#   mutate(pct = count_ones/total_create_modify_programs * 100)
+
+
+# for 2022, we use Q1.12.
+ATE_student_recruitment_summary <- ATE_data %>%
+  filter(`Program Development In 2020, did your ATE project create or substantially modify an academic degree or certificate program?` == 1) %>% 
+  process_summary_2(starting_with = 'Q1.12. ', names_to = 'student_recruitment', summary = "count_ones", remove_hyphen = FALSE, remove_brackets = TRUE) %>%
+  mutate(
+    student_recruitment = fct_reorder(student_recruitment, count_ones, .desc = TRUE),
+    pct = count_ones/total_create_modify_programs * 100
+  )
+
+  
+```
+
+```{r 2.1_inline}
+# paragraph 1
+create_modify_program_pct_en <- 
+  ATE_create_modify_program_summary %>%
+  filter(yes_no_planning == 'Yes') %>%
+  pull(pct) %>%
+  round_and_english()
+
+# paragraph 2
+total_programs <- 
+  ATE_program_degree_summary %>%
+  pull(n) %>%
+  sum() 
+certificate_pct <- 
+  ATE_program_degree_summary %>%
+  filter(degree == 'Certificates') %>%
+  pull(pct) %>%
+  round2()
+associate_pct <- 
+  ATE_program_degree_summary %>%
+  filter(degree == 'Associate degree') %>%
+  pull(pct) %>%
+  round2()
+bachelors_en <- 
+  ATE_program_degree_summary %>%
+  filter(degree == "Bachelor's degree") %>%
+  pull(n) %>%
+  round_and_english()
+other_awarded <- 
+  ATE_program_degree_summary %>%
+  filter(degree == 'Other') %>%
+  pull(n) 
+total_students_attended <- ATE_data %>%
+  pivot_longer(cols = starts_with('Q2.3.')) %>%
+  pull(value) %>% 
+  sum(na.rm = TRUE) %>% 
+  round_to_ten()
+students_completed <- ATE_program_degree_completed_summary %>% 
+  pull(completed) %>% 
+  sum() %>% 
+  round_to_ten()
+completed_associate_degree <- ATE_program_degree_completed_summary %>% 
+  filter(degree == 'Associate degree') %>% 
+  pull(completed) %>% 
+  round_to_ten()
+completed_certificate <- ATE_program_degree_completed_summary %>% 
+  filter(degree == "Certificates") %>% 
+  pull(completed) %>% 
+  round_to_ten()
+average_graduated_students <- ATE_program_degree_completed_summary %>% 
+  summarize(average = sum(completed)/sum(n)) %>% 
+  pull(average) %>% 
+  round_to_ten()
+
+# callout graph
+associate <- 
+  ATE_program_degree_summary %>%
+  filter(degree == 'Associate degree') %>%
+  pull(n) %>%
+  round_to_ten()
+certificate <- 
+  ATE_program_degree_summary %>%
+  filter(degree == 'Certificates') %>%
+  pull(n) %>%
+  round_to_ten()
+associate_students <- ATE_program_degree_students_summary %>% 
+  filter(degree == 'Associate degree') %>% 
+  pull(audience) %>% 
+  round_to_ten()
+certificate_students <- ATE_program_degree_students_summary %>% 
+  filter(degree == 'Certificates') %>% 
+  pull(audience) %>% 
+  round_to_ten()
+
+# paragraph 3
+projects_emphasize_minority <- ATE_data %>%
+  filter(`Program Development In 2020, did your ATE project create or substantially modify an academic degree or certificate program?` == 1) %>% 
+  select(starts_with('Q1.12. ')) %>% 
+  # Filter rows where at least one column contains the value 1
+  filter(if_any(everything(), ~ .x == 1)) %>%
+  nrow() %>% 
+  round_and_english()
+  
+```
+
+#### `r create_modify_program_pct_en` percent of ATE projects created or substantially modified an academic program.
+
+The Committee on Science, Technology, Engineering, and Math Education’s 2018 strategic plan emphasizes expanding the number of students pursuing STEM degrees and improving access to effective STEM programs across educational levels. One of the ways that ATE responds to this call is through the development of new STEM academic programs. ATE PIs were asked to identify the degree or certificate programs that their projects created or improved with ATE funding, and characteristics of students served by those programs.
+
+<!-- manual update A total of `r total_programs` academic degree programs were developed or substantially modified by `r total_create_modify_programs` ATE projects in 2024. <!-- manual update **Most of these programs awarded certificates (`r certificate_pct`%) or associate degrees (`r associate_pct`%).**<!-- manual update  `r bachelors_en` programs awarded bachelor’s degrees, and `r other_awarded` programs provided other types of credentials. **`r total_students_attended` students attended at least one course in these academic programs**, with a total of `r students_completed` completing a program in 2020; `r completed_associate_degree` students completed an associate degree program, while `r completed_certificate` students completed a certificate program. Programs with students completing certifications or degrees in 2024 graduated an average of `r average_graduated_students` students. -->
+
+A total of 146 academic degree programs were developed or substantially modified by 78 ATE projects in 2024. **Most of these programs awarded certificates (58%) or associate degrees (36%).** Two programs awarded bachelor’s degrees,and 8 programs provided other types of credentials. **18,030 students attended at least one course in these academic programs,** with a total of 2161 completing a program in 2024; 920 students completed an associate degree program, while 1100 students completed a certificate program. Programs with students completing certifications or degrees in 2024 graduated an average of 15 students.
+
+<!-- manual update
+```{r, fig.height = 2}
+icons_list <- c("&#xf0a3", "&#xf70e")
+text_list <- c(paste0(certificate, " certificate programs served<br>", certificate_students, " students"),
+               paste0(associate, " associate degree programs served<br>", associate_students, " students"))
+colors_list <- c(color1,color2)
+
+df <- create_callout_df(icons = icons_list, text = text_list, colors = colors_list)
+
+create_callout_chart(df)
+```
+-->
+
+```{r, fig.height = 2}
+# Updated values by adding the differences
+certificate_programs <- 50 + 34
+certificate_students <- 1230 + 4580
+
+associate_programs <- 30 + 22
+associate_students <- 990 + 10362
+
+icons_list <- c("&#xf0a3", "&#xf70e")
+text_list <- c(
+  paste0(certificate_programs, " certificate programs served<br>", certificate_students, " students"),
+  paste0(associate_programs, " associate degree programs served<br>", associate_students, " students")
+)
+colors_list <- c(color1, color2)
+
+df <- create_callout_df(icons = icons_list, text = text_list, colors = colors_list)
+
+create_callout_chart(df)
+```
+
+\newpage
+
+The Committee on STEM Education’s 2024 progress report noted the persistence of labor shortages in STEM fields and underscored the importance of increasing diversity, equity, and inclusion in STEM. NSF (2024) has determined that women, persons with disabilities, and three racial and ethnic groups—Blacks, Hispanics, and American Indians or Alaskan Natives—are underrepresented in science and engineering.
+
+<!-- manual update
+##### `r projects_emphasize_minority` ATE projects out of the `r total_create_modify_programs` that developed academic degree programs emphasized recruitment of at least one of the following types of students.
+-->
+
+```{r fig2a1, fig.cap = paste0('Percentage of projects that emphasized recruitment of students from specific demographic groups (n=', total_create_modify_programs, ')'), fig.height = length(ATE_student_recruitment_summary$student_recruitment) * 0.75}
+
+set_color_palette(ATE_student_recruitment_summary)
+create_bar_chart(ATE_student_recruitment_summary, pct, student_recruitment)
+
+```
+
+## Students Served by ATE Academic Programs
+
+```{r 2.2_prep}
+
+ATE_student_characteristics_men_women_summary <- ATE_data_section_two %>%
+  inner_join(degree_mapping, by = c("Q2.2. Program 1 Degree" = "number")) %>%
+  pivot_longer(cols = matches("^Q2\\.4\\.1. "), names_to = 'gender') %>%
+  filter(str_detect(gender, "Men|Women|Other"),
+         degree %in% c("Associate degree", "Certificates")) %>%
+  group_by(degree, gender) %>%
+  summarise(total = sum(value, na.rm = TRUE), .groups = 'drop') %>%
+  group_by(degree) %>%
+  mutate(
+    total_students = sum(total),  # Total students for each degree
+    pct = total / total_students * 100,  # Percentage calculation
+    degree = case_when(           # Append total students to degree name
+      degree == "Associate degree" ~ paste0("Associate Degree Programs (", total_students, " students)"),
+      degree == "Certificates" ~ paste0("Certificate Programs (", total_students, " students)")
+    ),
+    gender = case_when(           # Simplified gender renaming
+      str_detect(gender, "Men") ~ "Men",
+      str_detect(gender, "Women") ~ "Women",
+      TRUE ~ "Other"
+    )
+  ) %>%
+  mutate(
+    degree = factor(degree, levels = unique(degree)),  # Factorize degree
+    gender = fct_reorder(gender, total)               # Reorder gender based on total
+  ) %>%
+  ungroup()
+
+  # filter(str_detect(gender, "Men|Women")) %>%
+  # mutate(
+  #   gender = if_else(str_detect(gender, "Men"), "Men", "Women"),
+  #     # Maintain order as a factor
+  # )
+
+
+# # Get just associate and certificate for black / african american
+# ATE_student_characteristics_ethnicity_summary <- ATE_student_characteristics_summary %>%
+#   # Remove gender suffix from name
+#   mutate(ethnicity = str_remove(name, " - (Men|Women|Gender Unknown|Other Gender Identities)$")) %>%
+#   # Group by degree and ethnicity
+#   group_by(degree, ethnicity) %>%
+#   summarise(total = sum(total, na.rm = TRUE), .groups = 'drop') %>% 
+#   group_by(degree) %>% 
+#   mutate(
+#     total2 = sum(total),
+#     pct = total / sum(total) * 100
+#   ) %>% 
+#   ungroup() %>% 
+#   filter(degree %in% c("Associate degree", "Certificates"))
+ATE_student_characteristics_black_hispanic_summary <- ATE_data_section_two %>%
+  inner_join(degree_mapping, by = c("Q2.2. Program 1 Degree" = "number")) %>%
+  pivot_longer(cols = matches("^Q2\\.4\\. "), names_to = 'ethnicity') %>%
+  # Remove unwanted prefixes and suffixes from ethnicity names
+  mutate(ethnicity = str_remove_all(ethnicity, "^Q(\\d+\\.)+ Program ?\\d ?")) %>%
+  filter(degree %in% c("Associate degree", "Certificates"), !str_detect(ethnicity, 'Unknown')) %>%
+  group_by(degree, ethnicity) %>%
+  summarise(total = sum(value, na.rm = TRUE), .groups = 'drop') %>%
+  group_by(degree) %>%
+  mutate(
+    subtotal = sum(total),
+    pct = total / subtotal * 100
+  ) %>%
+  filter(str_detect(ethnicity, "African American|Latino"))
+
+ 
+
+```
+
+```{r 2.2_inline}
+#paragraph 1
+total_reported_student_gender <- ATE_data_section_two %>% 
+  select(starts_with('Q2.4.1.' ), -`Q2.4.1. Program 1 Gender Identity Unknown`) %>% 
+  filter(rowSums(!is.na(.) & . != 0) > 0)  %>%
+  nrow()
+total_reported_student_gender_pct <- round2(total_reported_student_gender/total_programs * 100)
+total_reported_student_race <- ATE_data_section_two %>% 
+  select(starts_with('Q2.4. '), -`Q2.4. Program 1 Racial or Ethnic Identity Unknown`) %>%
+  filter(rowSums(!is.na(.) & . != 0) > 0) %>%
+  nrow()
+total_reported_student_race_pct <- round2(total_reported_student_race/total_programs * 100)
+
+
+
+# paragraph 2
+women_pct <- ATE_student_characteristics_men_women_summary %>%
+  summarise(pct = sum(total[gender == "Women"]) / sum(total) * 100) %>%
+  pull(pct) %>% 
+  round2()
+
+# figure 2.2
+projects_with_gender_and_associate_or_certificate <- ATE_data %>%
+  filter(
+    rowSums(
+      select(., starts_with('Q2.2.') & ends_with('Degree')) == 1 | # filter associate projects
+      select(., starts_with('Q2.2.') & ends_with('Degree')) == 2,  # filter certificate projects
+      na.rm = TRUE
+      ) > 0
+    ) %>%
+  select(
+    starts_with('Q2.4.1.' ), 
+    -contains('Unknown')
+    ) %>%                                                          # select gender columns, except unknown gender
+  filter(rowSums(!is.na(.) & . != 0) > 0) %>%                      # filter projects where there's data on gender
+  nrow()
+
+# figure 2.3
+projects_with_black_or_hispanic_and_associate_or_certificate  <- ATE_data %>%
+  filter(
+    rowSums(
+      select(., starts_with('Q2.2.') & ends_with('Degree')) == 1 | # filter associate projects
+      select(., starts_with('Q2.2.') & ends_with('Degree')) == 2,  # filter certificate projects
+      na.rm = TRUE
+      ) > 0
+    ) %>%
+  select(
+    starts_with('Q2.4.' ) & (contains('Black') | contains('Latino'))
+    ) %>%                                                          # select black and latino columns
+  filter(rowSums(!is.na(.) & . != 0) > 0) %>%                      # filter projects where there's data on gender
+  nrow()
+
+```
+
+#### Students from groups that have been historically underrepresented in STEM have similar rates of participation in the ATE program.
+<!-- manual update 
+Of the `r total_programs` academic programs that were developed or modified by ATE projects in 2024, `r total_reported_student_gender` programs (`r total_reported_student_gender_pct`%) reported data on
+student gender, and `r total_reported_student_race` programs (`r total_reported_student_race_pct`%) reported data on student race. Due to this low response rate, the numbers reported here do not represent the entire ATE program nor all `r total_create_modify_programs` ATE projects that created or substantially modified academic programs in 2024.<sup>i</sup>
+
+The gender breakdown in ATE-supported programs is similar to what is observed in STEM programs nationally. **Overall, `r women_pct`% of ATE students are women, although the proportion of women varies by education level and discipline.** According to the U.S. Department of Education, 26% of students in technical programs at two-year colleges and 14% of students who received certificates below the associate level in the U.S. are women. <sup>ii</sup>
+-->
+
+Of the 146 academic programs that were developed or modified by ATE projects in 2024, 84 programs (58%) reported data on student gender, and 81 programs (55%) reported data on student race.
+
+
+<!-- manual update 
+Due to this low response rate, the numbers reported here do not represent the entire ATE program nor all 78 ATE projects that created or substantially modified academic programs in 2024.i
+-->
+
+
+
+##### Like other STEM programs, ATE projects still face a challenge in attracting `r colorize('women to the field', color1)`.
+<!-- manual update -->
+<!-- still face a challenge in attracting -->
+
+<!-- manual update
+```{r fig2a2, fig.cap = paste0("Percentage of women and men in ATE-supported academic programs by degree level (n=", projects_with_gender_and_associate_or_certificate, ")"), fig.height=nlevels(ATE_student_characteristics_men_women_summary$degree) * 1.6, fig.width = 8.5}
+set_color_palette(ATE_student_characteristics_men_women_summary$gender)
+create_bar_chart_proportional(ATE_student_characteristics_men_women_summary, x = pct, y = degree, fill = gender)
+
+```
+-->
+
+```{r fig2a2_corrected, fig.cap = "Percentage of women and men in ATE-supported academic programs by degree level", fig.height = 2 * 1.6, fig.width = 8.5}
+# Corrected dataset with student counts included in the degree labels
+ATE_student_characteristics_men_women_summary <- data.frame(
+  degree = factor(c(
+    "Certificate programs (3,571 students)",
+    "Certificate programs (3,571 students)",
+    "Associate degree programs (5,640 students)",
+    "Associate degree programs (5,640 students)"
+  ), levels = c("Certificate programs (3,571 students)", "Associate degree programs (5,640 students)")),
+  
+  gender = factor(c("Men", "Women", "Men", "Women"), levels = c("Men", "Women")),
+  count = c(3571, 1250, 5640, 1592),
+  pct = c(74, 26, 78, 22)
+)
+
+# Use standard color setting and chart function
+set_color_palette(ATE_student_characteristics_men_women_summary$gender)
+create_bar_chart_proportional(
+  ATE_student_characteristics_men_women_summary,
+  x = pct,
+  y = degree,
+  fill = gender
+)
+```
+
+
+
+
+
+\newpage
+
+Students who identify as Black / African American or Hispanic / Latino or Latina have slightly higher representation in ATE- supported programs than they do in the general population of students across educational degrees. (See the technical notes for a full explanation of comparison sources for national data.<sup>iii</sup>)
+
+##### The percentage of students who identify as `r colorize('Black / African American', color3)` and `r colorize('Hispanic / Latino or Latina', color4)` or Latina in the ATE program mimics national trends.
+<!-- manual update -->
+<!-- mimic national trends -->
+
+
+```{r fig2a3, fig.cap = paste0("Percentage of students from underrepresented racial and ethnic minority groups in ATE-supported academic programs, compared with national rates "), fig.height=7}
+# update the numbers in national_pct = c(x,y) according to national trends
+ATE_associate_black_hispanic_summary <- ATE_student_characteristics_black_hispanic_summary %>% 
+  filter((str_starts(ethnicity, "Black") | str_starts(ethnicity, "Hispanic")) & str_starts(degree, 'Associate')) %>% 
+  mutate(ethnicity = factor(ethnicity, levels = c("Black or African American", "Hispanic or Latino/Latina"))) %>% 
+  mutate(national_pct = c(9,19),
+  pct = c(14, 21))
+
+ATE_certificate_black_hispanic_summary <- ATE_student_characteristics_black_hispanic_summary %>% 
+  filter((str_starts(ethnicity, "Black") | str_starts(ethnicity, "Hispanic")) & str_starts(degree, 'Certificate')) %>% 
+  mutate(ethnicity = factor(ethnicity, levels = c("Black or African American", "Hispanic or Latino/Latina")),
+         pct = c(11, 19)) 
+
+########################################################################
+theme_set(theme_minimal(base_family = "Calibri"))
+  theme_update(
+    axis.line = element_blank(),
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    axis.title = element_blank(),
+    panel.background = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_blank(),
+    plot.title = element_text(face = "bold"),
+    plot.margin = margin(7, 7, 7, 7)
+  )
+
+p1 <- ATE_associate_black_hispanic_summary %>% 
+  ggplot(aes(x = pct, y = ethnicity, fill = ethnicity)) +
+  ggtitle("Associate Degree Programs") +
+  stat_summary(
+    geom = "linerange", xmin = 0, xmax = 100, color = 'grey',
+    linewidth = 0.5, alpha = 0.7, show.legend = FALSE, linetype = 'dotted', fun = "mean"
+  ) +
+  geom_col(width = 0.6) +
+  geom_col(aes(x = national_pct, y = ethnicity), alpha = 0.5) +
+  scale_fill_manual(values = c('#bc4c42','#4b7f60'), guide = 'none') +
+  facet_wrap(vars(ethnicity), ncol = 1, scales = "free_y") +
+  scale_x_continuous(limits = c(0, 100), guide = "none", name = NULL, expand = c(0, 0)) + 
+  scale_y_discrete(guide = "none", expand = expansion(add = c(.8, .6))) +
+  theme(
+    strip.text = element_text(
+      hjust = 0, margin = margin(1, 0, 3, 0), 
+      size = rel(1.1)
+    )
+  )
+p1 <- p1 +
+  geom_text(
+    aes(label = paste0("  ", round2(pct), '%  '), 
+        color = pct > 4, hjust = pct > 4),
+    size = 4, fontface = "bold"
+  ) +
+  geom_text(
+    aes(x = 70, label = paste0("National Percentage of ", ethnicity, " Students: ", round2(national_pct), '%')),
+    color = c('#bc4c42','#4b7f60'), 
+    alpha = 0.7,
+    vjust = 2.5,
+    size = 3, fontface = "bold"
+  ) +
+  scale_color_manual(values = c("TRUE" = "white", "FALSE" = "black"), guide = "none")
+
+########################################################################
+
+p2 <- ATE_certificate_black_hispanic_summary %>% ggplot(aes(x = pct, y = ethnicity, fill = ethnicity)) +
+  ggtitle("Certificate Programs") +
+  stat_summary(
+    geom = "linerange", xmin = 0, xmax = 100, color = 'grey',
+    linewidth = 0.5, alpha = 0.7, show.legend = FALSE, linetype = 'dotted', fun = "mean"
+  ) +
+  geom_col() +
+  scale_fill_manual(values = c('#bc4c42','#4b7f60'), guide = 'none') +
+  facet_wrap(vars(ethnicity), ncol = 1, scales = "free_y") +
+  scale_x_continuous(limits = c(0, 100), guide = "none", name = NULL, expand = c(0, 0)) + 
+  scale_y_discrete(guide = "none", expand = expansion(add = c(.8, .6))) +
+  theme(
+    strip.text = element_text(
+      hjust = 0, margin = margin(1, 0, 3, 0), 
+      size = rel(1.1)
+    )
+  )
+
+p2 <- p2 +
+  geom_text(
+    aes(label = paste0("  ", round2(pct), '%  '), 
+        color = pct > 5, hjust = pct > 5),
+    size = 4, fontface = "bold"
+    ) +
+  scale_color_manual(values = c("TRUE" = "white", "FALSE" = "black"), guide = "none")
+
+p1 / p2
+
+```
+
+## Course Development
+
+```{r 2.3_prep}
+ATE_course_development_summary <- ATE_data %>% 
+  process_summary(
+    yes_no_planning_mapping, 
+    'In 2020, did your ATE project create or substantially modify an academic course?'
+  )
+
+ATE_offered_2020_summary <- ATE_data %>%
+  pivot_longer(starts_with('Q2.10.') & ends_with('Offered')) %>% 
+  process_summary(yes_no_planning_mapping, 'value')
+
+audience_mapping <- data.frame(
+  number = 1:4,
+  audience = c(
+    'High school', #1
+    'Two-year college', #2
+    'Four-year college', #3
+    'Other') #4
+)
+
+ATE_course_development_audience_summary <- ATE_data %>%
+  pivot_longer(starts_with('Q2.10.') & ends_with('Audience')) %>% 
+  process_summary(audience_mapping, 'value')
+
+ATE_course_development_projects_summary <- ATE_data %>%
+  select(starts_with('Q2.10.') & ends_with('Audience')) %>%
+  summarise(
+    'High school' = sum(rowSums(. == 1, na.rm = TRUE) > 0, na.rm = TRUE),
+    'Two-year college' = sum(rowSums(. == 2, na.rm = TRUE) > 0, na.rm = TRUE),
+    'Four-year college' = sum(rowSums(. == 3, na.rm = TRUE) > 0, na.rm = TRUE),
+    'Other' = sum(rowSums(. == 4, na.rm = TRUE) > 0, na.rm = TRUE)
+  ) %>%
+  pivot_longer(cols = everything(), names_to = "audience", values_to = "n") %>% 
+  mutate(pct = n/sum(n) *100)
+
+delivery_mode_mapping <- data.frame(
+  number = 1:4,
+  delivery_mode = c(
+    'Face-to-Face', #1
+    'Online', #2
+    'Online', #3
+    'Hybrid') #4
+)
+
+ATE_course_development_delivery_mode_summary <- ATE_data %>% 
+  select(matches("^Q2\\.10\\. Course \\d{1,2} Audience|^Q2\\.12\\. Program \\d{1,2}")) %>% 
+  pivot_longer(
+    col = everything(),
+    names_to = c(".value"), # Use '.value' to keep the data in two main columns
+    names_pattern = "(^Q2\\.10\\.|^Q2\\.12\\.)"
+  ) %>% 
+  left_join(audience_mapping, by = c("Q2.10." = "number")) %>% 
+  left_join(delivery_mode_mapping, by = c("Q2.12." = "number")) %>% 
+  filter(!is.na(audience) & !is.na(delivery_mode) & (audience != "Other")) %>% 
+  group_by(audience, delivery_mode) %>% 
+  summarise(n = n(), .groups = 'drop') %>% 
+  group_by(audience) %>% 
+  mutate(
+    n2 = sum(n),
+    pct = n / n2 * 100,
+    audience = factor(audience, levels = c("High school", "Two-year college", "Four-year college")),
+    delivery_mode = factor(delivery_mode, levels = c("Face-to-Face","Hybrid","Online"))
+  ) 
+
+```
+
+```{r 2.3_inline}
+# paragraph 1
+modified_course_pct <- 
+  ATE_course_development_summary %>%
+  filter(yes_no_planning == 'Yes') %>%
+  pull(pct) %>%
+  round_and_english()
+
+# paragraph 2
+total_developed_courses <- 
+  ATE_course_development_audience_summary %>%
+  summarise(total = sum(n, na.rm = TRUE)) %>%
+  pull(total) %>%
+  round_to_ten()
+total_projects_that_developed_courses <- 
+  ATE_data %>%
+  select(starts_with('Q2.10.') & ends_with('Audience')) %>%
+  filter(rowSums(!is.na(.)) > 0) %>%
+  nrow()
+# Manual override
+total_developed_courses <- 376
+total_projects_that_developed_courses <- 104
+
+developed_courses_two_year_college_audience <- 
+  ATE_course_development_audience_summary %>%
+  filter(audience == 'Two-year college') %>%
+  pull(pct) %>%
+  round2()
+
+# callout graph
+highschool_courses <- 
+  ATE_course_development_audience_summary %>% 
+  filter(audience == 'High school') %>%
+  pull(n) %>%
+  round_to_ten()
+two_year_courses <- 
+  ATE_course_development_audience_summary %>% 
+  filter(audience == 'Two-year college') %>%
+  pull(n) %>%
+  round_to_ten()
+four_year_courses <- 
+  ATE_course_development_audience_summary %>% 
+  filter(audience == 'Four-year college') %>%
+  pull(n) %>%
+  round_to_ten() 
+highschool_courses_projects <- 
+  ATE_course_development_projects_summary %>% 
+  filter(audience == 'High school') %>%
+  pull(n) 
+two_year_courses_projects <- 
+  ATE_course_development_projects_summary %>% 
+  filter(audience == 'Two-year college') %>%
+  pull(n)
+four_year_courses_projects <- 
+  ATE_course_development_projects_summary %>% 
+  filter(audience == 'Four-year college') %>%
+  pull(n) 
+
+# paragraph 3
+total_offered_2020_percentage <- 
+  ATE_offered_2020_summary %>%
+  filter(yes_no_planning == 'Yes') %>%
+  pull(pct) %>%
+  round_and_english()
+
+# callout graph
+total_students_completed_course <- ATE_data %>%
+  pivot_longer(cols = matches("^Q2\\.11\\. Program \\d{1,2}")) %>%
+  summarise(sum = sum(value, na.rm = TRUE)) %>% 
+  pull(sum) %>% 
+  round_to_ten()
+```
+
+#### `r modified_course_pct` percent of ATE projects created or modified at least one academic course.
+
+ATE PIs whose projects engaged in creating or substantially modifying academic courses were asked to identify the number
+and types of courses they created or modified, the academic levels of these courses, their primary delivery modes, and how many students enrolled in the courses. Some ATE projects engaged in course development as part of a larger initiative to develop or modify an entire degree or certificate program; others did so as a stand-alone effort.
+
+##### A total of `r total_developed_courses` courses were developed by `r total_projects_that_developed_courses` projects in 2024. 
+
+<!-- MANUAL UPDATE 
+The majority of these courses (`r developed_courses_two_year_college_audience`%) were for `r colorize('two-year college students', color2)`.
+-->
+<!-- MANUAL UPDATE -->
+<!-- The majority of these courses were for two-year college students. -->
+
+<!-- MANUAL UPDATE 
+```{r, fig.height = 3}
+icons_list <- c("&#xf0a3", "&#xf70e", "&#xf015")
+text_list <- c(paste0(highschool_courses, " High school courses were developed by<br>", highschool_courses_projects, " ATE projects"),
+               paste0(two_year_courses, " Two-year college courses were developed by<br>", two_year_courses_projects, " ATE projects"),
+               paste0(four_year_courses, " Four-year college courses were developed by<br>", four_year_courses_projects, " ATE projects"))
+colors_list <- c(color1,color2,color3)
+
+df <- create_callout_df(icons = icons_list, text = text_list, colors = colors_list)
+
+create_callout_chart(df)
+```
+-->
+<!-- MANUAL UPDATE 
+##### `r total_offered_2020_percentage` percent of these `r total_developed_courses` were offered in 2024.
+-->
+
+```{r, fig.height = 1}
+
+icons_list <- c("&#xf501")
+text_list <- c(paste0(total_students_completed_course, " students completed an ATE-developed<br>or modified course in 2024"))
+colors_list <- c(color4)
+
+df <- create_callout_df(icons = icons_list, text = text_list, colors = colors_list)
+
+create_callout_chart(df)
+```
+<!-- manual update -->
+<!-- students completed an ATE-developed or modified course in *2020* -->
+
+\newpage
+<!-- manual update 
+ATE PIs were not asked about the primary delivery modes for each of the courses they developed or modified. 
+-->
+<!-- ##### Most ATE courses were designed for a `r colorize('face-to-face', color3)` of online and face-to-face delivery, as compared with exclusively `r colorize('hybrid', color2)` or `r colorize('online', color1)`. 
+
+
+
+
+
+```{r fig2a4, fig.cap = paste0("Percent of courses designed by differing delivery mode, by education level"), fig.height=nlevels(ATE_course_development_delivery_mode_summary$audience) * 1.6, fig.width = 8.5}
+
+# set_color_palette(ATE_course_development_delivery_mode_summary)
+# create_bar_chart_proportional(ATE_course_development_delivery_mode_summary, pct, audience, delivery_mode)
+
+```
+-->
+
+## Instrument Acquisition
+
+```{r 2.4_prep}
+ATE_instrument_acquisition_summary <- ATE_data %>% 
+  process_summary(
+    yes_no_planning_mapping, 
+    'In 2020, did your ATE project acquire instrumentation or equipment to prepare students to work in business and industry?'
+  )
+
+ATE_instrument_student_educators_courses_summary <- ATE_data %>% 
+  process_summary_2(starting_with = 'Q2.19.', summary = 'sum')
+
+ATE_instrument_student_educators_courses_median_summary <- ATE_data %>% 
+  process_summary_2(starting_with = 'Q2.19.', summary = 'median')
+  
+
+
+how_instruments_used_mapping <- data.frame(
+  number = 1:4,
+  how_instruments_used = c(
+    'Give students hands-on experience', #1
+    'Allows students to perform technical tasks', #2
+    'Enables students with disabilities', #3
+    'Other') #4
+)
+
+ATE_how_instruments_used_mapping <- ATE_data %>% 
+  process_summary(
+    how_instruments_used_mapping,
+    'Q2.18. Which of the following best describes how your project uses this instrumentation, equipment, or tools? - Selected Choice'
+  )
+
+
+ATE_instrument_spending_summary <- ATE_data %>%
+  mutate(
+    pct_grant_spent_instruments = `Q2.17. How much did your project spend on instrumentation, equipment, or tools?` / `Q1.10. What is the total dollar value of the grant?...9` * 100,
+    grant_spent_category = case_when(
+      pct_grant_spent_instruments < 25 ~ "Less than 25%",
+      pct_grant_spent_instruments < 50 ~ "25% to 49%",
+      pct_grant_spent_instruments < 75 ~ "50% to 74%",
+      pct_grant_spent_instruments < 100 ~ "More than 74%"
+    ),
+    grant_spent_category = factor(grant_spent_category, levels = c("Less than 25%", "25% to 49%", "50% to 74%", "More than 74%"))
+  ) %>%
+  filter(!is.na(grant_spent_category)) %>%
+  count(grant_spent_category, name = "n") %>%
+  complete(grant_spent_category, fill = list(n = 0)) %>%
+  mutate(pct = n / sum(n) * 100)
+
+```
+
+```{r 2.4_inline}
+# paragraph 1
+total_instrument_acquisition_pct <- 
+  ATE_instrument_acquisition_summary %>%
+  filter(yes_no_planning == "Yes") %>%
+  pull(pct) %>%
+  round_and_english()
+
+# paragraph 2
+total_instrument_acquisition <- 
+  ATE_instrument_acquisition_summary %>%
+  filter(yes_no_planning == "Yes") %>%
+  pull(n) %>%
+  round_and_english()
+lowest_instrument_spending <- 
+  ATE_data %>%
+  summarise(min_spending = min(`Q2.17. How much did your project spend on instrumentation, equipment, or tools?`, na.rm = TRUE)) %>%
+  pull(min_spending) %>%
+  round2()
+highest_instrument_spending <- 
+  ATE_data %>%
+  summarise(max_spending = max(`Q2.17. How much did your project spend on instrumentation, equipment, or tools?`, na.rm = TRUE)) %>%
+  pull(max_spending) %>%
+  round_to_ten()
+projects_reported_spending <- ATE_data %>%
+  summarise(n = sum(!is.na(`Q2.17. How much did your project spend on instrumentation, equipment, or tools?`), na.rm = TRUE)) %>%
+  pull(n) %>%
+  round_and_english()
+
+# figure 12
+total_projects_instrument_spending <- 
+  ATE_instrument_spending_summary %>%
+  summarise(total_n = sum(n, na.rm = TRUE)) %>%
+  pull(total_n)
+
+# paragraph 3
+total_students_instrument <- 
+  ATE_instrument_student_educators_courses_summary %>%
+  filter(name == 'Students') %>% 
+  pull(sum) %>%
+  round_to_ten()
+
+# paragraph 4
+median_students_instrument <- 
+  ATE_instrument_student_educators_courses_median_summary %>%
+  filter(name == 'Students') %>% 
+  pull(median) %>%
+  round2()
+
+# callout graph
+total_educators_instrument <- 
+  ATE_instrument_student_educators_courses_summary %>%
+  filter(name == 'Educators') %>% 
+  pull(sum) %>%
+  round_to_ten()
+
+total_courses_instrument <- 
+  ATE_instrument_student_educators_courses_summary %>%
+  filter(name == 'Courses') %>% 
+  pull(sum) %>%
+  round_to_ten()
+
+# paragraph 5
+instrument_hands_on <- 
+  ATE_how_instruments_used_mapping %>%
+  filter(how_instruments_used == 'Give students hands-on experience') %>%
+  pull(n) %>%
+  round_and_english()
+instrument_technical_tasks <- 
+  ATE_how_instruments_used_mapping %>%
+  filter(how_instruments_used == 'Allows students to perform technical tasks') %>%
+  pull(n) %>%
+  round_and_english()
+instrument_other <- 
+  ATE_how_instruments_used_mapping %>%
+  filter(how_instruments_used == 'Other' | how_instruments_used == 'Enables students with disabilities') %>%
+  summarise(total_other = sum(n, na.rm = TRUE)) %>%
+  pull(total_other)
+```
+
+#### `r total_instrument_acquisition_pct` percent of ATE projects acquired instruments or equipment to prepare students for work in business and industry.
+
+Using state-of-the-art equipment contributes to the development of technical skills students will need for employment. Hands-on experience with such equipment has also been shown to contribute to students’ self-efficacy and positively impact their longer-term career and educational goals [@amelink2015examining]. The ATE program includes a funding stream to help grantees obtain instruments or equipment that can be used in instruction to prepare students for employment in business and industry.
+
+`r total_instrument_acquisition` ATE projects acquired instrumentation or equipment in 2024. Examples of instruments purchased and utilized by projects might include 3D scanners, computers for adversarial programming, assessment devices, mini drones, virtual reality viewers, and laboratory equipment. `r projects_reported_spending` projects reported the amounts they spent on instrumentation or equipment. **Projects spent between \$`r lowest_instrument_spending` and \$`r highest_instrument_spending` on instrument acquisition in 2024.**
+
+##### A majority of projects spent less than 25% of their grant funds on instrumentation in 2024.
+<!-- MANUAL UPDATE -->
+
+```{r, fig.height = length(ATE_instrument_spending_summary$grant_spent_category) * 0.75, fig.cap = paste0('Percentage of total grant amount spent on instrumentation or equipment in 2020 (n=', total_projects_instrument_spending, ')')}
+
+set_color_palette(ATE_instrument_spending_summary)
+create_bar_chart(ATE_instrument_spending_summary, pct, grant_spent_category)
+```
+
+<br>
+
+\newpage
+
+Projects that use ATE funding to purchase instruments or equipment are expected to revise their academic programming to maximize the value of the items for student learning. In 2024, `r total_students_instrument` students used instruments and equipment.
+
+##### A median of `r median_students_instrument` students used the equipment or instrumentation acquired by each ATE project.
+
+```{r, fig.height = 3}
+# ATE_instrument_student_educators_courses_summary %>% 
+#   mutate(sum = round_to_ten(sum)) %>% 
+#   pull()
+
+icons_list <- c("&#xf501", "&#xf51c", "&#xf6e3")
+text_list <- c(paste0(total_students_instrument, " students benefited from purchased equipment"),
+               paste0(total_educators_instrument ," educators used the purchased equipment"),
+               paste0(total_courses_instrument ," courses used the purchased equipment"))
+colors_list <- c(color4,color5, color6)
+
+df <- create_callout_df(icons = icons_list, text = text_list, colors = colors_list)
+
+create_callout_chart(df)
+
+
+```
+
+**`r instrument_hands_on` projects reported acquiring instrumentation, equipment, or tools to give students hands-on experience with instruments used in the field.** `r instrument_technical_tasks` projects reported acquiring instruments to allow students to perform technical tasks in a simulated environment, and `r instrument_other` projects noted other reasons, such as fostering collaborative work, students’ applied research experiments, hands-on experience with industry-standard equipment, enabling students with disabilities to perform certain technical tasks, and enhancing virtual instruction.
+
+## Articulation Agreements
+
+```{r 2.5_prep}
+ATE_articulation_summary <- ATE_data %>% 
+  process_summary(
+    yes_no_planning_mapping,
+    'In 2020, did your ATE project create new articulation agreements or maintain articulation agreements created previously through your project?'
+  )
+
+ATE_articulation_detail_summary <- ATE_data %>%
+  select(starts_with("Q2.13.")) %>%
+  summarise_all(sum, na.rm = TRUE) %>% 
+  pivot_longer(cols = everything(), values_to = 'n') %>% 
+  mutate(
+    detail = c(
+      "Articulation agreements developed",
+      "Articulation agreements developed",
+      "Articulation agreements in place in 2020",
+      "Articulation agreements in place in 2020",
+      "Institutions involved",
+      "Institutions involved",
+      "Students who transferred",
+      "Students who transferred"
+    ),
+    education = c(
+      "High school to Two-year college",
+      "Two-year college to Four-year college",
+      "High school to Two-year college",
+      "Two-year college to Four-year college",
+      "High school to Two-year college",
+      "Two-year college to Four-year college",
+      "High school to Two-year college",
+      "Two-year college to Four-year college"
+    ),
+    education = factor(education, levels = c("Two-year college to Four-year college", "High school to Two-year college"))
+  ) %>% 
+  select(detail, education, n)
+
+
+articulation_agreements_developed <- ATE_articulation_detail_summary %>% 
+  filter(detail == 'Articulation agreements developed')
+articulation_agreements_in_place <- ATE_articulation_detail_summary %>% 
+  filter(detail == 'Articulation agreements in place in 2020')
+institutions_involved <- ATE_articulation_detail_summary %>% 
+  filter(detail == 'Institutions involved') 
+transfer_students <- ATE_articulation_detail_summary %>% 
+  filter(detail == 'Students who transferred') 
+
+```
+
+```{r 2.5_inline}
+# paragraph 1
+total_articulation_pct_en <- 
+  ATE_articulation_summary %>%
+  filter(yes_no_planning == 'Yes') %>%
+  pull(pct) %>%
+  round_and_english()
+
+# paragraph 2
+total_articulation_en <- 
+  ATE_articulation_summary %>%
+  filter(yes_no_planning == 'Yes') %>%
+  pull(n) %>%
+  round_and_english()
+
+# figure 13
+total_articulation <- 
+  ATE_articulation_summary %>%
+  filter(yes_no_planning == 'Yes') %>%
+  pull(n)
+```
+
+#### `r total_articulation_pct_en` percent of ATE projects created or maintained articulation agreements.
+
+Articulation agreements are formal agreements between educational institutions that provide students from secondary schools with pathways and education access to two-year colleges and four-year colleges. These agreements contribute to increasing the number and diversity of scientists, engineers, and technicians [@nae2012community].
+
+In 1992, Congress saw the importance of these agreements and required their use in NSF’s ATE program. The 2021 ATE solicitation calls for “developing life-long career and educational pathways for technicians to support the changing workplace” [@nsf2021, p. 5].
+
+**`r total_articulation_en` projects developed or maintained articulation agreements in 2024.** 
+
+##### Most articulation agreements created in 2024 were between `r colorize('high schools and two-year colleges', color1)`, but more students matriculated between `r colorize('two-year and four-year colleges', color2)`.
+
+```{r fig2a6, fig.cap = paste0("Number of articulation agreements, institutions, and students (n=", total_articulation, ")"), fig.height = 3.5}
+
+evaluate_color_palette = c(color2, color1)
+
+create_multiple_pie_chart <- function(data, title_suffix) {
+  
+  theme_set(theme_void(base_family = "Calibri"))
+  theme_update(
+    plot.title = element_text(hjust = 0.5, face = "bold"), 
+    legend.position = "bottom")
+  
+  ggplot(data = data, aes(x = 2, y = n, fill = education)) +
+    geom_col(color = 'white') +
+    coord_polar("y") +
+    geom_text(aes(y = n, label = paste(n)), col = "white", fontface = "bold", position = position_stack(vjust = 0.5)) +
+    ggtitle(paste0(sum(data$n), '\n', title_suffix)) +
+    scale_fill_custom(name = NULL, guide = guide_legend()) +
+    xlim(.8, 2.5)
+}
+
+
+
+p1 <- create_multiple_pie_chart(articulation_agreements_developed, "new agreements\n developed")
+p2 <- create_multiple_pie_chart(articulation_agreements_in_place, 'agreements already\n in place')
+p3 <- create_multiple_pie_chart(institutions_involved, 'institutions\ninvolved')
+p4 <- create_multiple_pie_chart(transfer_students, 'students\nmatriculated')
+
+(p1 + p2 + p3 + p4) +
+  plot_layout(ncol = 4, guides = "collect")
+```

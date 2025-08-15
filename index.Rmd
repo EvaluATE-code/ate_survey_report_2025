@@ -1,0 +1,35 @@
+---
+title: "ATE Survey Report 2025"
+subtitle: Findings from the Annual Survey of Principal Investigators in the National
+  Science Foundation’s Advanced Technological Education Program
+site: bookdown::bookdown_site
+documentclass: report
+description: "The Advanced Technological Education (ATE) program, established by the
+  National Science Foundation (NSF) in response to the Scientific and Advanced-Technology
+  Act of 1992, aims to enhance the education of technicians in high-technology fields
+  such as advanced manufacturing, biotechnology, and information technologies, with
+  a focus on two-year colleges. This report presents findings from the 2024 ATE survey,
+  conducted by EvaluATE at Western Michigan University, which gathered data from ATE
+  principal investigators with active grants. Covering grantee activities, achievements,
+  and initiatives from 2023, the survey includes topics such as academic program development,
+  professional development, student support, and research outputs.\n"
+bibliography: references.bib
+csl: apa.csl
+link-citations: true
+always_allow_html: true
+---
+# Introduction {-}
+
+The Scientific and Advanced-Technology Act (1992) called for establishing “a national advanced technician training program utilizing the resources of the nation’s two-year associate-degree- granting colleges” [@scientific1992act]. In response, the National Science Foundation (NSF) created the Advanced Technological Education (ATE) program. The ATE program makes awards ranging from $70,000 to $7.5 million to support an array of initiatives to improve the education of technicians at undergraduate institutions and secondary schools, with an emphasis on two-year colleges. Examples of high-technology fields of interest include advanced manufacturing, biotechnology, energy and environmental technologies, engineering, information technologies, and nanotechnologies.
+
+`r colorize('This report summarizes data gathered in the 2024 survey of ATE program grantees.', color7)` EvaluATE, the evaluation hub for the ATE program, located at The Evaluation Center at Western Michigan University, has conducted this survey annually since 2000. Included in this report are findings about ATE projects and their activities and achievements during the 2023 calendar year (and, for budget-related questions, the 2023 fiscal year).
+
+`r colorize('The 2024 survey was a census of ATE principal investigators (PIs) with active grants (N=396).',color7)` Ninety- two percent of PIs (n=364) responded to the survey. The survey included sections about grantee characteristics and practices, evaluation, collaboration, academic program or course development, educational materials development, instrument acquisition, student services and support, professional development for educators or future educators, professional
+exchange, research and publications, and ATE program services. Grantees were asked to complete sections that pertained to their work.
+<!-- MANUAL UPDATE -->
+
+Survey questions were substantially revised in 2018, resulting in the modification of existing questions and the addition of several new questions to capture a wider range of activities supported by ATE grants. Readers are cautioned against comparing results of the 2024 survey with those prior to 2019. In some cases, changes in the survey questions and structure led to fewer respondents reporting in some areas. In a tradeoff, this report includes data on several types of activities not addressed by the ATE Survey prior to 2019, such as workplace-based learning experiences for students, support for students transitioning into college, and acquisition of equipment for use in instruction.
+
+Reported numbers of participants, products, and activities throughout this report are rounded to the nearest ten. The n that appears with tables and figures indicates the number of respondents for a given item.
+
+*Additional reports based on annual ATE survey data dating back to 2000 are available at https://atesurvey.evalu-ate.org/survey-resources/. Custom reports may be developed upon request. For more information, contact us through https://evalu-ate.org/contact/.*

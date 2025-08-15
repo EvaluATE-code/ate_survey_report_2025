@@ -1,0 +1,6 @@
+before_chapter_script: "setup.R"
+delete_merged_file: false
+language:
+  ui:
+    chapter_name: "Chapter "
+clean: ["_main.aux", "_main.bbl", "_main.blg", "_main.log", "_main.toc", "_main.Rmd"]

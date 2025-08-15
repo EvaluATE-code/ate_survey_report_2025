@@ -1,0 +1,141 @@
+# Professional Exchange
+
+##### Bringing together professionals from different organizations and geographical locations facilitates knowledge diffusion, collaboration, and professional interaction [@chai2019temporary]. Research has shown that “diverse collaborative networks” enhance innovation and complex problem-solving [@biancani2014semiformal].
+
+##### The ATE program has two funding tracks that support activities to catalyze professional exchange. One such track supports coordination networks, which facilitate collaboration and communication about research, training, and education across disciplines, organizations, and geographical boundaries. The other track provides funding for **conferences, meetings, and events** to improve understanding of advanced technological education issues [@nsf2021, p. 9].
+
+##### ATE PIs whose projects hosted conferences or similar events were asked to identify the names and purposes of the events and the number of attendees. Those engaged in network coordination were asked to identify the purpose of their networks.
+
+## Coordination Networks
+
+```{r 7.1_prep}
+ATE_coordination_network_summary <- ATE_data %>% 
+  process_summary(
+    yes_no_planning_mapping,
+    'Q7.1. Was organizing a coordination network the PRIMARY purpose of your grant?') %>% 
+  select(-pct)
+```
+
+```{r 7.1_inline}
+primary_purpose_coordination_pct_en <- 
+  ATE_coordination_network_summary %>%
+  filter(yes_no_planning == 'Yes') %>%
+  pull(n) %>%
+  {round_and_english(. / total_ATE_grants * 100 )}
+
+total_primary_purpose_coordination_en <- 
+  ATE_coordination_network_summary %>%
+  filter(yes_no_planning == 'Yes') %>%
+  pull(n) %>% 
+  round_and_english()
+
+```
+
+#### `r primary_purpose_coordination_pct_en` percent of ATE projects indicated coordination networks as a primary purpose of their grant.
+
+`r total_primary_purpose_coordination_en` ATE projects indicated that developing and facilitating coordination networks was the primary purpose of their grant.
+
+<!-- manual update -->
+- **National Center for Autonomous Technologies** has partnered with the Federal Aviation Administration to help lead the Uncrewed Aircraft Systems Collegiate Training Initiative. UAS-CIT is a consortium of higher-education institutions that shared educational philosophy and content resources to create a uniform standard of education for uncrewed aircraft systems.
+- **Advanced Technological Education Coordination Network for Knowledge Sharing in Robotics/Automation and Cybersecurity** intends to facilitate the sharing of best practices about how to develop community college students’ knowledge and skills in robotics/automation and cybersecurity.
+- **Advanced Technological Education Network for Utilities and Energy Technical Education** facilitated relationships and resource sharing between educators, industry leaders, and workforce developers focused on closing the workforce gap in the energy industry.
+- **The IT Innovation Network (ITIN)** is comprised of community colleges who will participate in a community of practice (CoP) to benchmark best practices and emerging ideas to advance IT
+education nationally.
+- **National Cybersecurity Training & Education (NCyTE)’s** academic and industry partner membership is a large consortium network (ecosystem) contributing to advancing the quality and quantity of the cybersecurity workforce. 
+- **Collaborative Research: Revolutionizing Electric Vehicle Education** is designing, developing, implementing, and evaluating battery electric vehicle (BEV) curricula. They will build networks and provide professional development addressing the new BEV sector and future PI development.
+- **Mount San Antonio College** is coordinating a network of four-year colleges to enhance access to research facilities and mentorship for their students.
+- **NEVTEX NEXT** is a network of 15 community colleges developing electric vehicle programs.
+- **The Necessary Skills Now Network** facilitates collaboration between educators and employers to improve the employability skills of entry-level technicians in STEM fields.
+- **National Electric Vehicle Consortium (NEVC)** promotes the interaction of a critical mass of academic, agency, and industry experts across all EV disciplines to help secure the nation’s EV workforce pipeline.
+<!-- manual update -->
+
+
+## Conferences and Meetings
+
+```{r 7.2_prep}
+
+```
+
+```{r 7.2_inline}
+# paragraph 1
+explicitly_funded_conference_en <- 
+  ATE_grant_type_summary %>%
+  filter(grant_type == 'Conferences and Meetings') %>%
+  pull(n) %>%
+  round_and_english()
+additional_explicitly_funded_conference_en <- 
+  ATE_data %>%
+  filter(`Q5.1. project was funded with a "conference" grant?` == 1, 
+         `Q1.1. What type of award is your ATE grant? - Selected Choice` != 7) %>%
+  nrow() %>%
+  round_and_english()
+total_explicitly_funded_conference <- 
+  ATE_data %>%
+  filter(`Q5.1. project was funded with a "conference" grant?` == 1 | 
+         `Q1.1. What type of award is your ATE grant? - Selected Choice` == 7) %>%
+  nrow() %>%
+  round2()
+total_funded_conferences <- 
+  ATE_data %>%
+  filter(`Q5.1. project was funded with a "conference" grant?` == 1 | 
+         `Q1.1. What type of award is your ATE grant? - Selected Choice` == 7) %>%
+  summarise(total = sum(`Q5.2. How many conferences, meetings, or other events did your project organize in 2020?`, na.rm = TRUE)) %>%
+  pull(total)
+min_conference_attendance <- ATE_data %>% 
+  select(starts_with('Q5.4. ')) %>% 
+  pivot_longer(cols = everything()) %>% 
+  pull(value) %>% 
+  min(na.rm = TRUE)
+max_conference_attendance <- 
+  ATE_data %>% 
+  select(starts_with('Q5.4. ')) %>% 
+  pivot_longer(cols = everything()) %>% 
+  pull(value) %>% 
+  max(na.rm = TRUE) %>% 
+  round_to_ten()
+
+# callout values
+total_conference_attendance <- 
+  ATE_data %>% 
+  select(starts_with('Q5.4. ')) %>% 
+  pivot_longer(cols = everything()) %>% 
+  pull(value) %>% 
+  sum(na.rm = TRUE) %>% 
+  round_to_ten()
+
+# Hardcoded values
+total_explicitly_funded_conference <- 36
+total_funded_conferences <- 67
+min_conference_attendance <- 3
+
+```
+
+#### Twelve percent of ATE projects engaged in organizing a conference or meeting for the purpose of professional exchange in 2024.
+
+`r explicitly_funded_conference_en` 0 ATE project was explicitly funded to coordinate conferences or meetings in 2024. For `r additional_explicitly_funded_conference_en` additional projects, hosting a conferences was the main purpose of their grant and 34 other projects organized conferences or meetings in 2024. These `r total_explicitly_funded_conference` projects hosted a total of `r total_funded_conferences` conferences or meetings, with attendance that ranged from `r min_conference_attendance` to `r max_conference_attendance` people. 
+
+<!-- manual update
+ATE PIs identified the purposes of these events as networking and professional development, disseminating best practices, and bringing together stakeholders from industry and education.
+-->
+
+```{r, fig.height = 2}
+icons_list <- c("&#xe4da", "&#xf0c0")
+text_list <- c(paste0(total_funded_conferences, " conferences and meetings<br>were organized by 36 ATE projects"),
+               paste0(total_conference_attendance, " people<br>attended conferences and meetings organized by 36 ATE projects"))
+colors_list <- c(color1, color2)
+
+df <- create_callout_df(icons = icons_list, text = text_list, colors = colors_list)
+
+create_callout_chart(df)
+```
+
+Projects that organized conference or meeting events in 2024 included:
+
+<!-- manual update -->
+- **Preparing Cybersecurity Technicians with the Technical and Entrepreneurial Skills Required to Work as Independent Contractors** hosted an event called “Sheros: Protecting Business Systems.”
+- **Manufacturing Talent Development Innovation Laboratory** hosted a Manufacturing Momentum Summit.
+- **Enhancing Preparation of Students for Technical Careers in Cloud Computing Technologies** organized an event called “IT READY!”
+- **Map Your Success** hosted a GIS Day.
+- **Advancing STEM Technician Education & Innovation: The Community College Leadership Role** hosted the 2024 ATE PI Conference.
+- **NEVTEX Next** hosted five events that facilitated professional exchange among 15 colleges.
+<!-- manual update -->

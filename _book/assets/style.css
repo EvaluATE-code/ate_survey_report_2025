@@ -1,0 +1,138 @@
+@import url('https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400;1,700&family=Jaldi:wght@700&display=swap');
+
+/*--- Logo ---*/
+.toc-logo {
+  width: 200px !important;
+  object-fit: contain;
+  margin: 0 auto;
+  display: block;
+}
+
+.toc-logo img {
+  max-width: 100%;
+  margin-bottom: -10px;
+}
+
+.summary > li:first-child {
+  height: auto !important;
+}
+
+/*------------ TOC --------------*/
+.summary{
+  font-family: 'Calibri', 'Carlito', sans-serif;
+  font-size: 16px;
+}
+
+.book .book-summary ul.summary li a,
+.book .book-summary ul.summary li span {
+  color: #545759;
+}
+
+/*---------------Hero Image------------------*/
+
+.hero-image-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 390px;
+  background-color: #327492;
+}
+
+.hero-image {
+  width: 100%;
+  height: 390px;
+  object-fit: cover;
+}
+
+.page-inner {
+  padding-top: 400px !important;
+}
+
+/*------------- Body and header text---------------- */
+/* Apply the Calibri font to the entire document */
+body, h1, h2, h3, h4, h5, h6, p, blockquote, pre, code, li, table, th, td, a, .references, p.caption, .citation, .custom_citation{
+  font-family: 'Calibri', 'Carlito', sans-serif;
+  letter-spacing: normal;
+}
+
+.title {
+  font-size: 50px !important;
+  margin-top: 10px !important;
+  margin-bottom: 10px !important;
+}
+
+.subtitle {
+  font-size: 20px !important;
+  font-style: normal !important;
+}
+
+p.caption {
+  color: #777;
+  margin-top: 10px;
+}
+
+h4 .header-section-number,
+h5 .header-section-number,
+h6 .header-section-number {
+    display: none;
+}
+
+.header-section-number {
+  padding-right: 10px;
+  font-weight: bold;
+}
+
+.level1 h1 .header-section-number {
+  display: inline-block;
+  border-bottom: 3px solid;
+}
+
+.level1 h1 {
+  border-bottom: 1px solid;
+}
+
+/* Style for headers */
+h1 {
+  color: #327492;
+  font-weight: bold;
+}
+
+h2 {
+  color: #545759;
+  font-weight: bold;
+  font-size: 28px !important;
+}
+
+h4 {
+  color: #327492;
+  font-weight: lighter;
+  font-size: 24px !important;
+}
+
+h5 {
+  color: #545759;
+  font-weight: normal;
+  font-size: 22px !important;
+}
+
+body, p {
+  color: #545759;
+  font-size: 18px !important;
+}
+
+.csl-entry {
+  font-size: 18px !important;
+}
+
+.custom_citation {
+  text-indent: -24px; /* Adjust this value based on your desired indent */
+  padding-left: 24px;
+  color: #545759 !important;
+  font-size: 18px !important;
+}
+
+
+
+
+

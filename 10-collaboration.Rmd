@@ -1,0 +1,265 @@
+# Collaboration
+
+##### NSF encourages ATE projects to partner with other institutions of higher education, secondary schools, businesses, industries, economic development agencies, and/or government agencies. The ATE program solicitation emphasizes the importance of engaging with industry to ensure programs are responsive to workforce needs and leveraging the assets of industry in preparing students for employment [@nsf2021]. According to the Brookings Institution, hallmarks of successful community college based workforce training programs include employer involvement in curriculum development and workplace experiences for students [@soliz2016preparing].
+
+##### ATE PIs were asked about the types of entities with which they collaborated and the benefits of those collaborations, including monetary and in-kind support. Projects that collaborated with business and industry were asked to identify the specific ways in which they worked with these groups.
+
+## Collaboration
+
+```{r 10.1_prep}
+ATE_collaboration_organizations_summary <- ATE_data %>% 
+  select(starts_with('Q9.1. '), -ends_with('Text')) %>%
+  summarise(
+    across(everything(), list(
+      sum = ~sum(.x, na.rm = TRUE),
+      median = ~median(.x, na.rm = TRUE),
+      n = ~sum(.x != 0 & !is.na(.x))
+    ))
+  ) %>%
+  pivot_longer(
+    cols = everything(), 
+    names_to = c("organization", ".value"), 
+    names_pattern = "(.*)_(sum|median|n)"
+  ) %>%
+  mutate(
+    organization = str_remove_all(organization, "^Q(\\d+\\.)+ | \\(describe\\)$| -.*| \\(.*"),
+    organization = fct_reorder(organization, n, .desc = TRUE),
+    pct = n / total_ATE_projects * 100
+  ) %>%
+  arrange(desc(sum))
+
+```
+
+```{r 10.1_inline}
+# paragraph 1
+total_collaboration_organizations <- 
+  ATE_collaboration_organizations_summary %>%
+  pull(n) %>%
+  sum() %>% 
+  round_to_ten()
+
+# paragraph 2
+business_en <- 
+  ATE_collaboration_organizations_summary %>%
+  filter(str_detect(organization, 'Business')) %>% 
+  pull(n) %>%
+  round_to_ten()
+k12_en <- 
+  ATE_collaboration_organizations_summary %>%
+  filter(str_detect(organization, 'school')) %>% 
+  pull(n) %>%
+  round_to_ten()
+other_ate_projects_en <- 
+  ATE_collaboration_organizations_summary %>%
+  filter(organization == 'Other ATE projects') %>%
+  pull(n) %>%
+  round_to_ten()
+within_host_en <- 
+  ATE_collaboration_organizations_summary %>%
+  filter(str_detect(organization, 'Within')) %>% 
+  pull(n) %>%
+  round_to_ten()
+public_agencies_en <- 
+  ATE_collaboration_organizations_summary %>%
+  filter(str_detect(organization, 'agencies')) %>% 
+  pull(n) %>%
+  round_to_ten()
+other_en <- 
+  ATE_collaboration_organizations_summary %>%
+  filter(organization == 'Other') %>%
+  pull(n) %>%
+  round_to_ten()
+business_median_en <- ATE_collaboration_organizations_summary %>% 
+  filter(str_detect(organization, 'Business')) %>% 
+  pull(median) %>% 
+  round_and_english()
+k12_median_en <- ATE_collaboration_organizations_summary %>% 
+  filter(str_detect(organization, 'school')) %>% 
+  pull(median) %>% 
+  round_and_english()
+colleges_median_en <- ATE_collaboration_organizations_summary %>% 
+  filter(str_detect(organization, 'colleges')) %>% 
+  pull(median) %>% 
+  round_and_english()
+other_ATE_projects_median_en <- ATE_collaboration_organizations_summary %>% 
+  filter(organization == 'Other ATE projects') %>%
+  pull(median) %>% 
+  round_and_english()
+
+
+# callout values
+monetary_support <- round_to_ten(sum(ATE_data$`Q9.4. Monetary support -`, na.rm = TRUE))
+in_kind_support <- round_to_ten(sum(ATE_data$`Q9.4. In-kind support -`, na.rm = TRUE))
+
+# paragraph 3
+total_ATE_projects_receiving_support <- ATE_data %>% 
+  select(starts_with('Q9.4. ')) %>% 
+  filter(rowSums(is.na(.) | . == 0) != ncol(.)) %>% 
+  nrow()
+
+# paragraph 4
+total_ATE_projects_receiving_monetary_pct_en <-
+  ATE_data %>% 
+  select(`Q9.4. Monetary support -`) %>%
+  filter(!is.na(`Q9.4. Monetary support -`) & `Q9.4. Monetary support -` != 0) %>% 
+  nrow() %>% 
+  {round_and_english(./ total_ATE_projects * 100)}
+total_ATE_projects_receiving_in_kind_pct <-
+  round2(
+  ATE_data %>% 
+  select(`Q9.4. In-kind support -`) %>%
+  filter(!is.na(`Q9.4. In-kind support -`) &`Q9.4. In-kind support -` != 0) %>% 
+  nrow() / total_ATE_projects * 100)
+  
+median_monetary_support <- 
+  ATE_data %>% 
+  select(`Q9.4. Monetary support -`) %>%
+  filter(!is.na(`Q9.4. Monetary support -`) & `Q9.4. Monetary support -` != 0) %>%
+  pull(1) %>%
+  median() %>% 
+  round_to_ten()
+median_in_kind_support <-
+  ATE_data %>% 
+  select(`Q9.4. In-kind support -`) %>%
+  filter(!is.na(`Q9.4. In-kind support -`) &`Q9.4. In-kind support -` != 0) %>% 
+  pull(1) %>% 
+  median() %>% 
+  round_to_ten()
+total_ATE_projects_receiving_in_kind <- 
+  ATE_data %>% 
+  select(`Q9.4. In-kind support -`) %>%
+  filter(!is.na(`Q9.4. In-kind support -`) &`Q9.4. In-kind support -` != 0) %>% 
+  nrow()
+in_kind_support_staff_time_pct <- 
+  ATE_data %>%
+  summarise(pct = sum(`Q9.4.1. Staff time` == 1, na.rm = TRUE) / total_ATE_projects_receiving_in_kind * 100) %>%
+  pull(pct) %>%
+  round2()
+in_kind_support_equipment_pct <- 
+  ATE_data %>%
+  summarise(pct = sum(`Q9.4.1. Equipment` == 1, na.rm = TRUE) / total_ATE_projects_receiving_in_kind * 100) %>%
+  pull(pct) %>%
+  round2()
+
+```
+
+#### ATE projects collaborated with `r total_collaboration_organizations` other organizations and institutions.
+
+**In 2024, ATE projects collaborated with `r business_en` business and industry partners, `r k12_en` K–12 schools, `r other_ate_projects_en` colleges, `r other_ate_projects_en` other ATE projects, `r within_host_en` entities within their host institutions, `r public_agencies_en` public agencies, and `r other_en` other types of partners.** ATE projects collaborated with a median of `r business_median_en` business and industry groups, `r k12_median_en` K–12 schools, `r colleges_median_en` colleges, and `r other_ATE_projects_median_en` other ATE project.
+
+##### ATE projects most frequently collaborated with `r colorize('business and industry', color1)` groups, followed by `r colorize('other two- or four-year colleges', color1)`.
+
+```{r fig10a1, fig.cap = paste0("Percentage of ATE projects that collaborated with other groups, by type (n=", total_ATE_projects, ")"), fig.height = length(ATE_collaboration_organizations_summary$organization) * 0.75}
+set_color_palette(ATE_collaboration_organizations_summary)
+create_bar_chart(ATE_collaboration_organizations_summary, pct, organization)
+
+```
+
+Most projects that indicated they worked with other types of partners identified these collaborators as community organizations and professional associations.
+
+\newpage
+
+<!-- manual update -->
+Collaborators provided over \$11 million in monetary and in-kind support to `r total_ATE_projects_receiving_support` ATE projects.
+<!-- manual update -->
+
+```{r, fig.height = 2}
+icons_list <- c("&#xf4c0", "&#xf4be")
+text_list <- c(paste0("$", monetary_support, " monetary support"),
+               paste0("$", in_kind_support, " in-kind support"))
+colors_list <- c(color1, color2)
+
+df <- create_callout_df(icons = icons_list, text = text_list, colors = colors_list)
+
+create_callout_chart(df)
+```
+
+<!-- manual update -->
+**`r total_ATE_projects_receiving_monetary_pct_en` percent of projects reported receiving monetary support from collaborators, while `r total_ATE_projects_receiving_in_kind_pct`% reported receiving in-kind support**. The median contributions for monetary support and in- kind support across projects were \$`r median_monetary_support` and \$`r median_in_kind_support`, respectively. Projects reported that in-kind support primarily consisted of staff time (`r in_kind_support_staff_time_pct`%) and equipment (`r in_kind_support_equipment_pct`%). Other types of in-kind support included access to facilities, materials, and supplies.
+<!-- manual update -->
+
+
+## Collaboration with Business and Industry
+
+```{r 10.2_prep}
+
+total_business_industry <- ATE_collaboration_organizations_summary %>% 
+  filter(str_detect(organization, 'Business')) %>% 
+  pull(n)
+
+
+ATE_collaboration_engage_business_way <- ATE_data %>% 
+  select(starts_with('Q9.3. '), -ends_with('Text')) %>% 
+  summarise(across(everything(), ~ sum(. == 1, na.rm = TRUE))) %>% 
+  pivot_longer(cols = everything(), names_to = 'way', values_to = 'n') %>% 
+  mutate(
+    way = str_remove_all(way, "^Q\\d{1,2}\\.\\d{1,2}\\. | \\(describe\\)$| -.*| \\(.*"),
+    way = fct_reorder(way, n, .desc = TRUE),
+    pct = n/total_business_industry * 100
+  ) %>% 
+  arrange(desc(n))
+
+# # Process the data
+# ATE_collaboration_engage_business_way <- ATE_data %>% 
+#   select(starts_with('Q9.3. '), -ends_with('Text')) %>%
+#   rowwise() %>%
+#   filter(any(c_across(everything()) == 1)) %>%
+#   ungroup() %>%
+#   summarise(count = n())
+
+```
+
+```{r 10.2_inline}
+# paragraph 1
+business_pct_en <- 
+  ATE_collaboration_organizations_summary %>%
+  filter(str_detect(organization, 'Business')) %>% 
+  pull(pct) %>%
+  round_and_english()
+
+# paragraph 2
+total_business_industry <- ATE_collaboration_organizations_summary %>% 
+  filter(str_detect(organization, 'Business')) %>% 
+  pull(n)
+
+# paragraph 3
+total_serve_on_advisory_board <- ATE_collaboration_engage_business_way %>% 
+  filter(way == 'Serve on an advisory board') %>% 
+  pull(n)
+
+# paragraph 4
+two_to_five_hours <- ATE_data %>% 
+  select(`Q9.5. How many hours did your advisory board meet over the course of 2020?`) %>% 
+  filter(`Q9.5. How many hours did your advisory board meet over the course of 2020?` == 2) %>% # '2' represents '2-5 hours'
+  nrow() %>% 
+  {round2(. / total_serve_on_advisory_board * 100)}
+
+
+```
+
+#### `r business_pct_en` percent of ATE projects collaborated with business and industry partners.
+
+A total of `r total_business_industry` projects reported collaborating with business and industry groups. Most used these partners to `r colorize('identify workforce needs', color1)`, `r colorize('serve on an advisory board', color2)`, or `r colorize('review and advise on curriculum', color3)`.
+
+<!-- manual update -->
+<!-- Most used these partners to identify workforce needs, serve on an advisory board, or review and advise on curriculum -->
+```{r fig10a2, fig.cap = paste0("Percentage of projects reporting contributions from business and industry partners (n=", total_business_industry, ")"), fig.height = length(ATE_collaboration_engage_business_way$way) * 0.75}
+set_color_palette(ATE_collaboration_engage_business_way)
+create_bar_chart(ATE_collaboration_engage_business_way, pct, way)
+
+```
+
+
+Business and industry representatives serve on advisory boards for `r total_serve_on_advisory_board` projects. Most of these projects (`r two_to_five_hours`%) reported that their advisors from business and industry committed two to five hours per year to their ATE projects.
+
+\newpage
+
+When asked to identify the benefits of collaborating with different organizations and groups, PIs frequently pointed to the utility of
+the information that they received from them. For example, one PI noted:
+
+> "By collaborating with multiple internal and external partners, … [the] team was able to create a community for
+support for the… project that increased awareness of the career path and helped increase enrollment.”
+
+Collaborations with industry groups were also noted by PIs as important to project innovation and growth:
+
+> "Collaborating with industry allowed us to bridge the gap of what students learn in the classroom compared to applying it in industry… to learn what is new in the industry, what academic and career pathways students should track to get into the career of interest [and] learn how other females navigated traditional male-dominated careers.”

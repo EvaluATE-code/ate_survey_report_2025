@@ -1,0 +1,303 @@
+# Research and Publications
+
+##### All NSF-funded projects are expected to advance the frontiers of knowledge [@nsf2024]. The ATE program’s **targeted research track** funds studies to generate knowledge and build an evidence base for technician education and the development of a skilled technical workforce. ATE PIs whose projects engaged in research were asked about the purpose and status of their research, their methods and findings, and their dissemination strategies.
+
+##### **Publications** are a vehicle not only for disseminating research findings, but also for sharing promising practices, lessons learned, and information about project developments and materials. Survey respondents were asked about the number and types of publications produced by their projects, such as articles, reports, white papers, and other documents of publishable quality (not including projects’ annual reports to NSF, evaluation reports, or conference materials).
+
+## ATE Targeted Research
+
+```{r 8.1_prep}
+##################################################################################################################
+# The code encapsulated is for processing the wide format structure of the section 6 data, similar to section 2
+# Create an empty list to store results
+ATE_data_section_six <- ATE_data %>%
+  select(starts_with('Q6.6. '),
+         starts_with('Q6.8. '),) %>%
+  select(matches("(?i)study ?1")) %>%
+  head(0)
+
+# Loop through studies numbers 1 to 7, and union the results
+for (i in 1:7) {
+  # Perform the selection for each study
+  results <- ATE_data %>%
+    select(starts_with('Q6.6. '),
+           starts_with('Q6.8. ')) %>%
+    select(matches(paste0("(?i)study ?", i))) # Change study number dynamically
+
+  # Append the result to the list
+  ATE_data_section_six <- rbind(ATE_data_section_six, setNames(results, names(ATE_data_section_six)))
+}
+##################################################################################################################
+
+
+ATE_targeted_research_summary <- ATE_data %>% 
+  process_summary(
+    yes_no_planning_mapping,
+    'In 2020, did your ATE project conduct targeted research?'
+  )
+
+targeted_research_phase_mapping = data.frame(
+  number = 1:5,
+  targeted_research_phase = c(
+    'Planning phase', 
+    'Collecting data', 
+    'Analyzing data',
+    'Writing up results',
+    'Findings published or submitted for publication')
+)
+
+# in 2021, this question only accounts for 1 study
+# ATE_targeted_research_phase_summary <- ATE_data %>% 
+#   filter(`Q1.1. What type of award is your ATE grant? - Selected Choice` == 6) %>%  # projects specifically funded for targeted research
+#   process_summary(
+#     targeted_research_phase_mapping,
+#     'Q6.1. Which of the following best describes the current stage of your research?'
+#     ) 
+
+# in 2022, this question accounts for up to 7 studies, taking on the wide format like in section 2
+ATE_targeted_research_phase_summary <- ATE_data %>%
+  filter(`Q1.1. What type of award is your ATE grant? - Selected Choice` == 6) %>% # projects specifically funded for targeted research
+  select(matches("^Q6\\.3\\. ")) %>%
+  pivot_longer(cols = everything()) %>%
+  inner_join(targeted_research_phase_mapping, by = c("value" = "number")) %>%
+  count(targeted_research_phase) %>%
+  mutate(
+    targeted_research_phase = fct_reorder(targeted_research_phase, n, .desc = TRUE),
+    pct = n / sum(n) * 100
+  )
+
+# in 2021, this question only accounts for 1 study
+# ATE_targeted_research_designs_summary <- ATE_data %>%
+#   process_summary_2(starting_with = 'Q6.4. ', names_to = 'design', summary = 'sum') %>% 
+#   mutate(pct = sum/sum(sum) *100)
+
+# in 2022, this question accounts for up to 7 studies, taking on the wide format like in section 2
+total_research_studies <- ATE_data_section_six %>%
+  select(starts_with('Q6.6. ')) %>%
+  filter(rowSums(. == 1, na.rm = TRUE) > 0) %>%
+  nrow()
+
+# in 2022, this question accounts for up to 7 studies, taking on the wide format like in section 2
+ATE_targeted_research_designs_summary <- ATE_data_section_six %>%
+  process_summary_2(starting_with = 'Q6.6. ', names_to = 'design', summary = 'count_ones') %>%
+  mutate(
+    design = str_remove(design, 'Study 1 '),
+    design = fct_reorder(design, count_ones, .desc = TRUE),
+    pct = count_ones/total_research_studies * 100
+  )
+# in 2021, this question only accounts for 1 study
+# ATE_targeted_research_dissemination_summary <- ATE_data %>%
+#   process_summary_2(starting_with = 'Q6.6. ', names_to = 'dissemination', summary = 'sum') %>% 
+#   mutate(pct = sum/sum(sum) *100)
+
+# in 2022, this question accounts for up to 7 studies, taking on the wide format like in section 2
+ATE_targeted_research_dissemination_summary <- ATE_data_section_six %>%
+  process_summary_2(starting_with = 'Q6.8. ', names_to = 'dissemination', summary = 'count_ones') %>%
+  mutate(
+    dissemination = str_remove(dissemination, 'Study 1 '),
+    dissemination = fct_reorder(dissemination, count_ones, .desc = TRUE),
+    pct = count_ones/total_research_studies * 100
+  )
+
+```
+
+```{r 8.1_inline}
+# paragraph 1
+total_targeted_research_pct_en <- 
+  ATE_targeted_research_summary %>%
+  filter(yes_no_planning == 'Yes') %>%
+  pull(pct) %>%
+  round_and_english()
+
+# paragraph 2 
+projects_funded_targeted_research_en <- 
+  ATE_data %>% 
+  filter(`Q1.1. What type of award is your ATE grant? - Selected Choice` == 6) %>% 
+  nrow() %>% 
+  { 5 } %>% 
+  round_and_english()
+projects_funded_targeted_research_total_studies <-
+  ATE_data %>% 
+  filter(`Q1.1. What type of award is your ATE grant? - Selected Choice` == 6) %>% 
+  select(`Q6.1. How many research studies has your project conducted in 2021?`) %>% 
+  sum(na.rm = TRUE)
+research_planning_phase_pct <- 
+  ATE_targeted_research_phase_summary %>%
+  filter(targeted_research_phase == 'Planning phase') %>%
+  pull(pct) %>%
+  round2()
+research_collecting_data_pct <- 
+  ATE_targeted_research_phase_summary %>%
+  filter(targeted_research_phase == 'Collecting data') %>%
+  pull(pct) %>%
+  round2()
+research_analyzing_data_pct <- 
+  ATE_targeted_research_phase_summary %>%
+  filter(targeted_research_phase == 'Analyzing data') %>%
+  pull(pct) %>%
+  round2()
+research_writing_up_results_pct <- 
+  ATE_targeted_research_phase_summary %>%
+  filter(targeted_research_phase == 'Writing up results') %>%
+  pull(pct) %>%
+  round2()
+research_writing_up_results_pct <- 
+  ATE_targeted_research_phase_summary %>%
+  filter(targeted_research_phase == 'Findings published or submitted for publication') %>%
+  pull(pct) %>%
+  round2()
+
+# Hardcoded research phase percentages
+research_planning_phase_pct <- 6
+research_collecting_data_pct <- 24
+research_analyzing_data_pct <- 14
+research_writing_up_results_pct <- 16
+research_publishing_pct <- 41
+
+# paragraph 3
+projects_funded_targeted_research <- ATE_data %>% 
+  filter(`Q1.1. What type of award is your ATE grant? - Selected Choice` == 6) %>% 
+  nrow()
+projects_not_funded_targeted_research_en <- ATE_data %>% 
+  filter(`Q1.1. What type of award is your ATE grant? - Selected Choice` != 6, `In 2020, did your ATE project conduct targeted research?` == 1) %>% 
+  nrow()
+# Manually adjust
+projects_not_funded_targeted_research_en <- projects_not_funded_targeted_research_en - 4
+# only can be used for 2021
+# total_research_studies <- ATE_targeted_research_designs_summary %>% 
+#   pull(sum) %>% 
+#   sum()
+descriptive <- ATE_targeted_research_designs_summary %>% 
+  filter(str_detect(design, 'Descriptive')) %>% 
+  pull(pct) %>% 
+  round2()
+experimental <- ATE_targeted_research_designs_summary %>% 
+  filter(str_detect(design, 'Experimental')) %>% 
+  pull(pct) %>% 
+  round2()
+correlational <- ATE_targeted_research_designs_summary %>% 
+  filter(str_detect(design, 'Correlational')) %>% 
+  pull(pct) %>% 
+  round2()
+review <- ATE_targeted_research_designs_summary %>% 
+  filter(str_detect(design, 'Review')) %>% 
+  pull(pct) %>% 
+  round2()
+# meta_analysis <- ATE_targeted_research_designs_summary %>% 
+#   filter(str_detect(design, 'Meta')) %>% 
+#   pull(pct) %>% 
+#   round2()
+other_research <- ATE_targeted_research_designs_summary %>% 
+  filter(str_detect(design, 'Other')) %>% 
+  pull(pct) %>% 
+  round2()
+```
+
+#### `r total_targeted_research_pct_en` percent of ATE projects conducted some type of research.
+
+`r projects_funded_targeted_research_en` ATE projects were specifically funded to conduct targeted research in 2024. Between them, they reported `r projects_funded_targeted_research_total_studies` active studies. At the time of the survey, `r research_collecting_data_pct`% of those studies were collecting data, `r research_analyzing_data_pct`% were analyzing data, `r research_writing_up_results_pct`% were writing up results, and `r research_writing_up_results_pct`% had findings published or submitted for publication.
+
+In addition to these `r projects_funded_targeted_research_en` targeted research projects, `r projects_not_funded_targeted_research_en` other ATE projects indicated they conducted some sort of research in 2024. Together, these projects reported 56 research studies. Examples included conducting descriptive research (`r descriptive`%), document reviews (`r review`%), correlational research (`r correlational`%), experimental or quasi-experimental research (`r experimental`%), other research (`r other_research`%), and meta-analysis (2%).
+
+<!-- manual update 
+In addition to these `r projects_funded_targeted_research_en` targeted research projects, `r projects_not_funded_targeted_research_en` other ATE projects indicated they conducted some sort of research in 2024. Together, these projects reported `r total_research_studies` research studies. Examples included conducting descriptive research (`r descriptive`%), document reviews (`r review`%), correlational research (`r correlational`%), experimental or quasi-experimental research (`r experimental`%), other research (`r other_research`%), and meta-analysis (2%).
+-->
+
+##### Research findings are frequently disseminated through `r colorize('conference presentations', color1)` or `r colorize('articles in peer-reviewed journals', color2)`.
+
+<!-- manual update -->
+<!-- frequently disseminated through conference presentations or articles in peer-reviewed journals -->
+
+
+```{r fig8a1, fig.cap = paste0("Percentage of research activities shared via various dissemination channels (n=", total_research_studies, ")"), fig.height = length(ATE_targeted_research_dissemination_summary$dissemination) * 0.75}
+set_color_palette(ATE_targeted_research_dissemination_summary)
+create_bar_chart(ATE_targeted_research_dissemination_summary, pct, dissemination)
+
+```
+
+## Publications
+
+```{r 8.2_prep}
+ATE_publication_summary <- ATE_data %>% 
+  process_summary(
+    yes_no_planning_mapping,
+    'In 2020 did your ATE project develop articles, reports, or white papers intended for publication?'
+  )
+
+ATE_publication_type_summary <- ATE_data %>% 
+  process_summary_2(starting_with = 'Q6.9. ', names_to = 'type', summary = 'sum')
+```
+
+```{r 8.2_inline}
+# paragraph 1
+total_publication_pct_en <- 
+  ATE_publication_summary %>%
+  filter(yes_no_planning == 'Yes') %>%
+  pull(pct) %>%
+  round_and_english() 
+
+# paragraph 2
+total_prepared_publications <- ATE_data %>%
+  select(starts_with('Q6.9. '), -ends_with('Text')) %>%
+  filter(rowSums(is.na(.)) != ncol(.)) %>%
+  nrow()
+total_publications <- 
+  ATE_publication_type_summary %>%
+  # filter(type != 'Other') %>%
+  summarize(sum = sum(sum, na.rm = TRUE)) %>%
+  pull(sum) %>%
+  round_to_ten()
+
+#  callout graph
+publication_academic_journal <- 
+  ATE_publication_type_summary %>%
+  filter(str_detect(type, "academic journal")) %>%
+  pull(sum) %>% 
+  round_to_ten()
+publication_practitioner_journal <- 
+  ATE_publication_type_summary %>%
+  filter(str_detect(type, "practitioner journal")) %>%
+  pull(sum) %>% 
+  round_to_ten()
+publication_reports <- 
+  ATE_publication_type_summary %>%
+  filter(str_detect(type, "Report")) %>%
+  pull(sum) %>% 
+  round_to_ten()
+publication_magazine_article <- 
+  ATE_publication_type_summary %>%
+  filter(str_detect(type, "Magazine article")) %>%
+  pull(sum) %>% 
+  round_to_ten()
+
+# paragraph 3
+total_publications_other <- 
+  ATE_publication_type_summary %>%
+  filter(type == 'Other') %>%
+  summarize(sum = sum(sum, na.rm = TRUE)) %>%
+  pull(sum) %>%
+  round_to_ten()
+```
+
+#### `r total_publication_pct_en` percent of developed materials were intended for publication.
+
+While publication is an expectation for all projects engaged in targeted research, many other ATE projects also prepare publications of various types. Therefore, all ATE PIs were asked if their projects developed publications (excluding annual reports prepared for NSF, evaluation reports, and conference proceedings).
+
+##### `r total_prepared_publications` ATE projects prepared a total of **`r total_publications` publications**.
+
+```{r, fig.height = 4}
+icons_list <- c("&#xf1ea", "&#xf1ea", "&#xf201", "&#xf518")
+text_list <- c(paste0(publication_academic_journal, " Manuscripts for academic journals"),
+               paste0(publication_practitioner_journal, " Manuscripts for practitioner journals"),
+               paste0(publication_reports, " Reports"),
+               paste0(publication_magazine_article, " Magazine articles"))
+colors_list <- c(color1, color2, color3, color4)
+
+df <- create_callout_df(icons = icons_list, text = text_list, colors = colors_list)
+
+create_callout_chart(df)
+```
+
+<!-- manual update -->
+PIs reported `r total_publications_other` other publication types, such as journal special issues, news posts, blogs, and newsletter articles.
+<!-- manual update -->

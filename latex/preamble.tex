@@ -1,0 +1,48 @@
+\usepackage{booktabs}
+\setmainfont{Calibri}
+\setcounter{secnumdepth}{2} % Numbers for sections and subsections.
+
+\usepackage{etoolbox}
+
+\preto{\section}{\clearpage}
+
+\usepackage{xcolor}
+
+\definecolor{327492}{HTML}{327492}  % blue_raspberry
+\definecolor{245075}{HTML}{245075}  % blueberry
+\definecolor{B03E61}{HTML}{B03E61}  % watermelon
+\definecolor{BD4C42}{HTML}{BD4C42}  % tangerine
+\definecolor{4B7F60}{HTML}{4B7F60}  % cucumber
+
+
+\definecolor{874e7a}{HTML}{874e7a}
+\definecolor{3c6384}{HTML}{3c6384}
+\definecolor{4d4c8c}{HTML}{4d4c8c}
+
+\usepackage[margin=1in]{geometry}
+
+
+\usepackage{etoolbox}
+\usepackage{titlesec}
+
+% Ensure page breaks before sections
+\preto{\section}{\clearpage}
+
+% Fix paragraph alignment
+\titleformat{\paragraph}[block]
+  {\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+\titlespacing*{\paragraph}{0pt}{1em}{1em}
+
+\usepackage{graphicx}
+
+\let\oldincludegraphics\includegraphics
+\renewcommand{\includegraphics}[2][]{%
+  \oldincludegraphics[width=0.8\textwidth, #1]{#2}%
+}
+
+
+
+
+
+
+

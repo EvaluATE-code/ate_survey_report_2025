@@ -1,0 +1,487 @@
+# Student Service and Support
+
+##### The ATE program supports an array of activities designed to enhance student learning and success in STEM programs outside of typical classroom environments. Studies have shown that students who experience these types of enrichment and support programs are more likely to have positive attitudes toward science and sustain interest in STEM [@merolla2014stem].
+
+##### ATE PIs were asked if their projects provided any of the following student-focused services: support for students transitioning into college, opportunities to participate in STEM competitions, mentoring, entrepreneurial skills development, or support for obtaining industry-recognized certifications or licenses. Respondents who answered affirmatively were asked additional questions about the nature of these activities and the number of students served.
+
+\newpage
+
+##### ATE PIs were asked if their projects provided any of the following student-focused services: support for students transitioning into college, opportunities to participate in STEM competitions, mentoring, entrepreneurial skills development, or support for obtaining industry-recognized certifications or licenses. Respondents who answered affirmatively were asked additional questions about the nature of these activities and the number of students served.
+
+
+
+```{r 4.1_prep}
+ATE_student_service_summary <- ATE_data %>%
+  summarize(
+    `Mentoring` = sum(`In 2020, did your ATE project offer mentoring or coaching to students?` == 1, na.rm = TRUE),
+    `Student competitions` = sum(`In 2020, did your ATE project host or organize a student competition?` == 1, na.rm = TRUE),
+    `Support for transitioning into college` = sum(`In 2020, did your project offer programs to help students transition into college?` == 1, na.rm = TRUE),
+     `Support for obtaining certifications or licesnse` = sum(`In 2020, did your ATE project work with students to support them in obtaining specific industry-recognized certifications or licenses?` == 1, na.rm = TRUE),
+    `Business and entrepreneurial skills development` = sum(`In 2020, did your ATE project work with students specifically to develop their business and entrepreneurial skills?` == 1, na.rm = TRUE)
+  ) %>% 
+  pivot_longer(cols = everything(), names_to = 'service_type', values_to = 'n') %>% 
+  mutate(
+    service_type = fct_reorder(service_type, n, .desc = TRUE),
+    pct = n/total_ATE_projects *100
+    ) %>% 
+  arrange(desc(n))
+
+total_develop_business_skills <- ATE_data %>% 
+  process_summary(
+    yes_no_planning_mapping,
+    'In 2020, did your ATE project work with students specifically to develop their business and entrepreneurial skills?'
+  ) %>% 
+  filter(yes_no_planning == "Yes") %>% 
+  pull(n)
+
+ATE_ways_to_develop_business_skills_summary <- ATE_data %>%
+  process_summary_2(starting_with = 'Q3.1.', names_to = 'ways', summary = 'count_ones') %>% 
+  filter(ways != "Are there any specific cybersecurity topics for which it would be helpful to have new curricular resources?") %>% 
+  mutate(pct = count_ones/total_develop_business_skills * 100)
+```
+
+```{r 4.1_inline}
+# paragraph 1
+projects_with_student_service <- ATE_data %>%
+  select(
+    `In 2020, did your ATE project offer mentoring or coaching to students?`,
+    `In 2020, did your ATE project host or organize a student competition?`,
+    `In 2020, did your project offer programs to help students transition into college?`,
+    `In 2020, did your ATE project work with students to support them in obtaining specific industry-recognized certifications or licenses?`,
+    `In 2020, did your ATE project work with students specifically to develop their business and entrepreneurial skills?`
+  ) %>% 
+  summarize('count' = sum(rowSums(. == 1, na.rm = TRUE) > 0, na.rm = TRUE)) %>% 
+  pull()
+
+projects_with_student_service_pct_en <- 
+  round_and_english(projects_with_student_service/total_ATE_projects*100)
+
+# paragraph 2
+business_skills_pct_en <- 
+  ATE_student_service_summary %>% 
+  filter(str_detect(service_type, 'Business')) %>% 
+  pull(pct) %>% 
+  round_and_english()
+business_skills <-
+  ATE_student_service_summary %>% 
+  filter(str_detect(service_type, 'Business')) %>% 
+  pull(n) 
+
+# paragraph 3
+total_students_business_skills <- 
+  ATE_data %>% 
+  select(`Q3.2. How many students participated in business and entrepreneurial skills development provided by your project in 2020?`) %>% 
+  sum(na.rm = TRUE) %>% 
+  round_to_ten()
+
+# paragraph 4
+other_business_skills_pct <-
+  ATE_ways_to_develop_business_skills_summary %>% 
+  filter(str_detect(ways, 'Other')) %>% 
+  pull(pct) %>% 
+  round2()
+
+```
+
+#### `r projects_with_student_service_pct_en` percent of projects provided at least one type of student service or support.
+
+##### `r projects_with_student_service` ATE projects provided at least one type of student service or support.
+
+```{r fig4a1, fig.cap = paste0("Percentage of projects that provided student services and support (n=", total_ATE_projects, ")"), fig.height = length(ATE_student_service_summary$service_type) * 0.75}
+set_color_palette(ATE_student_service_summary)
+create_bar_chart(ATE_student_service_summary, pct, service_type)
+```
+
+## Business and Entrepreneurial Skills
+
+#### `r business_skills_pct_en` percent of ATE projects engaged students in building their business and entrepreneurial skills.
+
+Business and entrepreneurial skills development involves working with students to develop their skills in areas such as business development, marketing, networking, and understanding the global marketplace. 
+
+`r colorize(paste0('A total of ', total_students_business_skills), color3)` received business and entrepreneurial skills development from `r business_skills` ATE projects in 2024.
+
+<!-- manual update
+ATE projects used a variety of strategies to develop students’ business and entrepreneurial skills. Other strategies not reported in the graph below included engaging with industry professionals (`r other_business_skills_pct`%).
+-->
+
+##### `r colorize('Mentoring and coaching', color1)`, and `r colorize('in-course units or activities', color2)` are the dominant ways of helping students develop business and entrepreneurial skills in the ATE program.
+
+```{r fig4a2, fig.cap = paste0("Percentage of skills development opportunities offered to students by ATE projects (n=", total_develop_business_skills, ")"), fig.height = length(ATE_ways_to_develop_business_skills_summary$ways) * 0.75}
+create_lollipop_chart(ATE_ways_to_develop_business_skills_summary, pct, ways) 
+
+```
+
+## Mentoring
+
+```{r 4.2_prep}
+ATE_mentoring_coaching_summary <- ATE_data %>% 
+  process_summary_2(starting_with = 'Q3.8. ', names_to = 'education', summary = 'sum') %>% 
+  mutate(pct = sum/sum(sum)*100) %>% 
+  filter(sum != 0)
+
+total_mentoring_coaching <- 
+  ATE_student_service_summary %>% 
+  filter(str_detect(service_type, 'Mentoring')) %>% 
+  pull(n)
+
+ATE_mentoring_coaching_provided_by_summary <- ATE_data %>% 
+  process_summary_2(starting_with = 'Q3.6. ', names_to = 'provided_by', summary = 'count_ones', remove_hyphen = FALSE) %>% 
+  mutate(
+    pct = count_ones/total_mentoring_coaching*100
+)
+
+```
+
+```{r 4.2_inline}
+# paragraph 1
+mentoring_coaching_pct_en <-
+  ATE_student_service_summary %>% 
+  filter(str_detect(service_type, 'Mentoring')) %>% 
+  pull(pct) %>% 
+  round_and_english()
+
+# callout graph
+mentoring_highschool_students <- ATE_mentoring_coaching_summary %>% 
+  filter(str_detect(education, 'High')) %>% 
+  pull(sum) %>% 
+  round_to_ten()
+mentoring_two_year_students <- ATE_mentoring_coaching_summary %>% 
+  filter(str_detect(education, '2-year')) %>% 
+  pull(sum) %>% 
+  round_to_ten()
+mentoring_four_year_students <- ATE_mentoring_coaching_summary %>% 
+  filter(str_detect(education, '4-year')) %>% 
+  pull(sum) %>% 
+  round_to_ten()
+
+# paragraph 2
+total_students_mentoring_coaching <-
+  ATE_mentoring_coaching_summary %>%
+  dplyr::pull(sum) %>%
+  sum(na.rm = TRUE) %>%
+  { . + 40 } %>%           # add 40 while it's still numeric
+  round_to_ten()           # then format
+
+
+# paragraph 3
+provided_by_educational_faculty_pct <- 
+  ATE_mentoring_coaching_provided_by_summary %>%
+  filter(str_detect(provided_by, "Educational")) %>%
+  pull(pct) %>%
+  round2()
+provided_by_business_professionals_pct <- 
+  ATE_mentoring_coaching_provided_by_summary %>%
+  filter(str_detect(provided_by, "Business")) %>%
+  pull(pct) %>%
+  round2()
+provided_by_student_peers_pct <- 
+  ATE_mentoring_coaching_provided_by_summary %>%
+  filter(str_detect(provided_by, "Students")) %>%
+  pull(pct) %>%
+  round2()
+provided_by_other_pct_en <- 
+  ATE_mentoring_coaching_provided_by_summary %>%
+  filter(str_detect(provided_by, "Other")) %>%
+  pull(pct) %>%
+  round_and_english()
+```
+
+#### `r mentoring_coaching_pct_en` percent of ATE projects provided students with mentoring or coaching 
+
+Student mentoring involves an experienced industry professional, educator, or advanced student providing guidance and advice to help less-experienced students develop the skills and knowledge they need to enhance their academic and professional growth. Mentoring is a source of both psychosocial support and career advancement [@anderson2015near]. This type of support is especially important for students at two-year colleges, who typically face more barriers to degree completion than those at four-year institutions [@crisp2010impact].
+
+##### Approximately **`r total_students_mentoring_coaching`** students received mentoring through ATE projects.
+
+```{r, fig.height = 3}
+icons_list <- c("&#xf549", "&#xf70e", "&#xf19d")
+text_list <- c(paste0(mentoring_highschool_students, " High school students"),
+               paste0(mentoring_two_year_students, " Two-year college students"),
+               paste0(mentoring_four_year_students, " Four-year college students"))
+colors_list <- c(color1, color2, color3)
+
+df <- create_callout_df(icons = icons_list, text = text_list, colors = colors_list)
+
+
+create_callout_chart(df)
+```
+
+**Mentoring was most often provided by educational faculty or staff (`r provided_by_educational_faculty_pct`%), followed by business and industry professionals (`r provided_by_business_professionals_pct`%) and students or peers (`r provided_by_student_peers_pct`%).** `r provided_by_other_pct_en` percent of projects that offered mentoring or coaching provided training to the mentors.
+
+## Competitions
+
+```{r 4.3_prep}
+ATE_student_competition_summary <- ATE_data %>%
+  filter(!is.na(`Q3.9. How many competitions were hosted or organized by your ATE project in 2020?`)) %>%
+  left_join(project_discipline_mapping, 
+            by = c('2021 Recode Q 1.11' = 'number')) %>%
+  group_by(project_discipline) %>%
+  summarise(
+    number_of_competitions = sum(`Q3.9. How many competitions were hosted or organized by your ATE project in 2020?`, na.rm = TRUE),
+    number_of_students_participated = sum(`Q3.10. How many students participated in the competitions hosted or organized by your ATE project in 2020?`, na.rm = TRUE),
+    .groups = 'drop'
+  ) %>%
+  arrange(desc(number_of_competitions))
+```
+
+```{r 4.3_inline}
+# paragraph 1
+student_competition_pct_en <- 
+  ATE_student_service_summary %>%
+  filter(str_detect(service_type, 'competitions')) %>%
+  pull(pct) %>%
+  round_and_english()
+
+# paragraph 2
+total_students_competition <- 
+  ATE_student_competition_summary %>%
+  pull(number_of_students_participated) %>%
+  sum() %>% 
+  round_to_ten()
+total_competitions <- 
+  ATE_student_competition_summary %>% 
+  pull(number_of_competitions) %>% 
+  sum() 
+
+# callout graph
+agricultural_competitions <- ATE_student_competition_summary %>% 
+  filter(str_detect(project_discipline, 'Agricultural')) %>% 
+  pull(number_of_competitions) 
+agricultural_competitions_students <- ATE_student_competition_summary %>%
+  filter(str_detect(project_discipline, 'Agricultural')) %>%
+  pull(number_of_students_participated) %>%
+  round_to_ten()
+it_competitions <- ATE_student_competition_summary %>% 
+  filter(str_detect(project_discipline, 'Information')) %>% 
+  pull(number_of_competitions) 
+it_competitions_students <- ATE_student_competition_summary %>%
+  filter(str_detect(project_discipline, 'Information')) %>%
+  pull(number_of_students_participated) %>%
+  round_to_ten()
+engineering_competitions <- ATE_student_competition_summary %>% 
+  filter(str_detect(project_discipline, 'Engineering')) %>% 
+  pull(number_of_competitions) 
+engineering_competitions_students <- ATE_student_competition_summary %>%
+  filter(str_detect(project_discipline, 'Engineering')) %>%
+  pull(number_of_students_participated) %>%
+  round_to_ten()
+
+# paragraph 3
+advanced_manufacturing_tech_competitions <- ATE_student_competition_summary %>% 
+  filter(str_detect(project_discipline, 'Advanced Manufacturing Technologies')) %>% 
+  pull(number_of_competitions) 
+advanced_manufacturing_tech_competitions_students <- ATE_student_competition_summary %>% 
+  filter(str_detect(project_discipline, 'Advanced Manufacturing Technologies')) %>% 
+  pull(number_of_students_participated) %>% 
+  round_to_ten()
+general_advanced_tech_competitions <- ATE_student_competition_summary %>% 
+  filter(str_detect(project_discipline, 'General')) %>% 
+  pull(number_of_competitions) 
+general_advanced_tech_competitions_students <- ATE_student_competition_summary %>%
+  filter(str_detect(project_discipline, 'General')) %>%
+  pull(number_of_students_participated) %>%
+  round_to_ten()
+
+
+```
+<!--
+#### `r student_competition_pct_en` percent hosted or organized a student competition.
+-->
+
+#### Eight percent hosted or organized a student competition.
+
+In student competitions, students compete as individuals or teams using skills related to a STEM discipline or industry, such as robotics, information technology, or engineering. Research shows that participation in STEM competitions has a positive impact on students’ interest in pursuing STEM careers, even when controlling for prior interest and ability [@miller2018influence].
+
+##### **`r total_students_competition`** students participated in one of the `r total_competitions` ATE-hosted student competitions. The most common areas for competitions included:
+
+```{r, fig.height = 3}
+icons_list <- c("&#xe2cd", "&#xf0ac", "&#xf085")
+text_list <- c(paste0(agricultural_competitions, " agricultural and environmental technologies competitions engaged<br>", 
+                      agricultural_competitions_students," students"),
+               paste0(it_competitions, " information security competitions engaged<br>",
+                      it_competitions_students," students"),
+               paste0(engineering_competitions, " engineering competitions engaged<br>",
+                      engineering_competitions_students," students"))
+colors_list <- c(color4, color5, color6)
+
+df <- create_callout_df(icons = icons_list, text = text_list, colors = colors_list)
+
+
+create_callout_chart(df)
+
+
+```
+
+In addition, `r advanced_manufacturing_tech_competitions` other competitions engaged `r advanced_manufacturing_tech_competitions_students` students in advanced manufacturing, and `r general_advanced_tech_competitions` competitions in general advance technological education engaged `r general_advanced_tech_competitions_students`.
+
+
+## Transition Programs
+
+```{r 4.4_prep}
+transition_programs_students_mapping = data.frame(
+  number = 1:5,
+  transition_programs_students = c(
+    'High school students', #1
+    'Recent high school graduates', #2
+    'First-year college students', #3
+    'Non-traditional students', #4
+    'Other') #5
+)
+
+ATE_transition_programs_summary <- ATE_data %>%
+  pivot_longer(
+    cols = (starts_with('Q3.12') & ends_with('Audience')) | (starts_with('Q3.12.') & ends_with('Students')),
+    names_to = c(".value"),
+    names_pattern = "(Audience|Students)$"
+  ) %>% 
+  left_join(transition_programs_students_mapping, by = c('Audience' = 'number')) %>%
+  filter(!is.na(transition_programs_students)) %>%
+  group_by(transition_programs_students) %>%
+  summarize(
+    total_students = sum(Students, na.rm = TRUE),
+    total_programs = n(),
+    .groups = 'drop'
+  ) %>%
+  mutate(
+    pct = total_programs/sum(total_programs) *100,
+    transition_programs_students = fct_reorder(transition_programs_students, total_programs, .desc = TRUE)) %>% 
+  arrange(desc(total_programs))
+```
+
+```{r 4.4_inline}
+# paragraph 1
+transition_programs_pct_en <- 
+  ATE_student_service_summary %>%
+  filter(str_detect(service_type, 'transitioning')) %>%
+  pull(pct) %>%
+  round_and_english()
+industry_certification_pct_en <- 
+  ATE_student_service_summary %>%
+  filter(str_detect(service_type, 'certifications')) %>%
+  pull(pct) %>%
+  round_and_english()
+
+# paragraph 2
+majority_transition_programs <- 
+  ATE_transition_programs_summary %>%
+  slice(1) %>%
+  pull(transition_programs_students)
+
+# figure 16
+total_transition_program_programs <- 
+  ATE_transition_programs_summary %>%
+  pull(total_programs) %>% 
+  sum()
+
+# paragraph 3
+total_students_transition_program <- 
+  ATE_transition_programs_summary %>%
+  pull(total_students) %>%
+  sum() %>% 
+  round_to_ten()
+
+# callout graph
+transition_highschool <- ATE_transition_programs_summary %>% 
+  filter(str_detect(transition_programs_students, 'High school students')) %>% 
+  pull(total_students) %>% 
+  round_to_ten()
+transition_recent_highschool <- ATE_transition_programs_summary %>% 
+  filter(str_detect(transition_programs_students, 'Recent high school graduates')) %>% 
+  pull(total_students) %>% 
+  round_to_ten()
+transition_first_year <- ATE_transition_programs_summary %>% 
+  filter(str_detect(transition_programs_students, 'First-year')) %>% 
+  pull(total_students) %>% 
+  round_to_ten()
+transition_non_traditional <- ATE_transition_programs_summary %>% 
+  filter(str_detect(transition_programs_students, 'Non-traditional')) %>% 
+  pull(total_students) %>% 
+  round_to_ten()
+```
+
+#### `r transition_programs_pct_en` percent of ATE projects provided extra support for students transitioning into college
+
+Community colleges enroll disproportionate numbers of students who are economically disadvantaged and from underrepresented minority groups [@edgecombe2019demography]. Programs that support students as they transition into college are an important means for enhancing academic persistence and completion among these and other students [@baber2018living]. **The ATE program supports efforts to facilitate students’ transition into college and equip them with the skills they need to successfully navigate college.** Such programs include—but are not limited to—summer bridge programs, college readiness workshops or classes, first-year programs, and support for nontraditional students.
+
+The majority of transition programs are for `r colorize(majority_transition_programs, color1)`.
+
+```{r fig4a3, fig.cap = paste0("Primary audience for transition programs supported by ATE projects (n=", total_transition_program_programs, ")"), fig.height=2 + 0.1 * nlevels(ATE_transition_programs_summary$transition_programs_students)}
+set_color_palette(ATE_transition_programs_summary)
+create_bar_chart_single(ATE_transition_programs_summary, pct, transition_programs_students)
+
+```
+
+##### Around `r total_students_transition_program` students transitioning into college received support from ATE projects.
+
+```{r, fig.height = 4}
+icons_list <- c("&#xf549", "&#xf70e", "&#xf19c",  "&#xf19d")
+text_list <- c(paste0(transition_highschool, " High school students"),
+               paste0(transition_recent_highschool, " Recent high school students"),
+               paste0(transition_first_year, " First year college students"),
+               paste0(transition_non_traditional, " Non-traditional students"))
+colors_list <- c(color1, color2, color3, color4)
+
+df <- create_callout_df(icons = icons_list, text = text_list, colors = colors_list)
+
+create_callout_chart(df)
+
+```
+
+## Support for Certifications or Licensure
+
+```{r 4.5_prep}
+total_industry_certification <- 
+  ATE_student_service_summary %>%
+  filter(str_detect(service_type, 'certifications')) %>%
+  pull(n)
+
+ATE_industry_certification_ways_summary <- ATE_data %>%
+  process_summary_2(starting_with = 'Q3.13', names_to = 'way', summary = 'count_ones', remove_hyphen = FALSE) %>% 
+  mutate(pct = count_ones/total_industry_certification * 100)
+  
+ATE_industry_certification_awarding_organization_summary <- ATE_data %>%
+  process_summary_2(starting_with = 'Q3.14', names_to = 'awarding_organization', summary = 'count_ones', remove_hyphen = FALSE) 
+```
+
+```{r 4.5_inline}
+# paragraph 1
+industry_certification_en <- 
+  ATE_student_service_summary %>%
+  filter(str_detect(service_type, 'certifications')) %>%
+  pull(n) %>%
+  round_and_english()
+existing_courses_pct_en <- 
+  ATE_industry_certification_ways_summary %>%
+  filter(str_starts(way, "Existing courses")) %>%
+  pull(pct) %>%
+  round2()
+workshop_learning_modules_pct <- 
+  ATE_industry_certification_ways_summary %>%
+  filter(str_starts(way, "Provide specific test")) %>%
+  pull(pct) %>%
+  round2()
+serve_as_testing_center_pct <- 
+  ATE_industry_certification_ways_summary %>%
+  filter(str_starts(way, "Serve as a testing")) %>%
+  pull(pct) %>%
+  round2()
+non_governmental_organization <- 
+  ATE_industry_certification_awarding_organization_summary %>%
+  filter(str_starts(awarding_organization, "Non-governmental organization")) %>%
+  pull(count_ones)
+for_profit_corporation <- 
+  ATE_industry_certification_awarding_organization_summary %>%
+  filter(str_starts(awarding_organization, "For-profit")) %>%
+  pull(count_ones)
+government_agencies <- 
+  ATE_industry_certification_awarding_organization_summary %>%
+  filter(str_starts(awarding_organization, "Government agency")) %>%
+  pull(count_ones)
+```
+
+#### `r industry_certification_pct_en` percent helped students prepare for certification or licensure.
+
+Professional certifications, typically awarded by industry groups or professional organizations, serve as verification that an individual has the knowledge and skills required for certain jobs. Many community colleges offer students assistance in obtaining these credentials. These efforts may involve aligning academic programming with certification exams, offering exam preparation support, or operating testing centers on campus [@nas2017building].
+
+**`r industry_certification_en` ATE projects provided students with support for obtaining certifications or licenses in 2024.** `r existing_courses_pct_en`% of those ATE projects reported supporting students through aligning existing courses with licensing or certification requirements. ATE projects also provided test preparation workshops or learning modules (`r workshop_learning_modules_pct`%) and served as testing centers (`r serve_as_testing_center_pct`%). ATE projects involved in this activity were asked to identify the type of entity that awards the licenses or certifications they help students obtain. <!-- manual update -->The most common response was non-governmental organizations (`r non_governmental_organization`), followed by for-profit companies (`r for_profit_corporation`) and government agencies (`r government_agencies`).<!-- manual update -->
+
+
